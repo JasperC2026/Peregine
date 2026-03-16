@@ -1,9 +1,13 @@
 #!/bin/bash
 
+# Jas - A simple command line utility for Linux. Beta version 0.2. 
+
+# Variables
 TRASH_FILES="$HOME/.local/share/Trash/files"
 TRASH_INFO="$HOME/.local/share/Trash/info"
 RESET="\e[0m"
 
+# Colors for ASCII art
 COLORS=(
 "255;120;0"
 "255;80;80"
@@ -29,35 +33,76 @@ done <<'EOF'
 EOF
 
 
-echo "    Beta version 0.1.2 - Author: Jasper - License: MIT"
+echo "    Beta version 0.2.0 - Author: Jasper - License: MIT"
+
+# Display menu options
 
 PS3="Select option: "
 
-select opt in "Securely empty trash" "Exit"; do
+select opt in "Securely empty trash" "Update all apps" "View license" "Exit"; do
     case $REPLY in
         1)
+            # Check if trash is empty
             if [[ -z "$(ls -A "$TRASH_FILES" 2>/dev/null)" && -z "$(ls -A "$TRASH_INFO" 2>/dev/null)" ]]; then
                 echo "Trash is empty."
                 continue
             fi
 
+            # Confirm deletion
             read -rp "Confirm deletion (y/n): " confirm
             if [[ "$confirm" != "y" ]]; then
                 echo "Aborted."
                 continue
             fi
 
+            # Securely delete files
             echo "Deleting files..."
             srm -v -r "${TRASH_FILES}/"*
 
             echo "Securely deleting trash info..."
             srm -v -r "${TRASH_INFO}/"*
 
+            # Completed status
             echo "Completed"
             ;;
             
         2)
-             cat <<'EOF'
+            echo "Updating all apps..."
+            # update APT
+            echo "Updating all APT packages..."
+            echo
+            sudo apt update && sudo apt upgrade -y
+            echo
+            echo "APT packages updated"
+            echo 
+            # update flatpak
+            echo "Updating all flatpak packages..."
+            echo
+            flatpak update -y
+            echo
+            echo "flatpak updated"
+            echo 
+            # update snap
+            echo "Updating all snap packages..."
+            echo
+            sudo snap refresh
+            echo
+            upgradable=$(snap list --upgradable)
+            if [ -z "$upgradable" ]; then
+            echo "No upgradable Snap packages found."
+            else
+            echo "Upgradable Snap packages:"
+            echo "$upgradable" 
+            echo "Updating upgradable Snap packages..."
+            sudo snap refresh --all
+            echo 
+            echo "All upgradable Snap packages have been updated."
+            echo
+fi
+            ;;
+        3)
+            # Display MIT License
+            cat <<'EOF'
 
 MIT License
 
@@ -83,17 +128,13 @@ SOFTWARE.
 
 EOF
             ;;
-         3)
+        4)
+            # Exit
             break
             ;;
         *)
+            # Error handling for invalid options
             echo "Invalid option"
             ;;
     esac
 done
-
-
-
-
-
-
