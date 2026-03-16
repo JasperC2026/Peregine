@@ -1,4 +1,3 @@
-<img width="667" height="160" alt="ascii-art-text" src="https://github.com/user-attachments/assets/ca0bc37e-4d62-4306-b14d-8a4aef1c94f7" />
 # Jas-toolbox 1.1
 
 Jas-toolbox is a lightweight, terminal-based Linux CLI toolkit designed for system management, network utilities, and privacy/security tasks. It provides an easy-to-use menu interface with submenus for different categories of tools.
