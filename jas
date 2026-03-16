@@ -3,28 +3,10 @@
 # Jas - A simple command line toolbox for networking, system managing and privacy/security. Version 1.0.
 
 # -------------------
-# Help function
-# -------------------
-
-if [[ "$1" == "help" ]]; then
-    echo "Jas Toolbox commands:"
-    echo "  jas        - launch toolbox menu"
-    echo "  jas help   - show this help"
-    exit
-fi
-
-# -------------------
-# Variables for commands.
-# -------------------
-
-TRASH_FILES="$HOME/.local/share/Trash/files"
-TRASH_INFO="$HOME/.local/share/Trash/info"
-RESET="\e[0m"
-
-# -------------------
 # Colors for ASCII art
 # -------------------
 
+RESET="\e[0m"
 COLORS=(
 "255;120;0"
 "255;80;80"
@@ -52,7 +34,7 @@ done <<'EOF'
 EOF
 
 
-echo "    Alpha version 1.0 - Author: Jasper - License: MIT"
+echo "    Alpha version 1.1 - Author: Jasper - License: MIT"
 
 # -------------------
 # Network Tools Submenu
@@ -60,7 +42,7 @@ echo "    Alpha version 1.0 - Author: Jasper - License: MIT"
 network_tools() {
     while true; do
         PS3="Network Tools Menu: "
-        options=("Whois" "Ping" "Trace" "DNS info" "get IP" "Back")
+        options=("Whois" "Ping" "Trace" "DNS info" "get IP" "Geolocate" "Back")
         select opt in "${options[@]}"; do
             case $REPLY in
                 1)
@@ -88,6 +70,21 @@ network_tools() {
                     curl ifconfig.me
                     ;;
                 6)
+                    ip_geo() {
+                    read -p "Enter IP or domain: " target
+
+                    data=$(curl -s ipinfo.io/$target)
+
+                    echo "IP:       $(echo $data | jq -r '.ip')"
+                    echo "City:     $(echo $data | jq -r '.city')"
+                    echo "Region:   $(echo $data | jq -r '.region')"
+                    echo "Country:  $(echo $data | jq -r '.country')"
+                    echo "ISP:      $(echo $data | jq -r '.org')"
+                    echo "Timezone: $(echo $data | jq -r '.timezone')"
+                }
+                    ip_geo
+                    ;;
+                7)
                     return  # Back to main menu
                     ;;
                 *)
@@ -165,6 +162,9 @@ privacy_tools() {
         select opt in "${options[@]}"; do
             case $REPLY in
                 1)
+                    TRASH_FILES="$HOME/.local/share/Trash/files"
+                    TRASH_INFO="$HOME/.local/share/Trash/info"
+
                      # Check if trash is empty
                     if [[ -z "$(ls -A "$TRASH_FILES" 2>/dev/null)" && -z "$(ls -A "$TRASH_INFO" 2>/dev/null)" ]]; then
                         echo "Trash is empty."
@@ -262,7 +262,7 @@ while true; do
 
 MIT License
 
-Copyright (c) 2026 DarkShadowUser
+Copyright (c) 2026 DarkShadowUser https://github.com/DarkShadowUser/
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
