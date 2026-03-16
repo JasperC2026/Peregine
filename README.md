@@ -1,6 +1,11 @@
-# Jas-toolbox 1.0
+# Jas-toolbox 1.1
 
 Jas-toolbox is a lightweight, terminal-based Linux CLI toolkit designed for system management, network utilities, and privacy/security tasks. It provides an easy-to-use menu interface with submenus for different categories of tools.
+
+## Update log
+Clarified code in version 1.1.
+
+Added IP geolocation
 
 ## Features
 
@@ -52,8 +57,12 @@ chkrootkit – for rootkit scanning
 
 openssl – for generating secure passwords
 
+jq - for geolocating
+
 ## Notes
 Toolkit is tested on Ubuntu, on other distro's it should function probably but there could be some isseus.
+
+Some parts require use of sudo so be aware of the risks. Also some network tools can leak your IP so use tor or a VPN to be safe.
 
 P.S. the updating apps part of the toolkit works with APT, flatpak and snap. Other packages will NOT be updated.
 
