@@ -9,7 +9,6 @@
 if [[ "$1" == "help" ]]; then
     echo "Jas Toolbox commands:"
     echo "  jas        - launch toolbox menu"
-    echo "  jas update - update Jas Toolbox"
     echo "  jas help   - show this help"
     exit
 fi
