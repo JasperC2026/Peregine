@@ -30,17 +30,18 @@ done <<'EOF'
   _   | |/ /\ \  \___ \     | | | |  | | |  | | |    |  _ <| |  | |> <  
  | |__| / ____ \ ____) |    | | | |__| | |__| | |____| |_) | |__| / . \ 
   \____/_/    \_\_____/     |_|  \____/ \____/|______|____/ \____/_/ \_\
-                                                                    
+                                                                        
+                                                                                                                                     
 EOF
 
 
-echo "    Beta version 0.2.0 - Author: Jasper - License: MIT"
+echo "    Beta version 0.3 - Author: Jasper - License: MIT"
 
 # Display menu options
 
 PS3="Select option: "
 
-select opt in "Securely empty trash" "Update all apps" "View license" "Exit"; do
+select opt in "Securely empty trash" "Update all apps" "Whois lookup" "View license" "Exit"; do
     case $REPLY in
         1)
             # Check if trash is empty
@@ -102,6 +103,20 @@ select opt in "Securely empty trash" "Update all apps" "View license" "Exit"; do
 fi
             ;;
         3)
+            # Whois lookup
+            echo -n "Enter domain (ex: example.com): "
+            read -r domain
+
+           # basic empty check
+           if [[ -z "$domain" ]]; then
+           echo "No domain entered."
+           else
+           echo "Running whois for: $domain"
+           whois "$domain"
+           fi
+           ;;
+   
+        4)
             # Display MIT License
             cat <<'EOF'
 
@@ -129,10 +144,14 @@ SOFTWARE.
 
 EOF
             ;;
-        4)
+        5)
             # Exit
             break
             ;;
+        q)
+            # Exit on 'q'
+            break
+            ;;    
         *)
             # Error handling for invalid options
             echo "Invalid option"
