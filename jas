@@ -33,44 +33,25 @@ if [[ "$1" == "help" ]]; then
     exit
 fi
 
-# -------------------
-# Run dependency check
-# -------------------
-check_dependencies
-
-# -------------------
 # Dependency check and installation
-# -------------------
-
 check_dependencies() {
-
-    deps=(
-        whois
-        curl
-        dig
-        fastfetch
-        srm
-        chkrootkit
-        openssl
-        traceroute
-    )
-
+    deps=(whois curl dig fastfetch srm chkrootkit openssl traceroute)
     missing=()
-
     for cmd in "${deps[@]}"; do
         if ! command -v "$cmd" >/dev/null 2>&1; then
             missing+=("$cmd")
         fi
     done
-
     if [ ${#missing[@]} -ne 0 ]; then
         echo "[!] Missing dependencies: ${missing[*]}"
         echo "[+] Installing them..."
-
         sudo apt update
         sudo apt install -y whois curl dnsutils fastfetch secure-delete chkrootkit traceroute openssl
     fi
 }
+
+# Run dependency check
+check_dependencies
 
 # -------------------
 # Variables for commands.
