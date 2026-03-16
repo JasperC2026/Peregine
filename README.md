@@ -6,3 +6,4 @@ A command line toolbox for verious options and tools. Beta 0.3 includes a secure
 
 Secure deleting files: requiring SRM package.
 Updating apps: curently works with apt, flatpak and snap.
+Whois lookup: whois package.
