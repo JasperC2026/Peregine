@@ -3,6 +3,76 @@
 # Jas - A simple command line toolbox for networking, system managing and privacy/security. Version 1.0.
 
 # -------------------
+# Updater
+# -------------------
+
+update_jas() {
+    echo "[+] Checking for updates..."
+
+    TMP=$(mktemp)
+
+    if curl -fsSL https://raw.githubusercontent.com/DarkShadowUser/Jas-toolbox/main/jas -o "$TMP"; then
+        sudo install -m 755 "$TMP" /usr/local/bin/jas
+        rm "$TMP"
+        echo "[✓] Jas Toolbox updated!"
+    else
+        echo "[!] Update failed."
+        rm -f "$TMP"
+    fi
+}
+
+# -------------------
+# Help function
+# -------------------
+
+if [[ "$1" == "help" ]]; then
+    echo "Jas Toolbox commands:"
+    echo "  jas        - launch toolbox menu"
+    echo "  jas update - update Jas Toolbox"
+    echo "  jas help   - show this help"
+    exit
+fi
+
+# -------------------
+# Run dependency check
+# -------------------
+check_dependencies
+
+# -------------------
+# Dependency check and installation
+# -------------------
+
+check_dependencies() {
+
+    deps=(
+        whois
+        curl
+        dig
+        fastfetch
+        srm
+        chkrootkit
+        openssl
+        traceroute
+    )
+
+    missing=()
+
+    for cmd in "${deps[@]}"; do
+        if ! command -v "$cmd" >/dev/null 2>&1; then
+            missing+=("$cmd")
+        fi
+    done
+
+    if [ ${#missing[@]} -ne 0 ]; then
+        echo "[!] Missing dependencies: ${missing[*]}"
+        echo "[+] Installing them..."
+
+        sudo apt update
+        sudo apt install -y whois curl dnsutils fastfetch secure-delete chkrootkit traceroute openssl
+    fi
+}
+
+# -------------------
 # Variables for commands.
 # -------------------
 
