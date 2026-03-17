@@ -1,11 +1,18 @@
-# Jas-toolbox 1.1
+# Jas-toolbox 1.2
 
 Jas-toolbox is a lightweight, terminal-based Linux CLI toolkit designed for system management, network utilities, and privacy/security tasks. It provides an easy-to-use menu interface with submenus for different categories of tools.
 
 ## Update log
-Clarified code in version 1.1.
 
-Added IP geolocation
+Added lynis security audit
+
+Added bleachbit for system cleanup
+
+Added paranoia mode     
+
+Added color schemes and warnings        
+
+Added processing and finishing indicators
 
 ## Features
 
@@ -57,10 +64,16 @@ chkrootkit – for rootkit scanning
 
 openssl – for generating secure passwords
 
-jq - for geolocating
+jq - for IP osint
+
+lynis - system audit
+
+bleachbit - system cleaning
 
 ## Notes
 Toolkit is tested on Ubuntu, on other distro's it should function probably but there could be some isseus.
+
+If you dont want some parts of the toolkit feel free to edit the code and change the install script.
 
 Some parts require use of sudo so be aware of the risks. Also some network tools can leak your IP so use tor or a VPN to be safe.
 
