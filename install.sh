@@ -15,7 +15,7 @@ fi
 echo "[+] Installing dependencies..."
 
 apt update
-apt install -y whois curl dnsutils fastfetch secure-delete chkrootkit openssl jq
+apt install -y whois curl dnsutils fastfetch secure-delete chkrootkit openssl jq lynis bleachbit
 
 echo "[+] Downloading tool..."
 
