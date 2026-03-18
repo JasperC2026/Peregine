@@ -69,7 +69,7 @@ network_tools() {
                     read -r itemping # read ping target input from user
                     echo -e "${GREEN}[➜] Pinging $itemping...${RESET}"
                     sleep 0.5
-                    ping "$itemping" # Perform ping and display results
+                    ping -c 6 "$itemping" # Perform ping and display results
                     echo -e "${GREEN}[+] Ping completed.${RESET}"
                     ;;
                 3)
