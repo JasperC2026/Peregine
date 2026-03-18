@@ -41,7 +41,7 @@ done <<'EOF'
 EOF
 
 
-echo -e "${BOLD}${RED}  Version 1.2.1 - Creator: DarkShadowUser - License: MIT${RESET}"
+echo -e "${BOLD}${RED}  Version 1.2.2 - Creator: DarkShadowUser - License: MIT${RESET}"
 
 # End ascii art, start of toolbox code
 
@@ -95,6 +95,7 @@ network_tools() {
                     echo -e "${GREEN}[➜] Fetching public IP...${RESET}"
                     sleep 0.5
                     curl ifconfig.me # Fetch and display public IP address
+                    echo
                     echo -e "${GREEN}[+] Public IP fetched.${RESET}"
                     ;;
                 6)
@@ -119,8 +120,13 @@ network_tools() {
                     ;;
                 7)
                     # Back to main menu
-                    echo -e "${GREEN}[+] Returning to main menu...${RESET}" 
-                    return  
+                    echo -e "${GREEN}[➜] Returning to main menu...${RESET}"
+                    return
+                    ;;
+                q)
+                    # Back to main menu
+                    echo -e "${GREEN}[➜] Returning to main menu...${RESET}"
+                    return
                     ;;
                 *)
                     # Handle invalid input and prompt user again
@@ -222,6 +228,11 @@ system_tools() {
                     echo -e "${GREEN}[➜] Returning to main menu...${RESET}"
                     return
                     ;;
+                q)
+                    # Back to main menu
+                    echo -e "${GREEN}[➜] Returning to main menu...${RESET}"
+                    return
+                    ;;
                 *)
                     # Error handling for invalid input
                     echo -e "${RED}[✖] Invalid option${RESET}" # Handle invalid input and prompt user again
@@ -315,7 +326,7 @@ privacy_tools() {
                     # Check for rootkits with chkrootkit
                     echo "chkrootkit by chkrootkit Team https://chkrootkit.org/"
                     echo -e "${GREEN}[➜] Checking for rootkits with chkrootkit...${RESET}"
-                    chkrootkit # Check for rootkits with chkrootkit and display results
+                    sudo chkrootkit # Check for rootkits with chkrootkit and display results
                     echo -e "${GREEN}[+] Rootkit check completed.${RESET}"
                     ;;  
                 6)
@@ -350,6 +361,11 @@ privacy_tools() {
                     ;; 
                 
                 9)
+                    # Back to main menu
+                    echo -e "${GREEN}[➜] Returning to main menu...${RESET}"
+                    return
+                    ;;
+                q)
                     # Back to main menu
                     echo -e "${GREEN}[➜] Returning to main menu...${RESET}"
                     return
@@ -404,10 +420,15 @@ SOFTWARE.
 
 EOF
             ;;
+            5) 
+            echo -e "${GREEN}[+] Exiting.${RESET}"; exit 0
+            ;;
             q) 
-            echo -e "${GREEN}[+] Exiting.${RESET}"; exit 0 ;;
+            echo -e "${GREEN}[+] Exiting.${RESET}"; exit 0
+            ;;
             *) 
-            echo -e "${RED}[!] Invalid option.${RESET}" ;;
+            echo -e "${RED}[!] Invalid option.${RESET}" 
+            ;;
         esac
     done
 done
