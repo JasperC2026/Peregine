@@ -1,8 +1,8 @@
-# Jas-toolbox v1.2.1
+# Jas-toolbox v1.2.2
 
 Jas-toolbox is a lightweight, terminal-based Linux CLI toolkit designed for system management, network utilities, and privacy/security tasks. It provides an easy-to-use menu interface with submenus for different categories of tools.
 
-## Update log 1.2
+## Update log v1.2
 
 Added lynis security audit
 
@@ -14,11 +14,16 @@ Added color schemes and warnings
 
 Added processing and finishing indicators
 
-## Update log 1.2.1
+## Update log v1.2.1
 
 Functionallity and performance improvements
 
 Improved interaction with tool
+
+## Update log v1.2.2
+
+Fixed issues of Testing of v1.2.1 
+
 
 ## Features
 
