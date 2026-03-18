@@ -16,12 +16,11 @@ RESET="\e[0m"
 
 #ASCII art with color cycling
 COLORS=(
-"255;120;0"
 "255;80;80"
-"255;0;150"
-"200;0;220"
-"150;0;255"
-"110;0;255"
+"255;40;40"
+"220;20;20"
+"180;10;10"
+"120;0;0"
 )
 
 i=0
@@ -42,7 +41,7 @@ done <<'EOF'
 EOF
 
 
-echo -e "${BOLD}${YELLOW}  Version 1.2 - Author: Jasper - License: MIT${RESET}"
+echo -e "${BOLD}${RED}  Version 1.2.1 - Creator: DarkShadowUser - License: MIT${RESET}"
 
 # End ascii art, start of toolbox code
 
@@ -59,41 +58,51 @@ network_tools() {
                     # Whois lookup
                     echo -n "Enter domain (ex: example.com): "
                     read -r domain # read domain input from user
-                    echo -e "${GREEN}[+] Performing Whois lookup for $domain...${RESET}"
+                    echo -e "${GREEN}[➜] Performing Whois lookup for $domain...${RESET}"
                     sleep 0.5
                     whois "$domain" # Perform whois lookup and display results
+                    echo -e "${GREEN}[+] Whois lookup completed.${RESET}"
                     ;;
                 2)
+                    # Ping
                     echo -n "Enter item to ping: "
                     read -r itemping # read ping target input from user
-                    echo -e "${GREEN}[+] Pinging $itemping...${RESET}"
+                    echo -e "${GREEN}[➜] Pinging $itemping...${RESET}"
                     sleep 0.5
                     ping "$itemping" # Perform ping and display results
+                    echo -e "${GREEN}[+] Ping completed.${RESET}"
                     ;;
                 3)
+                    # Traceroute
                     echo -n "Enter domain to trace: "
                     read -r domaintrace # read trace target input from user
-                    echo -e "${GREEN}[+] Tracing route to $domaintrace...${RESET}"
+                    echo -e "${GREEN}[➜] Tracing route to $domaintrace...${RESET}"
                     sleep 0.5
                     traceroute "$domaintrace" # Perform traceroute and display results
+                    echo -e "${GREEN}[+] Traceroute completed.${RESET}"
                     ;;
                 4)
+                    # DNS info
                     echo -n "Enter domain to get DNS info: "
                     read -r domaindns # read DNS target input from user
-                    echo -e "${GREEN}[+] Getting DNS info for $domaindns...${RESET}"
+                    echo -e "${GREEN}[➜] Getting DNS info for $domaindns...${RESET}"
                     sleep 0.5
                     dig "$domaindns" # Perform DNS lookup and display results
+                    echo -e "${GREEN}[+] DNS info retrieved.${RESET}"
                     ;;
                 5)
-                    echo -e "${GREEN}[+] Fetching public IP...${RESET}"
+                    # Get public IP
+                    echo -e "${GREEN}[➜] Fetching public IP...${RESET}"
                     sleep 0.5
                     curl ifconfig.me # Fetch and display public IP address
+                    echo -e "${GREEN}[+] Public IP fetched.${RESET}"
                     ;;
                 6)
+                    # IP OSINT
                     ip_osint() {
                     read -p "Enter IP or domain: " target # read target input from user
                     
-                    echo -e "${GREEN}[+] Fetching OSINT for $target...${RESET}"
+                    echo -e "${GREEN}[➜] Fetching OSINT for $target...${RESET}"
                     sleep 0.5
 
                     data=$(curl -s ipinfo.io/$target)
@@ -106,13 +115,16 @@ network_tools() {
                     echo "Timezone: $(echo $data | jq -r '.timezone')"
                 }
                     ip_osint # Perform IP OSINT lookup and display results
+                    echo -e "${GREEN}[+] IP OSINT lookup completed.${RESET}"
                     ;;
                 7)
+                    # Back to main menu
                     echo -e "${GREEN}[+] Returning to main menu...${RESET}" 
                     return  
                     ;;
                 *)
-                    echo -e "${RED} [!] Invalid option${RESET}   " # Handle invalid input and prompt user again
+                    # Handle invalid input and prompt user again
+                    echo -e "${RED} [✖] Invalid option${RESET}   " # Handle invalid input and prompt user again
                     ;;
             esac
         done
@@ -129,7 +141,8 @@ system_tools() {
         select opt in "${options[@]}"; do
             case $REPLY in
                 1)
-                    echo -e "${GREEN}[+] Starting update process...${RESET}"
+                    # Update all apps
+                    echo -e "${GREEN}[➜] Starting update process...${RESET}"
                     sleep 0.5
                     echo "Updating all apps..."
                     # update APT
@@ -165,13 +178,18 @@ system_tools() {
                     fi
             ;;
                 2)
-                    echo -e "${GREEN}[+] Gathering system information...${RESET}"
+                    # Display system information
+                    echo "Fastfetch https://github.com/fastfetch-cli/fastfetch"
+                    echo -e "${GREEN}[➜] Gathering system information...${RESET}"
                     sleep 0.5
                     fastfetch # Display system information using fastfetch
+                    echo
+                    echo -e "${GREEN}[+] System information displayed.${RESET}"
                     ;;
                 3)   
+                    # Paranoia mode
                     confirm_paranoia() {
-                    echo -e "[!] WARNING: PARANOIA MODE IS EXTREMELY INVASIVE"
+                    echo -e "${YELLOW}[!] WARNING: Paranoia mode is extremely invasive and will significantly restrict your system's functionality. It will block all outgoing network traffic, disable your webcam and microphone, and securely delete various files on your system. Make sure to save any important work before enabling this mode.${RESET}"
                     echo "Type EXACTLY: ENABLE PARANOIA MODE"
                     read -r input
 
@@ -183,7 +201,7 @@ system_tools() {
 
                     confirm_paranoia
 
-                    echo -e "${GREEN}[+] Enabling Paranoia mode...${RESET}"
+                    echo -e "${GREEN}[➜] Enabling Paranoia mode...${RESET}"
                     sleep 0.5
 
                     sudo iptables -P OUTPUT DROP # Drop all outgoing traffic by default
@@ -200,11 +218,13 @@ system_tools() {
                     echo -e "${GREEN}[+] Paranoia mode enabled.${RESET}"
                     ;;
                 4)
-                    echo -e "${GREEN}[+] Returning to main menu...${RESET}"
+                    # Back to main menu
+                    echo -e "${GREEN}[➜] Returning to main menu...${RESET}"
                     return
                     ;;
                 *)
-                    echo -e "${RED} [!] Invalid option${RESET}   " # Handle invalid input and prompt user again
+                    # Error handling for invalid input
+                    echo -e "${RED}[✖] Invalid option${RESET}" # Handle invalid input and prompt user again
                     ;;
             esac
         done
@@ -222,6 +242,8 @@ privacy_tools() {
         select opt in "${options[@]}"; do
             case $REPLY in
                 1)
+                    # Securely wipe trash
+
                     TRASH_FILES="$HOME/.local/share/Trash/files"
                     TRASH_INFO="$HOME/.local/share/Trash/info"
 
@@ -239,21 +261,21 @@ privacy_tools() {
                     fi
 
                     # Securely delete files
-                    echo -e "${GREEN}[+] Securely deleting trash...${RESET}"
+                    echo -e "${GREEN}[➜] Securely deleting trash...${RESET}"
                     sleep 0.5
                     echo "Deleting files..."
                     srm -v -r "${TRASH_FILES}/"*
 
-                    echo -e "${GREEN}[+] Securely deleting trash info...${RESET}"
+                    echo -e "${GREEN}[➜] Securely deleting trash info...${RESET}"
                     sleep 0.5
                     srm -v -r "${TRASH_INFO}/"*
 
                     # Completed status
                     echo -e "${GREEN}[+] Deletion completed.${RESET}"
                     ;;
-            
                 2)
-                    echo -e "${GREEN}[+] Securely overwriting free space...${RESET}"
+                    # Securely overwrite free space
+                    echo -e "${GREEN}[➜] Securely overwriting free space...${RESET}"
                     # Get the root partition
                     root_partition=$(df / | tail -1 | awk '{print $1}')
                     
@@ -269,8 +291,12 @@ privacy_tools() {
                     
                     echo -e "${GREEN}[+] Free space securely overwritten.${RESET}"
                     ;;
-                3)
-                    echo -e "${GREEN}[+] Performing system audit with Lynis...${RESET}"
+                3)  
+                    # Perform system audit with Lynis
+                    echo "Lynis by CISOfy https://cisofy.com/lynis/"
+                    sleep 0.5
+                    echo
+                    echo -e "${GREEN}[➜] Performing system audit with Lynis...${RESET}"
                     sleep 0.5
                     echo
                     sudo lynis audit system # Perform system audit with Lynis and display results
@@ -278,23 +304,29 @@ privacy_tools() {
                     echo -e "${GREEN}[+] System audit completed.${RESET}"
                     ;;    
                 4)
-                    echo -e "${GREEN}[+] Running BleachBit...${RESET}"
+                    # Perform system cleanup with BleachBit
+                    echo "BleachBit by BleachBit Team https://www.bleachbit.org/"
+                    echo -e "${GREEN}[➜] Running BleachBit...${RESET}"
                     sleep 0.5
                     sudo bleachbit # Run BleachBit with root privileges and display results
                     echo -e "${GREEN}[+] BleachBit cleanup completed.${RESET}"
                     ;;
                 5)
-                    echo -e "${GREEN}[+] Checking for rootkits with chkrootkit...${RESET}"
+                    # Check for rootkits with chkrootkit
+                    echo "chkrootkit by chkrootkit Team https://chkrootkit.org/"
+                    echo -e "${GREEN}[➜] Checking for rootkits with chkrootkit...${RESET}"
                     chkrootkit # Check for rootkits with chkrootkit and display results
                     echo -e "${GREEN}[+] Rootkit check completed.${RESET}"
                     ;;  
                 6)
-                    echo -e "${GREEN}[+] Removing temporary files...${RESET}"
+                    # Remove temporary files
+                    echo -e "${GREEN}[➜] Removing temporary files...${RESET}"
                     rm -rf /tmp/* # Remove all files in /tmp directory
                     echo -e "${GREEN}[+] Temporary files removed.${RESET}"
                     ;;  
-                7)
-                    echo -e "${GREEN}[+] Generating secure password...${RESET}"
+                7)  
+                    # Generate secure password
+                    echo -e "${GREEN}[➜] Generating secure password...${RESET}"
                     sleep 0.5
                     echo 
                     openssl rand -base64 12 # Generate and display a secure random password
@@ -302,6 +334,7 @@ privacy_tools() {
                     ;;  
 
                 8)    
+                    # Delete file with shred
                     echo -n "Enter file: "
                     read -r file
 
@@ -317,11 +350,12 @@ privacy_tools() {
                     ;; 
                 
                 9)
-                    echo -e "${GREEN}[+] Returning to main menu...${RESET}"
+                    # Back to main menu
+                    echo -e "${GREEN}[➜] Returning to main menu...${RESET}"
                     return
                     ;;
                 *)
-                    echo -e "${RED}[!] Invalid option.${RESET}" # Handle invalid input and prompt user again
+                    echo -e "${RED}[✖] Invalid option.${RESET}" # Handle invalid input and prompt user again
                     ;;
             esac
         done
