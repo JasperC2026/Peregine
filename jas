@@ -35,13 +35,10 @@ done <<'EOF'
       | | /  \  | (___      | | | |  | | |  | | |    | |_) | |  | \ V / 
   _   | |/ /\ \  \___ \     | | | |  | | |  | | |    |  _ <| |  | |> <  
  | |__| / ____ \ ____) |    | | | |__| | |__| | |____| |_) | |__| / . \ 
-  \____/_/    \_\_____/     |_|  \____/ \____/|______|____/ \____/_/ \_\
-                                                                        
-                                                                                                                                     
+  \____/_/    \_\_____/     |_|  \____/ \____/|______|____/ \____/_/ \_\                                                                                                                         
 EOF
 
-
-echo -e "${BOLD}${RED}  Version 1.2.2 - Creator: DarkShadowUser - License: MIT${RESET}"
+echo -e "${BOLD}${RED}  Version 1.3 - Creator: DarkShadowUser - License: MIT${RESET}"
 
 # End ascii art, start of toolbox code
 
@@ -57,44 +54,50 @@ network_tools() {
                 1)
                     # Whois lookup
                     echo -n "Enter domain (ex: example.com): "
-                    read -r domain # read domain input from user
+                    read -r domain 
+                    
+                    if [[ -z "$domain" ]]; then
+                    echo -e "${YELLOW}[!] Error: Domain cannot be empty.${RESET}"
+                    return 1
+                    fi
+
                     echo -e "${GREEN}[➜] Performing Whois lookup for $domain...${RESET}"
                     sleep 0.5
-                    whois "$domain" # Perform whois lookup and display results
+                    whois "$domain" 
                     echo -e "${GREEN}[+] Whois lookup completed.${RESET}"
                     ;;
                 2)
                     # Ping
                     echo -n "Enter item to ping: "
-                    read -r itemping # read ping target input from user
+                    read -r itemping 
                     echo -e "${GREEN}[➜] Pinging $itemping...${RESET}"
                     sleep 0.5
-                    ping -c 6 "$itemping" # Perform ping and display results
+                    ping -c 6 "$itemping" 
                     echo -e "${GREEN}[+] Ping completed.${RESET}"
                     ;;
                 3)
                     # Traceroute
                     echo -n "Enter domain to trace: "
-                    read -r domaintrace # read trace target input from user
+                    read -r domaintrace 
                     echo -e "${GREEN}[➜] Tracing route to $domaintrace...${RESET}"
                     sleep 0.5
-                    traceroute "$domaintrace" # Perform traceroute and display results
+                    traceroute "$domaintrace" 
                     echo -e "${GREEN}[+] Traceroute completed.${RESET}"
                     ;;
                 4)
                     # DNS info
                     echo -n "Enter domain to get DNS info: "
-                    read -r domaindns # read DNS target input from user
+                    read -r domaindns 
                     echo -e "${GREEN}[➜] Getting DNS info for $domaindns...${RESET}"
                     sleep 0.5
-                    dig "$domaindns" # Perform DNS lookup and display results
+                    dig "$domaindns" 
                     echo -e "${GREEN}[+] DNS info retrieved.${RESET}"
                     ;;
                 5)
                     # Get public IP
                     echo -e "${GREEN}[➜] Fetching public IP...${RESET}"
                     sleep 0.5
-                    curl ifconfig.me # Fetch and display public IP address
+                    curl ifconfig.me 
                     echo
                     echo -e "${GREEN}[+] Public IP fetched.${RESET}"
                     ;;
@@ -115,22 +118,20 @@ network_tools() {
                     echo "ISP:      $(echo $data | jq -r '.org')"
                     echo "Timezone: $(echo $data | jq -r '.timezone')"
                 }
-                    ip_osint # Perform IP OSINT lookup and display results
+                    ip_osint 
                     echo -e "${GREEN}[+] IP OSINT lookup completed.${RESET}"
                     ;;
                 7)
-                    # Back to main menu
-                    echo -e "${GREEN}[➜] Returning to main menu...${RESET}"
-                    return
+                    # Exit
+                    exit 0
                     ;;
                 q)
-                    # Back to main menu
-                    echo -e "${GREEN}[➜] Returning to main menu...${RESET}"
-                    return
+                    # Exit
+                    exit 0
                     ;;
                 *)
                     # Handle invalid input and prompt user again
-                    echo -e "${RED} [✖] Invalid option${RESET}   " # Handle invalid input and prompt user again
+                    echo -e "${RED} [✖] Invalid option${RESET}" 
                     ;;
             esac
         done
@@ -143,32 +144,36 @@ network_tools() {
 system_tools() {
     while true; do
         PS3="System Tools Menu: "
-        options=("Updating all apps" "See system information" "Paranoia mode" "Back")
+        options=("Updating all apps" "See system information" "Paranoia mode" "Exit")
         select opt in "${options[@]}"; do
             case $REPLY in
                 1)
                     # Update all apps
                     echo -e "${GREEN}[➜] Starting update process...${RESET}"
                     sleep 0.5
-                    echo "Updating all apps..."
-                    # update APT
+                   
+                    update_APT () {
                     echo "Updating all APT packages..."
                     echo
-                    sudo apt update && sudo apt upgrade -y # Update APT packages and display results
+                    sudo apt update && sudo apt upgrade -y 
                     echo
                     echo -e "${GREEN}[+] APT packages updated${RESET}"
                     echo 
-                    # update flatpak
+                    }
+
+                    update_flatpak () {
                     echo "Updating all flatpak packages..."
                     echo
-                    flatpak update -y # Update flatpak packages and display results 
+                    flatpak update -y 
                     echo
                     echo -e "${GREEN}[+] flatpak updated${RESET}"
                     echo 
-                    # update snap
+                    }
+
+                    update_snap () {
                     echo "Updating all snap packages..."
                     echo
-                    sudo snap refresh # Update snap packages and display results
+                    sudo snap refresh 
                     echo
                     upgradable=$(snap list --upgradable)
                     if [ -z "$upgradable" ]; then
@@ -177,25 +182,31 @@ system_tools() {
                     echo "Upgradable Snap packages:"
                     echo "$upgradable" 
                     echo "Updating upgradable Snap packages..."
-                    sudo snap refresh --all # Update all snap packages, including upgradable ones
+                    sudo snap refresh --all 
                     echo 
                     echo -e "${GREEN}[+] All upgradable Snap packages have been updated.${RESET}"
                     echo
                     fi
-            ;;
+                    }
+
+                    update_APT
+                    update_flatpak
+                    update_snap
+                    echo -e "${GREEN}[+] All updates completed.${RESET}"
+                    ;;
                 2)
                     # Display system information
                     echo "Fastfetch https://github.com/fastfetch-cli/fastfetch"
                     echo -e "${GREEN}[➜] Gathering system information...${RESET}"
                     sleep 0.5
-                    fastfetch # Display system information using fastfetch
+                    fastfetch 
                     echo
                     echo -e "${GREEN}[+] System information displayed.${RESET}"
                     ;;
                 3)   
                     # Paranoia mode
                     confirm_paranoia() {
-                    echo -e "${YELLOW}[!] WARNING: Paranoia mode is extremely invasive and will significantly restrict your system's functionality. It will block all outgoing network traffic, disable your webcam and microphone, and securely delete various files on your system. Make sure to save any important work before enabling this mode.${RESET}"
+                    echo -e "${RED}[!] WARNING: Paranoia mode is extremely invasive and will significantly restrict your system's functionality. It will block all outgoing network traffic, disable your webcam and microphone, and securely delete various files on your system. Make sure to save any important work before enabling this mode.${RESET}"
                     echo "Type EXACTLY: ENABLE PARANOIA MODE"
                     read -r input
 
@@ -205,33 +216,30 @@ system_tools() {
                     fi
                     }
 
-                    confirm_paranoia
+                    paranoia_mode() {
+                    sudo iptables -P OUTPUT DROP 
+                    sudo iptables -A OUTPUT -d 127.0.0.1 -j ACCEPT 
+                    nmcli networking off 
+                    shred -u ~/.bash_history 2>/dev/null 
+                    history -c 
+                    sudo find /tmp -type f -exec shred -u {} \; 2>/dev/null 
+                    sudo modprobe -r uvcvideo 2>/dev/null
+                    sudo modprobe -r snd_hda_intel 2>/dev/null 
+                    }
 
+                    confirm_paranoia
                     echo -e "${GREEN}[➜] Enabling Paranoia mode...${RESET}"
                     sleep 0.5
-
-                    sudo iptables -P OUTPUT DROP # Drop all outgoing traffic by default
-                    sudo iptables -A OUTPUT -d 127.0.0.1 -j ACCEPT # Allow localhost
-                    nmcli networking off # Disable NetworkManager
-
-                    shred -u ~/.bash_history 2>/dev/null # Securely delete bash history
-                    history -c # Clear current session history
-                    sudo find /tmp -type f -exec shred -u {} \; 2>/dev/null # Securely delete temporary files
-
-                    sudo modprobe -r uvcvideo 2>/dev/null # Disable webcam
-                    sudo modprobe -r snd_hda_intel 2>/dev/null # Disable microphone
-
+                    paranoia_mode
                     echo -e "${GREEN}[+] Paranoia mode enabled.${RESET}"
                     ;;
                 4)
-                    # Back to main menu
-                    echo -e "${GREEN}[➜] Returning to main menu...${RESET}"
-                    return
+                    # Exit
+                    exit 0
                     ;;
                 q)
-                    # Back to main menu
-                    echo -e "${GREEN}[➜] Returning to main menu...${RESET}"
-                    return
+                    # Exit
+                    exit 0
                     ;;
                 *)
                     # Error handling for invalid input
@@ -281,6 +289,7 @@ privacy_tools() {
                     sleep 0.5
                     srm -v -r "${TRASH_INFO}/"*
 
+
                     # Completed status
                     echo -e "${GREEN}[+] Deletion completed.${RESET}"
                     ;;
@@ -310,7 +319,7 @@ privacy_tools() {
                     echo -e "${GREEN}[➜] Performing system audit with Lynis...${RESET}"
                     sleep 0.5
                     echo
-                    sudo lynis audit system # Perform system audit with Lynis and display results
+                    sudo lynis audit system 
                     echo
                     echo -e "${GREEN}[+] System audit completed.${RESET}"
                     ;;    
@@ -319,20 +328,20 @@ privacy_tools() {
                     echo "BleachBit by BleachBit Team https://www.bleachbit.org/"
                     echo -e "${GREEN}[➜] Running BleachBit...${RESET}"
                     sleep 0.5
-                    sudo bleachbit # Run BleachBit with root privileges and display results
+                    sudo bleachbit 
                     echo -e "${GREEN}[+] BleachBit cleanup completed.${RESET}"
                     ;;
                 5)
                     # Check for rootkits with chkrootkit
                     echo "chkrootkit by chkrootkit Team https://chkrootkit.org/"
                     echo -e "${GREEN}[➜] Checking for rootkits with chkrootkit...${RESET}"
-                    sudo chkrootkit # Check for rootkits with chkrootkit and display results
+                    sudo chkrootkit 
                     echo -e "${GREEN}[+] Rootkit check completed.${RESET}"
                     ;;  
                 6)
                     # Remove temporary files
                     echo -e "${GREEN}[➜] Removing temporary files...${RESET}"
-                    rm -rf /tmp/* # Remove all files in /tmp directory
+                    rm -rf /tmp/* 
                     echo -e "${GREEN}[+] Temporary files removed.${RESET}"
                     ;;  
                 7)  
@@ -340,7 +349,7 @@ privacy_tools() {
                     echo -e "${GREEN}[➜] Generating secure password...${RESET}"
                     sleep 0.5
                     echo 
-                    openssl rand -base64 12 # Generate and display a secure random password
+                    openssl rand -base64 12 
                     echo -e "${GREEN}[+] Password generation completed.${RESET}"
                     ;;  
 
@@ -355,24 +364,106 @@ privacy_tools() {
                     echo -e "${RED}[!] File does not exist.${RESET}"
                     else
                     echo -e "${GREEN}[+] Running shred for: $file${RESET}"
-                    shred -u -v -n 5 "$file" # Securely delete the specified file with 5 passes and display results
+                    shred -u -v -n 5 "$file" 
                     echo -e "${GREEN}[+] File securely deleted.${RESET}"
                     fi
                     ;; 
                 
                 9)
-                    # Back to main menu
-                    echo -e "${GREEN}[➜] Returning to main menu...${RESET}"
-                    return
+                    # Exit
+                    exit 0
                     ;;
                 q)
-                    # Back to main menu
-                    echo -e "${GREEN}[➜] Returning to main menu...${RESET}"
-                    return
+                    # Exit
+                    exit 0
                     ;;
                 *)
-                    echo -e "${RED}[✖] Invalid option.${RESET}" # Handle invalid input and prompt user again
+                    # Handle invalid input and prompt user again
+                    echo -e "${RED}[✖] Invalid option.${RESET}" 
                     ;;
+            esac
+        done
+    done
+}
+# -------------------
+# Misc Tools Submenu
+# -------------------
+misc_tools() {
+    while true; do
+        PS3="Misc Tools Menu: "
+        options=("Matrix" "Look hacked" "Hacker code (fake)" "Exit")
+        select opt in "${options[@]}"; do
+            case $REPLY in
+                1)
+                    # Matrix effect
+                    cmatrix -s -C green 
+                    ;;
+                2)
+                    # Hacked effect
+                    hollywood 
+                    ;;
+                3)
+                    # Hacker code effect
+
+                    # IMPORTANT NOTICE
+                    # This is just for fun and does not actually perform any hacking activities. It is meant to simulate a "hacker code" effect for entertainment purposes only. Do not use this code for any malicious or illegal activities. Always use your skills and knowledge ethically and responsibly.
+                    # The following code simulates a hacking scenario where the user "connects" to a target server, "scans" for vulnerabilities, "exploits" a known vulnerability, and "gains root access". It then simulates connecting to a high-profile target (the DoD server) and "extracting sensitive data". This is purely fictional and should not be taken seriously.
+                    # No real commands are executed in this code, and it is only meant for entertainment purposes. Always use your skills and knowledge ethically and responsibly.
+
+                    echo -e "${GREEN}[➜] Starting exploit..."
+                    sleep 0.5
+                    echo "Connecting to target..."
+                    echo "Made connection with 158.238.44.210"
+                    echo "Scanning server for vulnerabilities..."
+                    sleep 3
+                    echo "Bypassing firewall..."
+                    sleep 1
+                    echo "Firewall bypassed."
+                    echo
+                    sleep 0.3
+                    echo "Exploiting vulnerability CVE-2021-44228..."
+                    echo "Executing aribtrary code remotely on target system..."
+                    echo
+                    sleep 1
+                    echo "Escalating privileges..."
+                    echo "Gaining root access..."
+                    sleep 2
+                    echo "Root access granted."
+                    echo "________________________________________________"
+                    echo "Connected with United States Department of Defense DoD server"
+                    echo "Running malicious code on DoD server..."
+                    sleep 1.2
+                    echo "Extracting sensitive data from DoD server..."
+                    sleep 2
+                    echo "Send to dark web"
+                    echo "[+] send!"
+                    echo
+                    echo "Removing traces of attack..."
+                    sleep 0.2
+                    echo "Clearing logs..."
+                    sleep 0.2
+                    echo "Logs cleared."
+                    sleep 0.2
+                    echo "Deleting exploit files..."
+                    sleep 0.2
+                    echo "Exploit files deleted."
+                    echo
+                    echo "Exiting DoD server..."
+                    sleep 0.5
+                    echo "Connection closed."
+                    echo -e "${RESET}"
+                    ;;
+                4)
+                    # Exit
+                    exit 0
+                    ;;
+                q)
+                    # Exit
+                    exit 0
+                    ;;
+                *)
+                    echo -e "${RED}[!] Invalid option.${RESET}" 
+                    ;;   
             esac
         done
     done
@@ -383,7 +474,7 @@ privacy_tools() {
 # -------------------
 while true; do
     PS3="Main Menu: "
-    main_options=("Network Tools" "System Tools" "Privacy/Security Tools" "License" "Exit")
+    main_options=("Network Tools" "System Tools" "Privacy/Security Tools" "Miscellaneous Tools" "License" "Exit")
     select opt in "${main_options[@]}"; do
         case $REPLY in
             1) 
@@ -392,7 +483,9 @@ while true; do
             system_tools ;;
             3) 
             privacy_tools ;;
-            4) 
+            4)
+            misc_tools ;;
+            5) 
             # Display MIT License
             cat <<'EOF'
 
@@ -420,15 +513,17 @@ SOFTWARE.
 
 EOF
             ;;
-            5) 
-            echo -e "${GREEN}[+] Exiting.${RESET}"; exit 0
-            ;;
+            6) 
+                # Exit
+                exit 0
+                ;;
             q) 
-            echo -e "${GREEN}[+] Exiting.${RESET}"; exit 0
-            ;;
+                # Exit
+                exit 0
+                ;;
             *) 
-            echo -e "${RED}[!] Invalid option.${RESET}" 
-            ;;
+                echo -e "${RED}[!] Invalid option.${RESET}" 
+                ;;
         esac
     done
 done
