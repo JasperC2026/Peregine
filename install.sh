@@ -15,7 +15,7 @@ fi
 echo "[+] Installing dependencies..."
 
 apt update
-apt install -y whois traceroute curl dnsutils fastfetch secure-delete chkrootkit openssl jq lynis bleachbit
+apt install -y whois cmatrix hollywood traceroute curl dnsutils fastfetch secure-delete chkrootkit openssl jq lynis bleachbit
 
 echo "[+] Downloading tool..."
 
