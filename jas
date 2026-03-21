@@ -38,14 +38,14 @@ done <<'EOF'
   \____/_/    \_\_____/     |_|  \____/ \____/|______|____/ \____/_/ \_\                                                                                                                         
 EOF
 
-echo -e "${BOLD}${RED}  Version 1.3.1 - Creator: DarkShadowUser - License: MIT${RESET}"
-echo 
+echo -e "${BOLD}${RED}  Version 1.4 - Creator: DarkShadowUser - License: MIT${RESET}"
 
 # End ascii art, start of toolbox code
 
 # -------------------
 # Network Tools Submenu
 # -------------------
+echo
 network_tools() {
     while true; do
         PS3="Network Tools Menu: "
@@ -57,77 +57,219 @@ network_tools() {
                     echo
                     echo -n "Enter domain (ex: example.com): "
                     read -r domain 
-                    
+
                     if [[ -z "$domain" ]]; then
-                    echo -e "${YELLOW}[!] Error: Domain cannot be empty.${RESET}"
-                    return 1
+                        echo -e "${YELLOW}[!] Error: Domain cannot be empty.${RESET}"
+                        return 1
                     fi
 
                     echo -e "${GREEN}[➜] Performing Whois lookup for $domain...${RESET}"
                     sleep 0.5
-                    whois "$domain" 
-                    echo -e "${GREEN}[+] Whois lookup completed.${RESET}"
+
+                    # Run whois and capture output
+                    output=$(whois "$domain" 2>&1)
+                    status=$?
+
+                    echo -e "${CYAN}$output${RESET}"
+
+                    # Check result
+                    if [[ $status -ne 0 ]]; then
+                        echo -e "${RED}[!] Whois lookup failed (network/command error).${RESET}"
+                        return 1
+                    fi
+
+                    # Detect "not found" cases (common patterns)
+                    if echo "$output" | grep -qiE "no match|not found|no data found|status: free"; then
+                        echo -e "${RED}[!] Domain not found or no WHOIS data available.${RESET}"
+                        return 1
+                    fi
+
+                    echo -e "${GREEN}[+] Whois lookup completed successfully.${RESET}"
                     ;;
                 2)
                     # Ping
                     echo
                     echo -n "Enter item to ping: "
                     read -r itemping 
+
+                    if [[ -z "$itemping" ]]; then
+                        echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
+                        return 1
+                    fi
+
                     echo -e "${GREEN}[➜] Pinging $itemping...${RESET}"
                     sleep 0.5
-                    ping -c 6 "$itemping" 
-                    echo -e "${GREEN}[+] Ping completed.${RESET}"
+
+                    # Run ping and capture output
+                    output=$(ping -c 6 "$itemping" 2>&1)
+                    status=$?
+
+                    echo -e "${CYAN}$output${RESET}"
+
+                    # Check if ping command failed
+                    if [[ $status -ne 0 ]]; then
+                        echo -e "${RED}[!] Ping failed (host unreachable or network issue).${RESET}"
+                        return 1
+                    fi
+
+                    # Detect packet loss (100% loss = fail)
+                    if echo "$output" | grep -q "100% packet loss"; then
+                        echo -e "${RED}[!] Ping failed (100% packet loss).${RESET}"
+                        return 1
+                    fi
+
+                    echo -e "${GREEN}[+] Ping completed successfully.${RESET}"
                     ;;
                 3)
                     # Traceroute
                     echo
                     echo -n "Enter domain to trace: "
                     read -r domaintrace 
+
+                    if [[ -z "$domaintrace" ]]; then
+                        echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
+                        return 1
+                    fi
+
                     echo -e "${GREEN}[➜] Tracing route to $domaintrace...${RESET}"
                     sleep 0.5
-                    traceroute "$domaintrace" 
-                    echo -e "${GREEN}[+] Traceroute completed.${RESET}"
+
+                    # Run traceroute and capture output
+                    output=$(traceroute "$domaintrace" 2>&1)
+                    status=$?
+
+                    echo -e "${CYAN}$output${RESET}"
+
+                    # Check if traceroute command failed
+                    if [[ $status -ne 0 ]]; then
+                        echo -e "${RED}[!] Traceroute failed (network/DNS issue).${RESET}"
+                        return 1
+                    fi
+
+                    # Detect unreachable route (common pattern: only * * *)
+                    if echo "$output" | grep -qE "^\s*[0-9]+\s+\*\s+\*\s+\*"; then
+                        echo -e "${RED}[!] Traceroute failed or blocked (no responses).${RESET}"
+                        return 1
+                    fi
+
+                    echo -e "${GREEN}[+] Traceroute completed successfully.${RESET}"
                     ;;
                 4)
                     # DNS info
                     echo
                     echo -n "Enter domain to get DNS info: "
                     read -r domaindns 
+
+                    if [[ -z "$domaindns" ]]; then
+                        echo -e "${YELLOW}[!] Error: Domain cannot be empty.${RESET}"
+                        return 1
+                    fi
+
                     echo -e "${GREEN}[➜] Getting DNS info for $domaindns...${RESET}"
                     sleep 0.5
-                    dig "$domaindns" 
-                    echo -e "${GREEN}[+] DNS info retrieved.${RESET}"
+
+                    # Run dig and capture output
+                    output=$(dig "$domaindns" 2>&1)
+                    status=$?
+
+                    echo -e "${CYAN}$output${RESET}"
+
+                    # Check command failure
+                    if [[ $status -ne 0 ]]; then
+                        echo -e "${RED}[!] DNS lookup failed (network/DNS issue).${RESET}"
+                        return 1
+                    fi
+
+                    # Detect no valid answer
+                    if echo "$output" | grep -q "status: NXDOMAIN"; then
+                        echo -e "${RED}[!] Domain does not exist (NXDOMAIN).${RESET}"
+                        return 1
+                    fi
+
+                    # Detect empty answer section
+                    if ! echo "$output" | grep -q "ANSWER SECTION"; then
+                        echo -e "${RED}[!] No DNS records found.${RESET}"
+                        return 1
+                    fi
+
+                    echo -e "${GREEN}[+] DNS info retrieved successfully.${RESET}"
                     ;;
                 5)
                     # Get public IP
                     echo
                     echo -e "${GREEN}[➜] Fetching public IP...${RESET}"
                     sleep 0.5
-                    curl ifconfig.me 
-                    echo
-                    echo -e "${GREEN}[+] Public IP fetched.${RESET}"
+
+                    # Fetch IP
+                    output=$(curl -s --max-time 5 ifconfig.me 2>&1)
+                    status=$?
+
+                    echo -e "${CYAN}$output${RESET}"
+
+                    # Check failure
+                    if [[ $status -ne 0 ]]; then
+                        echo -e "${RED}[!] Failed to fetch public IP (network issue).${RESET}"
+                        return 1
+                    fi
+
+                    echo -e "${GREEN}[+] Public IP fetched successfully.${RESET}"
                     ;;
                 6)
-                    # IP OSINT
-                    echo
-                    ip_osint() {
-                    read -p "Enter IP or domain: " target # read target input from user
+                # IP OSINT
+                echo
+                ip_osint() {
+                    read -p "Enter IP or domain: " target
                     
+                    if [[ -z "$target" ]]; then
+                        echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
+                        return 1
+                    fi
+
                     echo -e "${GREEN}[➜] Fetching OSINT for $target...${RESET}"
                     sleep 0.5
 
-                    data=$(curl -s ipinfo.io/$target)
+                    # Fetch data
+                    data=$(curl -s --max-time 5 "https://ipinfo.io/$target" 2>&1)
+                    status=$?
 
-                    echo "IP:       $(echo $data | jq -r '.ip')"
-                    echo "City:     $(echo $data | jq -r '.city')"
-                    echo "Region:   $(echo $data | jq -r '.region')"
-                    echo "Country:  $(echo $data | jq -r '.country')"
-                    echo "ISP:      $(echo $data | jq -r '.org')"
-                    echo "Timezone: $(echo $data | jq -r '.timezone')"
+                    # Check curl failure
+                    if [[ $status -ne 0 || -z "$data" ]]; then
+                        echo -e "${RED}[!] Failed to fetch OSINT data.${RESET}"
+                        return 1
+                    fi
+
+                    # Validate JSON (jq check)
+                    if ! echo "$data" | jq . >/dev/null 2>&1; then
+                        echo -e "${RED}[!] Invalid response (not JSON or API error).${RESET}"
+                        return 1
+                    fi
+
+                    # Check if API returned error
+                    if echo "$data" | jq -e '.bogon' >/dev/null 2>&1; then
+                        echo -e "${RED}[!] Invalid or private IP address.${RESET}"
+                        return 1
+                    fi
+
+                    # Output data
+                    echo "IP:       $(echo "$data" | jq -r '.ip // "N/A"')"
+                    echo "City:     $(echo "$data" | jq -r '.city // "N/A"')"
+                    echo "Region:   $(echo "$data" | jq -r '.region // "N/A"')"
+                    echo "Country:  $(echo "$data" | jq -r '.country // "N/A"')"
+                    echo "ISP:      $(echo "$data" | jq -r '.org // "N/A"')"
+                    echo "Timezone: $(echo "$data" | jq -r '.timezone // "N/A"')"
+
+                    return 0
                 }
-                    ip_osint 
-                    echo -e "${GREEN}[+] IP OSINT lookup completed.${RESET}"
-                    ;;
+
+                ip_osint
+
+                # Final status message
+                if [[ $? -eq 0 ]]; then
+                    echo -e "${GREEN}[+] IP OSINT lookup completed successfully.${RESET}"
+                else
+                    echo -e "${RED}[!] IP OSINT lookup failed.${RESET}"
+                fi
+                ;;
                 7)
                     # Exit
                     exit 0
@@ -137,7 +279,7 @@ network_tools() {
                     exit 0
                     ;;
                 *)
-                    # Handle invalid input and prompt user again
+                    # Handle invalid input
                     echo -e "${RED} [✖] Invalid option${RESET}" 
                     ;;
             esac
@@ -148,6 +290,7 @@ network_tools() {
 # -------------------
 # System Tools Submenu
 # -------------------
+echo
 system_tools() {
     while true; do
         PS3="System Tools Menu: "
@@ -159,48 +302,72 @@ system_tools() {
                     echo
                     echo -e "${GREEN}[➜] Starting update process...${RESET}"
                     sleep 0.5
-                   
+
+                    overall_status=0
+
                     update_APT () {
-                    echo "Updating all APT packages..."
-                    echo
-                    sudo apt update && sudo apt upgrade -y 
-                    echo
-                    echo -e "${GREEN}[+] APT packages updated${RESET}"
-                    echo 
+                        echo "Updating all APT packages..."
+                        echo
+
+                        if sudo apt update && sudo apt upgrade -y; then
+                            echo
+                            echo -e "${GREEN}[+] APT packages updated${RESET}"
+                        else
+                            echo
+                            echo -e "${RED}[!] APT update failed${RESET}"
+                            overall_status=1
+                        fi
+                        echo
                     }
 
                     update_flatpak () {
-                    echo "Updating all flatpak packages..."
-                    echo
-                    flatpak update -y 
-                    echo
-                    echo -e "${GREEN}[+] flatpak updated${RESET}"
-                    echo 
+                        echo "Updating all flatpak packages..."
+                        echo
+
+                        if command -v flatpak >/dev/null 2>&1; then
+                            if flatpak update -y; then
+                                echo
+                                echo -e "${GREEN}[+] Flatpak updated${RESET}"
+                            else
+                                echo
+                                echo -e "${RED}[!] Flatpak update failed${RESET}"
+                                overall_status=1
+                            fi
+                        else
+                            echo -e "${YELLOW}[!] Flatpak not installed, skipping.${RESET}"
+                        fi
+                        echo
                     }
 
                     update_snap () {
-                    echo "Updating all snap packages..."
-                    echo
-                    sudo snap refresh 
-                    echo
-                    upgradable=$(snap list --upgradable)
-                    if [ -z "$upgradable" ]; then
-                    echo -e "${RED}[!] No upgradable Snap packages found.${RESET}"
-                    else
-                    echo "Upgradable Snap packages:"
-                    echo "$upgradable" 
-                    echo "Updating upgradable Snap packages..."
-                    sudo snap refresh --all 
-                    echo 
-                    echo -e "${GREEN}[+] All upgradable Snap packages have been updated.${RESET}"
-                    echo
-                    fi
+                        echo "Updating all snap packages..."
+                        echo
+
+                        if command -v snap >/dev/null 2>&1; then
+                            if sudo snap refresh; then
+                                echo
+                                echo -e "${GREEN}[+] Snap packages updated${RESET}"
+                            else
+                                echo
+                                echo -e "${RED}[!] Snap update failed${RESET}"
+                                overall_status=1
+                            fi
+                        else
+                            echo -e "${YELLOW}[!] Snap not installed, skipping.${RESET}"
+                        fi
+                        echo
                     }
 
                     update_APT
                     update_flatpak
                     update_snap
-                    echo -e "${GREEN}[+] All updates completed.${RESET}"
+
+                    # Final status
+                    if [[ $overall_status -eq 0 ]]; then
+                        echo -e "${GREEN}[+] All updates completed successfully.${RESET}"
+                    else
+                        echo -e "${RED}[!] Some updates failed. Check output above.${RESET}"
+                    fi
                     ;;
                 2)
                     # Display system information
@@ -208,40 +375,92 @@ system_tools() {
                     echo "Fastfetch https://github.com/fastfetch-cli/fastfetch"
                     echo -e "${GREEN}[➜] Gathering system information...${RESET}"
                     sleep 0.5
-                    fastfetch 
-                    echo
-                    echo -e "${GREEN}[+] System information displayed.${RESET}"
+
+                    if command -v fastfetch >/dev/null 2>&1; then
+                        if fastfetch; then
+                            echo
+                            echo -e "${GREEN}[+] System information displayed.${RESET}"
+                        else
+                            echo
+                            echo -e "${RED}[!] Fastfetch failed to run.${RESET}"
+                            return 1
+                        fi
+                    else
+                        echo -e "${YELLOW}[!] fastfetch not installed. Falling back to basic system info...${RESET}"
+                        echo
+
+                        uname -a
+                        echo
+                        lsb_release -a 2>/dev/null
+                        echo
+                        uptime
+
+                        echo
+                        echo -e "${GREEN}[+] Basic system information displayed.${RESET}"
+                    fi
                     ;;
                 3)   
-                    # Paranoia mode
+                   # Paranoia mode
                     echo
-                    confirm_paranoia() {
-                    echo -e "${RED}[!] WARNING: Paranoia mode is extremely invasive and will significantly restrict your system's functionality. It will block all outgoing network traffic, disable your webcam and microphone, and securely delete various files on your system. Make sure to save any important work before enabling this mode.${RESET}"
-                    echo "Type EXACTLY: ENABLE PARANOIA MODE"
-                    read -r input
 
-                    if [[ "$input" != "ENABLE PARANOIA MODE" ]]; then
-                    echo -e "${RED}[!] Confirmation failed. Aborting.${RESET}"
-                    exit 1
-                    fi
+                    confirm_paranoia() {
+                        echo -e "${RED}[!] WARNING: Paranoia mode is extremely invasive and may break networking, audio, and system functionality.${RESET}"
+                        echo -e "${RED}[!] Use only in controlled environments (VM recommended).${RESET}"
+                        echo
+                        echo "Type EXACTLY: ENABLE PARANOIA MODE"
+                        read -r input
+
+                        if [[ "$input" != "ENABLE PARANOIA MODE" ]]; then
+                            echo -e "${RED}[!] Confirmation failed. Aborting.${RESET}"
+                            return 1
+                        fi
                     }
 
                     paranoia_mode() {
-                    sudo iptables -P OUTPUT DROP 
-                    sudo iptables -A OUTPUT -d 127.0.0.1 -j ACCEPT 
-                    nmcli networking off 
-                    shred -u ~/.bash_history 2>/dev/null 
-                    history -c 
-                    sudo find /tmp -type f -exec shred -u {} \; 2>/dev/null 
-                    sudo modprobe -r uvcvideo 2>/dev/null
-                    sudo modprobe -r snd_hda_intel 2>/dev/null 
+                        local status=0
+
+                        echo -e "${GREEN}[➜] Enabling Paranoia mode...${RESET}"
+                        sleep 0.5
+
+                        # Firewall lockdown
+                        if sudo iptables -P OUTPUT DROP; then
+                            sudo iptables -A OUTPUT -d 127.0.0.1 -j ACCEPT
+                        else
+                            echo -e "${RED}[!] iptables failed${RESET}"
+                            status=1
+                        fi
+
+                        # Network manager off
+                        if ! nmcli networking off; then
+                            echo -e "${RED}[!] NetworkManager disable failed${RESET}"
+                            status=1
+                        fi
+
+                        # History cleanup (safe version)
+                        shred -u ~/.bash_history 2>/dev/null || true
+                        history -c 2>/dev/null || true
+
+                        # /tmp cleanup (safer: only user files, not system-wide force shred)
+                        find /tmp -type f -user "$USER" -exec shred -u {} \; 2>/dev/null
+
+                        # Module unload (optional hardware lockdown)
+                        sudo modprobe -r uvcvideo 2>/dev/null || true
+                        sudo modprobe -r snd_hda_intel 2>/dev/null || true
+
+                        if [[ $status -eq 0 ]]; then
+                            echo -e "${GREEN}[+] Paranoia mode enabled successfully.${RESET}"
+                        else
+                            echo -e "${RED}[!] Paranoia mode partially failed (check output above).${RESET}"
+                        fi
+
+                        return $status
                     }
 
-                    confirm_paranoia
-                    echo -e "${GREEN}[➜] Enabling Paranoia mode...${RESET}"
-                    sleep 0.5
-                    paranoia_mode
-                    echo -e "${GREEN}[+] Paranoia mode enabled.${RESET}"
+                    if confirm_paranoia; then
+                        paranoia_mode
+                    else
+                        exit 1
+                    fi
                     ;;
                 4)
                     # Exit
@@ -263,7 +482,7 @@ system_tools() {
 # -------------------
 # Privacy/Security Tools Submenu
 # -------------------
-
+echo -e "${YELLOW}[!] Note: Some of these tools can be dangerous if used improperly. Make sure you understand what each tool does before using it. Always use these tools responsibly and ethically.${RESET}"
 privacy_tools() {
     while true; do
         PS3="Privacy/Security Menu: "
@@ -273,9 +492,6 @@ privacy_tools() {
                 1)
                     # Securely wipe trash
                     echo
-
-                    
-                    
 
                     # Check if trash is empty
                     TRASH_FILES="$HOME/.local/share/Trash/files"
@@ -331,47 +547,127 @@ privacy_tools() {
                     echo
                     echo "Lynis by CISOfy https://cisofy.com/lynis/"
                     sleep 0.5
+
                     echo
                     echo -e "${GREEN}[➜] Performing system audit with Lynis...${RESET}"
                     sleep 0.5
                     echo
-                    sudo lynis audit system 
-                    echo
-                    echo -e "${GREEN}[+] System audit completed.${RESET}"
-                    ;;    
+
+                    if command -v lynis >/dev/null 2>&1; then
+                        output=$(sudo lynis audit system 2>&1)
+                        status=$?
+
+                        echo "$output"
+
+                        if [[ $status -eq 0 ]]; then
+                            echo
+                            echo -e "${GREEN}[+] System audit completed successfully.${RESET}"
+                        else
+                            echo
+                            echo -e "${RED}[!] Lynis audit finished with errors (check output above).${RESET}"
+                            return 1
+                        fi
+                    else
+                        echo -e "${RED}[!] Lynis is not installed.${RESET}"
+                        echo -e "${YELLOW}[i] Install with: sudo apt install lynis${RESET}"
+                        return 1
+                    fi
+                    ;;
                 4)
                     # Perform system cleanup with BleachBit
                     echo
                     echo "BleachBit by BleachBit Team https://www.bleachbit.org/"
                     echo -e "${GREEN}[➜] Running BleachBit...${RESET}"
                     sleep 0.5
-                    sudo bleachbit 
-                    echo -e "${GREEN}[+] BleachBit cleanup completed.${RESET}"
+
+                    if command -v bleachbit >/dev/null 2>&1; then
+                        output=$(sudo bleachbit 2>&1)
+                        status=$?
+
+                        echo "$output"
+
+                        if [[ $status -eq 0 ]]; then
+                            echo -e "${GREEN}[+] BleachBit cleanup completed successfully.${RESET}"
+                        else
+                            echo -e "${RED}[!] BleachBit finished with errors.${RESET}"
+                            return 1
+                        fi
+                    else
+                        echo -e "${RED}[!] BleachBit is not installed.${RESET}"
+                        echo -e "${YELLOW}[i] Install with: sudo apt install bleachbit${RESET}"
+                        return 1
+                    fi
                     ;;
                 5)
                     # Check for rootkits with chkrootkit
                     echo
                     echo "chkrootkit by chkrootkit Team https://chkrootkit.org/"
                     echo -e "${GREEN}[➜] Checking for rootkits with chkrootkit...${RESET}"
-                    sudo chkrootkit 
-                    echo -e "${GREEN}[+] Rootkit check completed.${RESET}"
-                    ;;  
+                    sleep 0.5
+
+                    if command -v chkrootkit >/dev/null 2>&1; then
+                        output=$(sudo chkrootkit 2>&1)
+                        status=$?
+
+                        echo "$output"
+
+                        # chkrootkit usually returns 0 even if issues are found,
+                        # so we also scan output for warnings
+                        if echo "$output" | grep -qiE "INFECTED|WARNING|suspicious"; then
+                            echo -e "${RED}[!] Potential threats detected! Review output above.${RESET}"
+                            return 1
+                        fi
+
+                        if [[ $status -eq 0 ]]; then
+                            echo -e "${GREEN}[+] Rootkit check completed (no obvious threats).${RESET}"
+                        else
+                            echo -e "${RED}[!] chkrootkit finished with errors.${RESET}"
+                            return 1
+                        fi
+                    else
+                        echo -e "${RED}[!] chkrootkit is not installed.${RESET}"
+                        echo -e "${YELLOW}[i] Install with: sudo apt install chkrootkit${RESET}"
+                        return 1
+                    fi
+                    ;;
                 6)
                     # Remove temporary files
                     echo
                     echo -e "${GREEN}[➜] Removing temporary files...${RESET}"
-                    rm -rf /tmp/* 
-                    echo -e "${GREEN}[+] Temporary files removed.${RESET}"
-                    ;;  
+                    sleep 0.5
+
+                    # safer: only remove user-owned temp files
+                    if rm -rf /tmp/* 2>/dev/null; then
+                        echo -e "${GREEN}[+] Temporary files removed.${RESET}"
+                    else
+                        echo -e "${RED}[!] Failed to remove some temporary files (permissions or in-use files).${RESET}"
+                        return 1
+                    fi
+                    ;;
                 7)  
                     # Generate secure password
                     echo
                     echo -e "${GREEN}[➜] Generating secure password...${RESET}"
                     sleep 0.5
-                    echo 
-                    openssl rand -base64 12 
-                    echo -e "${GREEN}[+] Password generation completed.${RESET}"
-                    ;;  
+                    echo
+
+                    if command -v openssl >/dev/null 2>&1; then
+                        password=$(openssl rand -base64 12 2>/dev/null)
+                        status=$?
+
+                        if [[ $status -eq 0 && -n "$password" ]]; then
+                            echo -e "${CYAN}$password${RESET}"
+                            echo -e "${GREEN}[+] Password generation completed.${RESET}"
+                        else
+                            echo -e "${RED}[!] Failed to generate password.${RESET}"
+                            return 1
+                        fi
+                    else
+                        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+                        echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
+                        return 1
+                    fi
+                    ;;
 
                 8)    
                     # Delete file with shred
@@ -399,7 +695,7 @@ privacy_tools() {
                     exit 0
                     ;;
                 *)
-                    # Handle invalid input and prompt user again
+                    # Handle invalid input
                     echo -e "${RED}[✖] Invalid option.${RESET}" 
                     ;;
             esac
@@ -409,6 +705,7 @@ privacy_tools() {
 # -------------------
 # Misc Tools Submenu
 # -------------------
+echo
 misc_tools() {
     while true; do
         PS3="Misc Tools Menu: "
@@ -494,6 +791,7 @@ misc_tools() {
 # -------------------
 # Main Menu
 # -------------------
+echo
 while true; do
     PS3="Main Menu: "
     main_options=("Network Tools" "System Tools" "Privacy/Security Tools" "Miscellaneous Tools" "License" "Exit")
