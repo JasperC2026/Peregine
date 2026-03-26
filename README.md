@@ -1,55 +1,10 @@
-# Jas-toolbox v1.4
+# Jas-toolbox v1.5
 
-Jas-toolbox is a lightweight, terminal-based Linux CLI toolkit designed for system management, network utilities, and privacy/security tasks. It provides an easy-to-use menu interface with submenus for different categories of tools.
+A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security tasks.
 
-## Update log v1.4
+Jas Toolbox is a modular command-line utility designed for Linux users who want quick access to common tools in one place. It combines networking utilities, system maintenance, and privacy-focused features into a single interactive interface or direct command usage.
 
-Made big improvements with handling errors or encouting invalid output or entire commands missing
-
-Beter UX with spaces and extra colors
-
-## Features
-
-### Network Tools
-Whois lookup – get domain registration info
-
-Ping – test connectivity to hosts
-
-Traceroute – trace network paths
-
-DNS Lookup – fetch DNS records for a domain
-
-Public IP Info – view your current external IP
-
-IP onsint - view publicly availible information about a IP
-
-### System Tools
-Update All Apps – update installed packages and system apps
-
-System Info – view CPU, memory, disk, and overall system information
-
-Paranoia mode - disable all outgoing traffic and disable sensitive parts on the computer like microphone or camera.
-
-### Privacy / Security Tools
-Secure Empty Trash – safely delete files from trash
-
-Overwrite Free Space – prevent recovery of deleted files
-
-Rootkit Check – scan for potential rootkits
-
-Remove File – securely delete any file
-
-Generate Secure Password – create strong, random passwords
-
-Remove Temporary Files – clean up system temp directories
-
-### Miscellaneous Tools
-
-Matrix effect
-
-Hacked system effect
-
-Hacking server effect
+Built for speed, simplicity, and control.
 
 ## Requirements
 The following packages must be installed for Jas-toolbox 1.0 to function properly:
@@ -72,6 +27,8 @@ openssl – for generating secure passwords
 
 jq - for IP osint
 
+pv - typing effects 
+
 lynis - system audit
 
 bleachbit - system cleaning
@@ -83,14 +40,24 @@ hollywood - hacked effect
 ## Notes
 Toolkit is tested on Ubuntu, on other distro's it should function probably but there could be some isseus.
 
-If you dont want some parts of the toolkit feel free to edit the code and change the install script.
-
 Some parts require use of sudo so be aware of the risks. Also some network tools can leak your IP so use tor or a VPN to be safe.
+
+This project is actively evolving. Expect improvements, bug fixes, and new modules. Fast development can lead to bugs.
 
 P.S. the updating apps part of the toolkit works with APT, flatpak and snap. Other packages will NOT be updated.
 
+## Warnings
+
+Paranoia_mode can disable networking and hardware
+
+Secure_overwrite_free_space is heavy and time-consuming
+
+Secure_empty_trash permanently deletes files
+
+Delete_file uses secure deletion (irreversible)
+
 ## Bugs
-If you encounter any bugs feel free to open a pull requist or send a message. 
+If you encounter any bugs feel free to open a pull reqeust or send a message. 
 
 ## MIT license - Copyright (c) 2026 DarkShadowUser
 
