@@ -39,11 +39,12 @@ done <<'EOF'
   \____/_/    \_\_____/     |_|  \____/ \____/|______|____/ \____/_/ \_\                                                                                                                         
 EOF
 
-echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RESET}"
+echo -e "${BOLD}${RED}  Version beta 1.5.1 - Creator: DarkShadowUser - License: MIT${RESET}"
 }
 
 # Commands
     whois_lookup() {
+                    clear
                     echo
                     echo -n "Enter domain (ex: example.com): "
                     read -r domain 
@@ -55,7 +56,7 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
 
                     echo -e "${GREEN}[➜] Performing Whois lookup for $domain...${RESET}"
                     sleep 0.5
-
+                
                     output=$(whois "$domain" 2>&1)
                     status=$?
 
@@ -74,8 +75,10 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                     fi
 
                     echo -e "${GREEN}[+] Whois lookup completed successfully.${RESET}"
+                    echo
                     }
     ping () {
+                    clear
                     echo
                     echo -n "Enter item to ping: "
                     read -r itemping 
@@ -106,8 +109,10 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                     fi
 
                     echo -e "${GREEN}[+] Ping completed successfully.${RESET}"
+                    echo
                     }
     traceroute () {
+                    clear
                     echo
                     echo -n "Enter domain to trace: "
                     read -r domaintrace 
@@ -138,8 +143,10 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                     fi
 
                     echo -e "${GREEN}[+] Traceroute completed successfully.${RESET}"
+                    echo
                     }
     dns_info() {
+                    clear
                     echo
                     echo -n "Enter domain to get DNS info: "
                     read -r domaindns 
@@ -174,8 +181,10 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                     fi
 
                     echo -e "${GREEN}[+] DNS info retrieved successfully.${RESET}"
+                    echo
                     }
     get_ip() {
+                    clear
                     echo
                     echo -e "${GREEN}[➜] Fetching public IP...${RESET}"
                     sleep 0.5
@@ -192,9 +201,12 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                     fi
 
                     echo -e "${GREEN}[+] Public IP fetched successfully.${RESET}"
+                    echo
                     }
  ip_osint() {
+                    clear
                     echo
+                    echo "IPinfo https://ipinfo.io/"
                     read -p "Enter IP or domain: " target
 
                     if [[ -z "$target" ]]; then
@@ -234,8 +246,10 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
 
                     echo -e "${GREEN}[+] IP OSINT lookup completed successfully.${RESET}"
                     return 0
+                    echo
                     }
    update_apps() {
+                    clear
                     echo
                     echo -e "${GREEN}[➜] Starting update process...${RESET}"
                     sleep 0.5
@@ -295,8 +309,10 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                         echo -e "\a"
                         echo -e "${RED}[!] Some updates failed. Check output above.${RESET}"
                     fi
+                    echo
                     }
  systeminfo() {
+                    clear
                     echo
                     echo "Fastfetch https://github.com/fastfetch-cli/fastfetch"
                     echo -e "${GREEN}[➜] Gathering system information...${RESET}"
@@ -325,6 +341,7 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                         echo
                         echo -e "${GREEN}[+] Basic system information displayed.${RESET}"
                     fi
+                    echo
                     }
     confirm_paranoia() {
                         echo
@@ -342,8 +359,10 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                         fi
 
                         return 0
+                        echo
                     }
     paranoia_mode() {
+                        clear
                         echo
                         local status=0
 
@@ -379,8 +398,10 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                         fi
 
                         return $status
+                        echo
                     }
     secure_empty_trash() {
+                    clear
                     echo
                     TRASH_FILES="$HOME/.local/share/Trash/files"
                     TRASH_INFO="$HOME/.local/share/Trash/info"
@@ -406,8 +427,10 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                     srm -v -r "${TRASH_INFO}/"* 2>/dev/null
 
                     echo -e "${GREEN}[+] Deletion completed.${RESET}"
+                    echo
                     }
     secure_overwrite_free_space() {
+                    clear
                     echo
                     echo -e "${GREEN}[➜] Securely overwriting free space...${RESET}"
                     root_partition=$(df / | tail -1 | awk '{print $1}')
@@ -422,8 +445,10 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                     srm -v -z -r --free "$root_partition"
 
                     echo -e "${GREEN}[+] Free space securely overwritten.${RESET}"
+                    echo
                     }
     system_audit() {
+                    clear
                     echo
                     echo "Lynis by CISOfy https://cisofy.com/lynis/"
                     sleep 0.5
@@ -453,6 +478,7 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                         echo -e "${YELLOW}[i] Install with: sudo apt install lynis${RESET}"
                         return 1
                     fi
+                    echo
                     }
        bleachbit() {
                     echo
@@ -478,8 +504,10 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                         echo -e "${YELLOW}[i] Install with: sudo apt install bleachbit${RESET}"
                         return 1
                     fi
+                    echo
                     }
     rootkit_hunt() {
+                    clear
                     echo
                     echo "chkrootkit by chkrootkit Team https://chkrootkit.org/"
                     echo -e "${GREEN}[➜] Checking for rootkits with chkrootkit...${RESET}"
@@ -509,6 +537,7 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                         echo -e "${YELLOW}[i] Install with: sudo apt install chkrootkit${RESET}"
                         return 1
                     fi
+                    echo
                     }
     remove_temp_files() {
                     echo
@@ -521,6 +550,7 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                         echo -e "${RED}[!] Failed to remove some temporary files (permissions or in-use files).${RESET}"
                         return 1
                     fi
+                    echo
                     }
     generate_password() {
                     echo
@@ -544,6 +574,7 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                         echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
                         return 1
                     fi
+                    echo
                     }
     delete_file() {
                     echo
@@ -560,7 +591,9 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                     echo -e "${GREEN}[+] File securely deleted.${RESET}"
                     fi
                     }
+                    echo
     matrix () {
+                        
                         if command -v cmatrix >/dev/null 2>&1; then
                             cmatrix -s -C green 
                         else
@@ -570,6 +603,7 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                         fi
                     }
     hacked () {
+                        clear
                         if command -v hollywood >/dev/null 2>&1; then
                             hollywood 
                         else
@@ -583,52 +617,92 @@ echo -e "${BOLD}${RED}  Version 1.5 - Creator: DarkShadowUser - License: MIT${RE
                     # This is just for fun and does not actually perform any hacking activities. It is meant to simulate a "hacker code" effect for entertainment purposes only. Do not use this code for any malicious or illegal activities. Always use your skills and knowledge ethically and responsibly.
                     # The following code simulates a hacking scenario where the user "connects" to a target server, "scans" for vulnerabilities, "exploits" a known vulnerability, and "gains root access". It then simulates connecting to a high-profile target (the DoD server) and "extracting sensitive data". This is purely fictional and should not be taken seriously.
                     # No real commands are executed in this code, and it is only meant for entertainment purposes. Always use your skills and knowledge ethically and responsibly.
-
-                    echo
-                    echo -e "${GREEN}[➜] Starting exploit..."
+                    clear
+                    echo -e "${GREEN}"
+                    echo "Starting exploit"
                     sleep 0.5
-                    echo "Connecting to target..." | pv -qL 10
-                    echo "Made connection with 158.238.44.210" | pv -qL 10
-                    echo "Scanning server for vulnerabilities..." | pv -qL 10
+                    echo "Connecting to target..." | pv -qL 5
+                    echo "ssh 158.238.44.210" | pv -qL 5 
+                    sleep 0.5
+                    echo "Made connection with 158.238.44.210" | pv -qL 5
+                    sleep 0.5
+                    echo "Scanning server for vulnerabilities..." | pv -qL 5
                     sleep 3
-                    echo "Bypassing firewall..."  | pv -qL 10
+                    echo "Bypassing firewall..."  | pv -qL 5
+                    echo "[*] Initializing neural bypass engine..." | pv -qL 5
                     sleep 1
-                    echo "Firewall bypassed." | pv -qL 10
+                    echo "[*] Generating polymorphic packets..." | pv -qL 5
+                    sleep 1 
+                    echo "[*] Obfuscating traffic signatures..." | pv -qL 5
+                    sleep 1
+                    echo "[*] Injecting spoofed credentials..." | pv -qL 5
+                    sleep 1
+                    echo "[*] Bypassing IDS/IPS systems..." | pv -qL 5
+                    sleep 1
+                    echo "[*] Establishing covert channel..." | pv -qL 5
+                    echo 
+                    sleep 1
+                    echo "Firewall bypassed." | pv -qL 5
                     echo
                     sleep 0.3
-                    echo "Exploiting vulnerability CVE-2021-44228..." | pv -qL 10
-                    echo "Executing aribtrary code remotely on target system..." | pv -qL 10
+                    echo "Exploiting vulnerability CVE-2021-44228..." | pv -qL 5
+                    sleep 0.5
+                    echo "Executing aribtrary code remotely on target system..." | pv -qL 5 
                     echo
                     sleep 1
-                    echo "Escalating privileges..." | pv -qL 10
-                    echo "Gaining root access..." | pv -qL 10
-                    sleep 2
-                    echo "Root access granted." | pv -qL 10
+                    echo "Escalating privileges..." | pv -qL 5
+                    sleep 0.5
+                    echo "Gaining root access..." | pv -qL 5
+                    echo "[PAYLOAD] Uploading encrypted payload..." | pv -qL 5
+                    sleep 1
+                    echo "[PAYLOAD] Executing remote shell..." | pv -qL 5
+                    sleep 1
+                    echo "Root access granted." | pv -qL 5
                     echo
                     echo "________________________________________________"
                     echo
+                        cat <<'EOF'
+ ____                        _                        _            __       _       __                     
+|  _ \  ___ _ __   __ _ _ __| |_ _ __ ___   ___ _ __ | |_    ___  / _|   __| | ___ / _| ___ _ __  ___  ___ 
+| | | |/ _ \ '_ \ / _` | '__| __| '_ ` _ \ / _ \ '_ \| __|  / _ \| |_   / _` |/ _ \ |_ / _ \ '_ \/ __|/ _ \
+| |_| |  __/ |_) | (_| | |  | |_| | | | | |  __/ | | | |_  | (_) |  _| | (_| |  __/  _|  __/ | | \__ \  __/
+|____/ \___| .__/ \__,_|_|   \__|_| |_| |_|\___|_| |_|\__|  \___/|_|    \__,_|\___|_|  \___|_| |_|___/\___|
+           |_|                                                                                             
+                                                  
+EOF
                     echo "Connected with United States Department of Defense DoD server" | pv -qL 10
-                    echo "Running malicious code on DoD server..." | pv -qL 10
+                    sleep 0.5
+                    echo "Running malicious code on DoD server..." | pv -qL 5
+                    echo "Execute ~/DoD/malicous.sh" | pv -ql 10
                     sleep 1.2
-                    echo "Extracting sensitive data from DoD server..."   | pv -qL 10
+                    echo "Extracting sensitive data from DoD server..."   | pv -qL 5
+                    echo "Scanning file system" | pv -ql 5
+                    echo "Delete" | pv -ql 10
                     sleep 2
-                    echo "Send to dark web" | pv -qL 10
+                    echo "Send to dark web" | pv -qL 5
+                    echo "Ping https+tor://marketplace.tor" | pv -ql 10
+                    sleep 2
                     echo "[+] send!"
                     echo
-                    echo "Removing traces of attack..." | pv -qL 10
-                    sleep 0.2
-                    echo "Clearing logs..." | pv -qL 10
-                    sleep 0.2
-                    echo "Logs cleared." | pv -qL 10
-                    sleep 0.2
-                    echo "Deleting exploit files..." | pv -qL 10
-                    sleep 0.2
-                    echo "Exploit files deleted." | pv -qL 10
+                    echo "Removing traces of attack..." | pv -qL 5
                     echo 
-                    echo "Exiting DoD server..." | pv -qL 10
                     sleep 0.5
-                    echo "Connection closed."   | pv -qL 10
+                    echo "Clearing logs..." | pv -qL 5
+                    sleep 0.5
+                    echo "sudo rm -rf /var/log/" | pv -ql 10
+                    echo "Logs cleared." | pv -qL 5
+                    sleep 0.5
+                    echo "Deleting exploit files..." | pv -qL 5
+                    echo "sudo rm ./exploit" | pv -ql 10
+                    sleep 0.5
+                    echo "Exploit files deleted." | pv -qL 5
+                    echo 
+                    echo "Exiting DoD server..." | pv -qL 5
+                    echo "ssh exit" | pv -ql 10
+                    sleep 0.5
+                    echo "Connection closed."   | pv -qL 5
                     echo -e "${RESET}"
+                    clear
                     }
     license() {
             cat <<'EOF'
@@ -673,6 +747,13 @@ EOF
                     echo -e "${RED}[!] Git is not installed.${RESET}"
                     return 1
                 fi
+            }
+    version() {
+                echo
+                echo -e "${CYAN}JAS Version 1.5.1"
+                echo "Release: stable, received testing"
+                echo "Last updated on 28-3"
+                echo -e "${RESET}"
             }
 
 # -------------------
@@ -758,6 +839,7 @@ system_tools() {
 # Privacy/Security Tools Submenu
 # -------------------
 privacy_tools() {
+    echo
     echo -e "${YELLOW}[!] Note: Some of these tools can be dangerous if used improperly. Make sure you understand what each tool does before using it. Always use these tools responsibly and ethically.${RESET}"
     while true; do
         PS3="Privacy/Security Menu: "
@@ -837,38 +919,60 @@ misc_tools() {
 # Help Menu
 # -------------------
 show_help() {
-    echo "JAS Toolbox - Help"
-    echo
-    echo "Usage:"
-    echo "  jas                → Open interactive menu"
-    echo "  jas <command>      → Run command directly"
-    echo
-    echo "Commands:"
-    echo "  whois_lookup"
-    echo "  ping"
-    echo "  traceroute"
-    echo "  dns_info"
-    echo "  get_ip"
-    echo "  ip_osint"
-    echo "  update_apps"
-    echo "  systeminfo"
-    echo "  paranoia_mode"
-    echo "  secure_empty_trash"
-    echo "  secure_overwrite_free_space"
-    echo "  system_audit"
-    echo "  bleachbit"
-    echo "  rootkit_hunt"
-    echo "  remove_temp_files"
-    echo "  generate_password"
-    echo "  delete_file"
-    echo "  matrix"
-    echo "  hacked"
-    echo "  hacking"
-    echo "  license"
-    echo "  clone_source"
-    echo
-    echo "Other:"
-    echo "  help"
+cat << "EOF"
+JAS Toolbox - Command Line Interface
+===================================
+
+Usage:
+  jas <command> [options]
+
+Description:
+  Multi-purpose toolbox for networking, system management,
+  privacy, and security operations.
+
+Commands:
+
+  NETWORK:
+    whois_lookup / whois     Perform WHOIS lookup on a domain
+    ping                     Send ICMP requests to a host
+    traceroute / trace       Trace route to a target
+    dns_info / dns           Retrieve DNS records
+    get_ip / ip              Show public IP address
+    ip_osint / osint         Gather IP intelligence data
+
+  SYSTEM:
+    update_apps              Update system packages (APT/Flatpak/Snap)
+    systeminfo / sys-info    Display system information
+    paranoia_mode            Extreme lockdown mode (WARNING)
+
+  PRIVACY & SECURITY:
+    secure_empty_trash / set     Securely empty trash
+    secure_overwrite_free_space / SOFC
+                                 Overwrite free disk space
+    system_audit / audit         Run system audit (Lynis)
+    bleachbit                    Clean system junk
+    rootkit_hunt / audit         Scan for rootkits
+    remove_temp_files / rm-temp  Clear /tmp directory
+    generate_password /psswd     Generate secure password
+    delete_file / del           Securely delete a file
+
+  MISC:
+    matrix / -m              Matrix-style terminal effect
+    hacked                   Hollywood-style terminal effect
+    hacking                  Fake hacking simulation
+
+  OTHER:
+    license / -l             Show license information
+    clone_source / -c   Clone project repository
+    help / -h / --h      Show this help message
+
+Notes:
+  - Some commands require sudo privileges.
+  - External tools may be required (whois, dig, lynis, etc.).
+  - Destructive actions (e.g., overwrite, shred) are irreversible.
+  - paranoia_mode can disrupt networking and system behavior.
+
+EOF
 }
 
 # -------------------
@@ -876,14 +980,14 @@ show_help() {
 # -------------------
 if [[ -n "$1" ]]; then
     case "$1" in
-        whois_lookup) whois_lookup ;;
+        whois_lookup|whois) whois_lookup ;;
         ping) ping ;;
-        traceroute) traceroute ;;
-        dns_info) dns_info ;;
-        get_ip) get_ip ;;
-        ip_osint) ip_osint ;;
+        traceroute|trace) traceroute ;;
+        dns_info|dns) dns_info ;;
+        get_ip|ip) get_ip ;;
+        ip_osint|osint) ip_osint ;;
         update_apps) update_apps ;;
-        systeminfo) systeminfo ;;
+        systeminfo|sys-info) systeminfo ;;
         paranoia_mode)
             if confirm_paranoia; then
                 paranoia_mode
@@ -891,20 +995,21 @@ if [[ -n "$1" ]]; then
                 exit 1
             fi
             ;;
-        secure_empty_trash) secure_empty_trash ;;
-        secure_overwrite_free_space) secure_overwrite_free_space ;;
-        system_audit) system_audit ;;
+        secure_empty_trash|SET) secure_empty_trash ;;
+        secure_overwrite_free_space|SOFC) secure_overwrite_free_space ;;
+        system_audit|audit) system_audit ;;
         bleachbit) bleachbit ;;
-        rootkit_hunt) rootkit_hunt ;;
-        remove_temp_files) remove_temp_files ;;
-        generate_password) generate_password ;;
-        delete_file) delete_file ;;
-        matrix) matrix ;;
+        rootkit_hunt|rootkit) rootkit_hunt ;;
+        remove_temp_files|rm-temp) remove_temp_files ;;
+        generate_password|psswd) generate_password ;;
+        delete_file|del) delete_file ;;
+        matrix|-m) matrix ;;
         hacked) hacked ;;
         hacking) hacking ;;
-        license) license ;;
-        clone_source) clone_source ;;
+        license|-l) license ;;
+        clone_source|clone) clone_source ;;
         help|-h|--help) show_help ;;
+        version|-v) version ;;
         *)
             echo -e "${RED}[!] Unknown command: $1${RESET}"
             echo "Use 'jas help' to see available commands."
