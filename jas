@@ -39,10 +39,12 @@ done <<'EOF'
   \____/_/    \_\_____/     |_|  \____/ \____/|______|____/ \____/_/ \_\                                                                                                                         
 EOF
 
-echo -e "${BOLD}${RED}  Version beta 1.5.1 - Creator: DarkShadowUser - License: MIT${RESET}"
+echo -e "${BOLD}${RED}  Version beta 1.6 - Creator: DarkShadowUser - License: MIT${RESET}"
 }
 
 # Commands
+
+# Networking
     whois_lookup() {
                     clear
                     echo
@@ -248,6 +250,25 @@ echo -e "${BOLD}${RED}  Version beta 1.5.1 - Creator: DarkShadowUser - License: 
                     return 0
                     echo
                     }
+    inspect_cert() {
+                    echo
+                    echo -e "${GREEN}[➜] Inspecting SSL certificate...${RESET}"
+                    echo
+
+                    read -rp "Enter domain: " domain
+
+                    echo | openssl s_client -connect "$domain:443" -servername "$domain" 2>/dev/null \
+                        | openssl x509 -noout -text
+
+                    if [[ $? -eq 0 ]]; then
+                        echo -e "${GREEN}[+] Certificate retrieved.${RESET}"
+                    else
+                        echo -e "${RED}[!] Failed to retrieve certificate.${RESET}"
+                        return 1
+                    fi
+                    echo
+                    }
+# System
    update_apps() {
                     clear
                     echo
@@ -343,6 +364,7 @@ echo -e "${BOLD}${RED}  Version beta 1.5.1 - Creator: DarkShadowUser - License: 
                     fi
                     echo
                     }
+# Security
     confirm_paranoia() {
                         echo
                         echo -e "\a"
@@ -554,6 +576,7 @@ echo -e "${BOLD}${RED}  Version beta 1.5.1 - Creator: DarkShadowUser - License: 
                     }
     generate_password() {
                     echo
+                    echo "OpenSSl by the OpenSSL Project https://openssl.org/"
                     echo -e "${GREEN}[➜] Generating secure password...${RESET}"
                     sleep 0.5
                     echo
@@ -592,6 +615,448 @@ echo -e "${BOLD}${RED}  Version beta 1.5.1 - Creator: DarkShadowUser - License: 
                     fi
                     }
                     echo
+    clean_metadata() {
+        echo
+        echo "ExifTool by Phil Harvey https://exiftool.org/"
+        echo -e "${GREEN}[➜] Removing metadata from image...${RESET}"
+        echo
+
+        if ! command -v exiftool >/dev/null 2>&1; then
+            echo -e "${RED}[!] exiftool is not installed.${RESET}"
+            echo -e "${YELLOW}[i] Install with: sudo apt install libimage-exiftool-perl${RESET}"
+            return 1
+        fi
+
+        read -rp "Enter image file: " file
+
+        if [[ ! -f "$file" ]]; then
+            echo -e "${RED}[!] File not found.${RESET}"
+            return 1
+        fi
+
+        read -rp "Output file (e.g. clean.jpg): " outfile
+
+        # remove all metadata
+        exiftool -all= -overwrite_original -o "$outfile" "$file" >/dev/null 2>&1
+        status=$?
+
+        if [[ $status -eq 0 ]]; then
+            echo -e "${GREEN}[+] Metadata removed → $outfile${RESET}"
+        else
+            echo -e "${RED}[!] Failed to remove metadata.${RESET}"
+            return 1
+        fi
+        echo
+    }
+# Encoding
+    encrypt_file_aes256() {
+        echo
+        echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+        echo -e "${GREEN}[➜] Encrypting file (AES-256-CBC)...${RESET}"
+        echo
+
+        if ! command -v openssl >/dev/null 2>&1; then
+            echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+            echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
+            return 1
+        fi
+
+        read -rp "Enter file to encrypt: " file
+
+        if [[ ! -f "$file" ]]; then
+            echo -e "${RED}[!] File not found.${RESET}"
+            return 1
+        fi
+
+        read -rp "Output file (e.g. file.enc): " outfile
+
+        openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$outfile"
+        status=$?
+
+        if [[ $status -eq 0 ]]; then
+            echo -e "${GREEN}[+] File encrypted → $outfile${RESET}"
+        else
+            echo -e "${RED}[!] Encryption failed.${RESET}"
+            return 1
+        fi
+        echo
+    }
+    encrypt_file_aes128() {
+        echo
+        echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+        echo -e "${GREEN}[➜] Encrypting file (AES-128-CBC)...${RESET}"
+        echo
+
+        if ! command -v openssl >/dev/null 2>&1; then
+            echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+            echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
+            return 1
+        fi
+
+        read -rp "Enter file to encrypt: " file
+
+        if [[ ! -f "$file" ]]; then
+            echo -e "${RED}[!] File not found.${RESET}"
+            return 1
+        fi
+
+        read -rp "Output file (e.g. file.enc): " outfile
+
+        openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$outfile"
+        status=$?
+
+        if [[ $status -eq 0 ]]; then
+            echo -e "${GREEN}[+] File encrypted → $outfile${RESET}"
+        else
+            echo -e "${RED}[!] Encryption failed.${RESET}"
+            return 1
+        fi
+        echo
+    }
+    decrypt_file_aes256() {
+        echo
+        echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+        echo -e "${GREEN}[➜] Decrypting file (AES-256-CBC)...${RESET}"
+        echo
+
+        if ! command -v openssl >/dev/null 2>&1; then
+            echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+            return 1
+        fi
+
+        read -rp "Enter encrypted file: " file
+
+        if [[ ! -f "$file" ]]; then
+            echo -e "${RED}[!] File not found.${RESET}"
+            return 1
+        fi
+
+        read -rp "Output file: " outfile
+
+        openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -in "$file" -out "$outfile"
+        status=$?
+
+        if [[ $status -eq 0 ]]; then
+            echo -e "${GREEN}[+] File decrypted → $outfile${RESET}"
+        else
+            echo -e "${RED}[!] Decryption failed (wrong password or corrupted file).${RESET}"
+            return 1
+        fi
+        echo
+    }
+    decrypt_file_aes128() {
+        echo
+        echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+        echo -e "${GREEN}[➜] Decrypting file (AES-128-CBC)...${RESET}"
+        echo
+
+        if ! command -v openssl >/dev/null 2>&1; then
+            echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+            return 1
+        fi
+
+        read -rp "Enter encrypted file: " file
+
+        if [[ ! -f "$file" ]]; then
+            echo -e "${RED}[!] File not found.${RESET}"
+            return 1
+        fi
+
+        read -rp "Output file: " outfile
+
+        openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -in "$file" -out "$outfile"
+        status=$?
+
+        if [[ $status -eq 0 ]]; then
+            echo -e "${GREEN}[+] File decrypted → $outfile${RESET}"
+        else
+            echo -e "${RED}[!] Decryption failed (wrong password or corrupted file).${RESET}"
+            return 1
+        fi
+        echo
+    }
+    encrypt_text_ceasar() {
+    echo
+    echo -e "${GREEN}[➜] Caesar Cipher${RESET}"
+    echo
+
+    read -rp "Enter text: " text
+    read -rp "Enter shift (e.g. 3 or -3): " shift
+
+    echo -e "${CYAN}"
+    result=$(printf "%s" "$text" | tr 'A-Za-z' "$(printf '%s' {A..Z} {a..z} | tr -d ' ' | awk -v s="$shift" '
+    BEGIN {
+        alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+        len=length(alphabet)
+        for (i=1;i<=len;i++) {
+            c=substr(alphabet,i,1)
+            new=substr(alphabet,((i-1+s)%len+len)%len+1,1)
+            map[c]=new
+        }
+    }
+    {
+        for (i=1;i<=length($0);i++) {
+            c=substr($0,i,1)
+            printf "%s", (c in map)?map[c]:c
+        }
+    }')")
+
+    echo -e "${RESET}"
+    echo -e "${GREEN}[+] Result: $result${RESET}"
+    echo
+    }
+    encrypt_text_vigenere () {
+            echo
+    echo -e "${GREEN}[➜] Vigenère Cipher${RESET}"
+    echo
+
+    read -rp "Enter text: " text
+    read -rp "Enter key: " key
+
+    echo -e "${CYAN}"
+    result=$(awk -v text="$text" -v key="$key" '
+    function ord(c) { return index("ABCDEFGHIJKLMNOPQRSTUVWXYZ", c) }
+    function chr(n) { return substr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", n, 1) }
+
+    BEGIN {
+        key = toupper(key)
+        text = toupper(text)
+        keylen = length(key)
+        j = 1
+
+        for (i = 1; i <= length(text); i++) {
+            c = substr(text, i, 1)
+
+            if (c ~ /[A-Z]/) {
+                shift = ord(substr(key, j, 1)) - 1
+                new = (ord(c) + shift - 1) % 26 + 1
+                printf "%s", chr(new)
+                j = (j % keylen) + 1
+            } else {
+                printf "%s", c
+            }
+        }
+    }')
+
+    echo -e "${RESET}"
+    echo -e "${GREEN}[+] Result: $result${RESET}"
+    echo
+    }
+    encrypt_text_aes256() {
+        echo
+        echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+        echo -e "${GREEN}[➜] Encrypting text (AES-256-CBC)...${RESET}"
+
+        if ! command -v openssl >/dev/null 2>&1; then
+            echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+            return 1
+        fi
+
+        echo -e "${CYAN}"
+        read -rp "Enter text: " text
+        echo
+        printf "%s" "$text" | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -a
+        status=$?
+        echo -e "${RESET}"
+
+        if [[ $status -eq 0 ]]; then
+            echo -e "${GREEN}[+] Text encrypted.${RESET}"
+        else
+            echo -e "${RED}[!] Encryption failed.${RESET}"
+            return 1
+        fi
+        echo
+    }
+    encrypt_text_base64() {
+        echo
+        echo -e "${GREEN}[➜] Base64 Encode${RESET}"
+
+        echo -e "${CYAN}"
+        read -rp "Enter text: " text
+        result=$(printf "%s" "$text" | base64)
+        echo -e "${RESET}"
+
+        echo
+        echo -e "${GREEN}[+] Result:${RESET} $result"
+        echo
+        }
+    encrypt_text_aes128() {
+            echo
+            echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+            echo -e "${GREEN}[➜] Encrypting text (AES-128-CBC)...${RESET}"
+
+            if ! command -v openssl >/dev/null 2>&1; then
+                echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+                return 1
+            fi
+
+            echo -e "${CYAN}"
+            read -rp "Enter text: " text
+            printf "%s" "$text" | openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -a
+            status=$?
+            echo -e "${RESET}"
+
+            if [[ $status -eq 0 ]]; then
+                echo -e "${GREEN}[+] Text encrypted.${RESET}"
+            else
+                echo -e "${RED}[!] Encryption failed.${RESET}"
+                return 1
+            fi
+            echo
+        }
+    rot13_cipher() {
+        echo
+        echo -e "${GREEN}[➜] ROT13 Cipher${RESET}"
+        
+        echo -e "${CYAN}"
+        read -rp "Enter text: " text
+        result=$(printf "%s" "$text" | tr 'A-Za-z' 'N-ZA-Mn-za-m')
+        echo -e "${RESET}"
+
+        echo -e "${GREEN}[+] Result:${RESET} $result"
+        echo
+        }
+        decrypt_text_base64() {
+            echo
+            echo -e "${GREEN}[➜] Base64 Decode${RESET}"
+
+            echo -e "${CYAN}"
+            read -rp "Enter Base64 text: " text
+            result=$(printf "%s" "$text" | base64 -d 2>/dev/null)
+            echo -e "${RESET}"
+
+            if [[ $? -ne 0 ]]; then
+                echo -e "${RED}[!] Invalid Base64 input.${RESET}"
+                return 1
+            fi
+
+            echo -e "${GREEN}[+] Result:${RESET} $result"
+            echo
+        }
+    decrypt_text_aes256() {
+        echo
+        echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+        echo -e "${GREEN}[➜] Decrypting text (AES-256-CBC)...${RESET}"
+        echo
+
+        if ! command -v openssl >/dev/null 2>&1; then
+            echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+            return 1
+        fi
+        
+        read -rp "Enter encrypted text: " text
+        echo -e "${CYAN}"
+        printf "%s" "$text" | openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -a
+        status=$?
+        echo -e "${RESET}"
+
+        if [[ $status -eq 0 ]]; then
+            echo -e "${GREEN}[+] Text decrypted.${RESET}"
+        else
+            echo -e "${RED}[!] Decryption failed.${RESET}"
+            return 1
+        fi
+        echo
+    }
+    decrypt_text_aes128() {
+        echo
+        echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+        echo -e "${GREEN}[➜] Decrypting text (AES-128-CBC)...${RESET}"
+        echo
+
+        if ! command -v openssl >/dev/null 2>&1; then
+            echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+            return 1
+        fi
+
+        read -rp "Enter encrypted text: " text
+
+        echo -e "${CYAN}"
+        printf "%s" "$text" | openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -a
+        status=$?
+        echo -e "${RESET}"
+        if [[ $status -eq 0 ]]; then
+            echo -e "${GREEN}[+] Text decrypted.${RESET}"
+        else
+            echo -e "${RED}[!] Decryption failed.${RESET}"
+            return 1
+        fi
+        echo
+    }
+    decrypt_text_ceasar() {
+        echo
+        echo -e "${GREEN}[➜] Caesar Decipher${RESET}"
+
+        read -rp "Enter text: " text
+        read -rp "Enter shift (e.g. 3): " shift
+
+        # reverse shift
+        shift=$(( -shift ))
+
+        echo -e "${CYAN}"
+        result=$(printf "%s" "$text" | awk -v shift="$shift" '
+        BEGIN {
+            alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+            len=length(alphabet)
+
+            for (i=1;i<=len;i++) {
+                c=substr(alphabet,i,1)
+                new=substr(alphabet,((i-1+shift)%len+len)%len+1,1)
+                map[c]=new
+            }
+        }
+        {
+            for (i=1;i<=length($0);i++) {
+                c=substr($0,i,1)
+                printf "%s", (c in map)?map[c]:c
+            }
+        }')
+
+        echo -e "${RESET}"
+        echo -e "${GREEN}[+] Result: $result${RESET}"
+        echo
+        }
+    decrypt_text_vigenere() {
+        echo
+        echo -e "${GREEN}[➜] Vigenère Decipher${RESET}"
+        echo
+
+        read -rp "Enter text: " text
+        read -rp "Enter key: " key
+
+        echo -e "${CYAN}"
+        result=$(awk -v text="$text" -v key="$key" '
+        function ord(c) { return index("ABCDEFGHIJKLMNOPQRSTUVWXYZ", c) }
+        function chr(n) { return substr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", n, 1) }
+
+        BEGIN {
+            key = toupper(key)
+            text = toupper(text)
+            keylen = length(key)
+            j = 1
+
+            for (i = 1; i <= length(text); i++) {
+                c = substr(text, i, 1)
+
+                if (c ~ /[A-Z]/) {
+                    shift = ord(substr(key, j, 1)) - 1
+
+                    new = (ord(c) - shift - 1)
+                    new = (new % 26 + 26) % 26 + 1
+
+                    printf "%s", chr(new)
+                    j = (j % keylen) + 1
+                } else {
+                    printf "%s", c
+                }
+            }
+        }')
+
+        echo -e "${RESET}"
+        echo -e "${GREEN}[+] Result: $result${RESET}"
+        echo
+        }
+# Misc
     matrix () {
                         
                         if command -v cmatrix >/dev/null 2>&1; then
@@ -750,9 +1215,9 @@ EOF
             }
     version() {
                 echo
-                echo -e "${CYAN}JAS Version 1.5.1"
+                echo -e "${CYAN}JAS Version 1.6"
                 echo "Release: stable, received testing"
-                echo "Last updated on 28-3"
+                echo "Last updated on 29-3"
                 echo -e "${RESET}"
             }
 
@@ -760,7 +1225,16 @@ EOF
 # Network Tools Submenu
 # -------------------
 network_tools() {
-    echo
+    clear
+    echo -e "${RED}"
+    cat <<'EOF'
+ _   _ _____ _______        _____  ____  _  __
+| \ | | ____|_   _\ \      / / _ \|  _ \| |/ /
+|  \| |  _|   | |  \ \ /\ / / | | | |_) | ' / 
+| |\  | |___  | |   \ V  V /| |_| |  _ <| . \ 
+|_| \_|_____| |_|    \_/\_/  \___/|_| \_\_|\_\
+EOF
+    echo -e "${RESET}"
     while true; do
         PS3="Network Tools Menu: "
         options=("Whois" "Ping" "Trace" "DNS info" "get IP" "IP osint" "Back")
@@ -802,7 +1276,16 @@ network_tools() {
 # System Tools Submenu
 # -------------------
 system_tools() {
-    echo
+    clear
+    echo -e "${YELLOW}"
+    cat <<'EOF'
+ ______   ______ _____ _____ __  __ 
+/ ___\ \ / / ___|_   _| ____|  \/  |
+\___ \\ V /\___ \ | | |  _| | |\/| |
+___) || |  ___) || | | |___| |  | |
+|____/ |_| |____/ |_| |_____|_|  |_|
+EOF
+    echo -e "${RESET}"
     while true; do
         PS3="System Tools Menu: "
         options=("Updating all apps" "See system information" "Paranoia mode" "Exit")
@@ -839,11 +1322,25 @@ system_tools() {
 # Privacy/Security Tools Submenu
 # -------------------
 privacy_tools() {
-    echo
+    clear
+    echo -e "${BLUE}"
+    cat <<'EOF'
+  ____  ____  _____     ___    ______   __     __
+|  _ \|  _ \|_ _\ \   / / \  / ___\ \ / /    / /
+| |_) | |_) || | \ \ / / _ \| |    \ V /    / / 
+|  __/|  _ < | |  \ V / ___ \ |___  | |    / /  
+|_|__ |_|_\_\___| _\_/_/___\_\____|_|_|__ /_/_  
+
+/ ___|| ____/ ___| | | |  _ \|_ _|_   _\ \ / /  
+\___ \|  _|| |   | | | | |_) || |  | |  \ V /   
+ ___) | |__| |___| |_| |  _ < | |  | |   | |    
+|____/|_____\____|\___/|_| \_\___| |_|   |_|    
+EOF
+    echo -e "${RESET}"
     echo -e "${YELLOW}[!] Note: Some of these tools can be dangerous if used improperly. Make sure you understand what each tool does before using it. Always use these tools responsibly and ethically.${RESET}"
     while true; do
         PS3="Privacy/Security Menu: "
-        options=("Securely wipe trash" "Securely overwrite free space" "Peform system audit" "Peform system cleanup" "Check for rootkits" "Remove temporary files" "Generate secure password" "Delete file"  "Exit")
+        options=("Securely wipe trash" "Securely overwrite free space" "Peform system audit" "Peform system cleanup" "Check for rootkits" "Remove temporary files" "Generate secure password" "Delete file" "Clean metadata" "Exit")
         select opt in "${options[@]}"; do
             case $REPLY in
                 1)
@@ -871,6 +1368,183 @@ privacy_tools() {
                     delete_file
                     ;; 
                 9)
+                    clean_metadata
+                    ;;
+                10)
+                    return
+                    ;;
+                q)
+                    return
+                    ;;
+                *)
+                    echo -e "${RED}[✖] Invalid option.${RESET}" 
+                    ;;
+            esac
+        done
+    done
+}
+# -------------------
+# Encrypt files sub-sub menu
+# -------------------
+encrypt_files() {
+    echo
+    while true; do
+        PS3="Encryption Menu: "
+        options=("AES-256" "AES-128")
+        select opt in "${options[@]}"; do
+            case $REPLY in
+                1)
+                    encrypt_file_aes256 ;;
+                2)
+                    encrypt_file_aes128 ;;
+                q)
+                    return
+                    ;;
+                *)
+                    echo -e "${RED}[✖] Invalid option.${RESET}" 
+                    ;;
+            esac
+        done
+    done
+}
+# -------------------
+# Decrypt files sub-sub menu
+# -------------------
+encrypt_files() {
+    echo
+    while true; do
+        PS3="Encryption Menu: "
+        options=("AES-256" "AES-128")
+        select opt in "${options[@]}"; do
+            case $REPLY in
+                1)
+                    decrypt_file_aes256
+                    ;;
+                2)
+                    decrypt_file_aes128
+                    ;;
+                q)
+                    return
+                    ;;
+                *)
+                    echo -e "${RED}[✖] Invalid option.${RESET}" 
+                    ;;
+            esac
+        done
+    done
+}
+# -------------------
+# Encrypt texts sub-sub menu
+# -------------------
+encrypt_texts() {
+    echo
+    echo -e "${YELLOW}[!]For real security use AES, for education or fun Ceasar or Vigenere and for encoding Base64 or ROT13${RESET}"
+    echo
+    while true; do
+        PS3="Encryption Menu: "
+        options=("AES-256" "AES-128" "vigenere" "ceasar" "base64" "ROT13")
+        select opt in "${options[@]}"; do
+            case $REPLY in
+                1)
+                    encrypt_text_aes256
+                    ;;
+                2)
+                    encrypt_text_aes128
+                    ;;
+                3)
+                    encrypt_text_vigenere
+                    ;;
+                4)
+                    encrypt_text_ceasar
+                    ;;
+                5)
+                    encrypt_text_base64
+                    ;;
+                6)
+                    rot13_cipher
+                    ;;
+                q)
+                    return
+                    ;;
+                *)
+                    echo -e "${RED}[✖] Invalid option.${RESET}" 
+                    ;;
+            esac
+        done
+    done
+}
+# -------------------
+# Decrypt texts sub-sub menu
+# -------------------
+decrypt_texts() {
+    echo
+    echo -e "${YELLOW}[!]For real security use AES, for education or fun Ceasar or Vigenere and for encoding Base64 or ROT13${RESET}"
+    echo
+    while true; do
+        PS3="Encryption Menu: "
+        options=("AES-256" "AES-128" "vigenere" "ceasar" "base64" "ROT13")
+        select opt in "${options[@]}"; do
+            case $REPLY in
+                1)
+                    decrypt_text_aes256
+                    ;;
+                2)
+                    decrypt_text_aes128
+                    ;;
+                3)
+                    decrypt_text_vigenere
+                    ;;
+                4)
+                    decrypt_text_ceasar
+                    ;;
+                5)
+                    decrypt_text_base64
+                    ;;
+                6)
+                    rot13_cipher
+                    ;;
+                q)
+                    return
+                    ;;
+                *)
+                    echo -e "${RED}[✖] Invalid option.${RESET}" 
+                    ;;
+            esac
+        done
+    done
+}
+# -------------------
+# Encryptions Tools Submenu
+# -------------------
+encryptions_tools() {
+    clear
+        echo -e "${GREEN}"
+          cat <<'EOF'
+ _____ _   _  ____ ______   ______ _____ ___ ___  _   _ 
+| ____| \ | |/ ___|  _ \ \ / /  _ \_   _|_ _/ _ \| \ | |
+|  _| |  \| | |   | |_) \ V /| |_) || |  | | | | |  \| |
+| |___| |\  | |___|  _ < | | |  __/ | |  | | |_| | |\  |
+|_____|_| \_|\____|_| \_\|_| |_|    |_| |___\___/|_| \_|
+EOF
+    echo -e "${RESET}"
+    while true; do
+        PS3="Encryption Tools Menu: "
+        options=("Encrypt files" "Decrypt files" "Encrypt texts" "Decrypt texts" "Exit")
+        select opt in "${options[@]}"; do
+            case $REPLY in
+                1)
+                    encrypt_files
+                    ;;
+                2)
+                    decrypt_files
+                    ;;
+                3)
+                   encrypt_texts
+                   ;; 
+                4)
+                    decrypt_texts
+                    ;;
+                5)
                     return
                     ;;
                 q)
@@ -887,7 +1561,7 @@ privacy_tools() {
 # Misc Tools Submenu
 # -------------------
 misc_tools() {
-    echo
+    clear
     while true; do
         PS3="Misc Tools Menu: "
         options=("Matrix" "Look hacked" "Hacker code (fake)" "Exit")
@@ -954,13 +1628,30 @@ Commands:
     rootkit_hunt / audit         Scan for rootkits
     remove_temp_files / rm-temp  Clear /tmp directory
     generate_password /psswd     Generate secure password
-    delete_file / del           Securely delete a file
+    delete_file / del            Securely delete a file
+    clean_metadata               Remove metadata from files
 
   MISC:
     matrix / -m              Matrix-style terminal effect
     hacked                   Hollywood-style terminal effect
     hacking                  Fake hacking simulation
 
+  ENCRYPTING:
+    encrypt_file_aes256      Encrypt a file with AES-256
+    decrypt_file_aes256      Dencrypt a file with AES-256
+    encrypt_text_aes256      Encrypt text with AES-256
+    decrypt_text_aes256      Dencrypt text with AES-256
+    encrypt_file_aes128      Encrypt a file with AES-128
+    decrypt_file_aes128      Dencrypt a file with AES-128
+    encrypt_text_aes128      Encrypt text with AES-128
+    decrypt_text_aes128      Dencrypt text with AES-128
+    encrypt_text_vigenere    Encrypt text with Vigenere cipher
+    decrypt_text_vigenere    Decrypt text with Vigenere cipher
+    encrypt_text_ceasar      Encrypt text with Ceasar cipher
+    decrypt_text_ceasar      Decrypt text with Ceasar cipher
+    encrypt_text_base64      Encrypt text with Base64
+    decrypt_text_base64      Dencrypt text with Base64
+    rot13_cipher             Encrypt/Decrypt text with ROT13
   OTHER:
     license / -l             Show license information
     clone_source / -c   Clone project repository
@@ -1003,6 +1694,21 @@ if [[ -n "$1" ]]; then
         remove_temp_files|rm-temp) remove_temp_files ;;
         generate_password|psswd) generate_password ;;
         delete_file|del) delete_file ;;
+        encrypt_file_aes256) encrpt_file_aes256 ;;
+        decrypt_file_aes256) decrypt_file_aes256 ;;
+        encrypt_text_aes256) encrypt_text_aes256 ;;
+        decrypt_text_aes256) decrypt_text_aes256 ;;
+        encrypt_file_aes128) encrpt_file_aes128 ;;
+        decrypt_file_aes128) decrypt_file_aes128 ;;
+        encrypt_text_aes128) encrypt_text_aes128 ;;
+        decrypt_text_aes128) decrypt_text_aes128 ;;
+        decrypt_text_vigenere) decrypt_text_vigenere ;;
+        decrypt_text_vigenere) decrypt_text_vigenere ;;
+        encrypt_text_ceasar) encrypt_text_ceasar ;;
+        decrypt_text_ceasar) decrypt_text_ceasar ;;
+        encrypt_text_base64) encrypt_text_base64 ;;
+        decrypt_text_base64) decrypt_text_base64 ;;
+        rot13_cipher) rot13_cipher ;;
         matrix|-m) matrix ;;
         hacked) hacked ;;
         hacking) hacking ;;
@@ -1010,6 +1716,8 @@ if [[ -n "$1" ]]; then
         clone_source|clone) clone_source ;;
         help|-h|--help) show_help ;;
         version|-v) version ;;
+        encryptions_tools) encryptions_tools ;;
+        clean_metadata) clean_metadata ;;
         *)
             echo -e "${RED}[!] Unknown command: $1${RESET}"
             echo "Use 'jas help' to see available commands."
@@ -1027,7 +1735,7 @@ ASCII_ART
 echo
 while true; do
     PS3="Main Menu: "
-    main_options=("Network Tools" "System Tools" "Privacy/Security Tools" "Miscellaneous Tools" "License" "Clone source code"  "Exit")
+    main_options=("Network Tools" "System Tools" "Privacy/Security Tools" "Encrypting tools" "Miscellaneous Tools" "License" "Clone source code"  "Exit")
     select opt in "${main_options[@]}"; do
         case $REPLY in
             1) 
@@ -1037,12 +1745,14 @@ while true; do
             3) 
             privacy_tools ;;
             4)
-            misc_tools ;;
+            encryptions_tools ;;
             5)
+            misc_tools ;;
+            6)
             license ;;
-            6) 
-            clone_source ;;
             7) 
+            clone_source ;;
+            8) 
                 exit 0
                 ;;
             q) 
