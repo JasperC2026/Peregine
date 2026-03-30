@@ -1,4 +1,4 @@
-# Jas-toolbox v1.5
+# Jas-toolbox v1.6
 
 A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security tasks.
 
