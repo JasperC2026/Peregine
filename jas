@@ -11,6 +11,8 @@ GREEN="\e[32m"
 YELLOW="\e[33m"
 BLUE="\e[34m"
 CYAN="\e[36m"
+PURPLE="\e[35m"
+ORANGE="\e[38;5;208m"
 BOLD="\e[1m"
 RESET="\e[0m"
 COLORS=(
@@ -22,760 +24,771 @@ COLORS=(
 )
 i=0
 
-# -------------------
-# ASCII ART and Banner
-# -------------------
-ASCII_ART () {
-while IFS= read -r line; do
-    COLOR="\e[38;2;${COLORS[$(( i % ${#COLORS[@]} ))]}m"
-    printf "%b%s%b\n" "$COLOR" "$line" "$RESET"
-    ((i++))
-done <<'EOF'
-       _          _____   _______ ____   ____  _      ____   ______   __
-      | |  /\    / ____| |__   __/ __ \ / __ \| |    |  _ \ / __ \ \ / /
-      | | /  \  | (___      | | | |  | | |  | | |    | |_) | |  | \ V / 
-  _   | |/ /\ \  \___ \     | | | |  | | |  | | |    |  _ <| |  | |> <  
- | |__| / ____ \ ____) |    | | | |__| | |__| | |____| |_) | |__| / . \ 
-  \____/_/    \_\_____/     |_|  \____/ \____/|______|____/ \____/_/ \_\                                                                                                                         
-EOF
-
-echo -e "${BOLD}${RED}  Version beta 1.6 - Creator: DarkShadowUser - License: MIT${RESET}"
-}
+# Other variables
+MAIN_VERSION="1.6"
+SUB_VERSION=".1"
+TESTED="Yes"
+TESTED_ON="31-3-2026"
+TESTED_RELEASE="Stable"
+LICENSE="MIT License"
 
 # Commands
 
 # Networking
-    whois_lookup() {
-                    clear
-                    echo
-                    echo -n "Enter domain (ex: example.com): "
-                    read -r domain 
+whois_lookup() {
+    clear
+    echo
+    echo -n "Enter domain (ex: example.com): "
+    read -r domain
 
-                    if [[ -z "$domain" ]]; then
-                        echo -e "${YELLOW}[!] Error: Domain cannot be empty.${RESET}"
-                        return 1
-                    fi
+    if [[ -z "$domain" ]]; then
+        echo -e "${YELLOW}[!] Error: Domain cannot be empty.${RESET}"
+        return 1
+    fi
 
-                    echo -e "${GREEN}[➜] Performing Whois lookup for $domain...${RESET}"
-                    sleep 0.5
-                
-                    output=$(whois "$domain" 2>&1)
-                    status=$?
+    echo -e "${GREEN}[➜] Performing Whois lookup for $domain...${RESET}"
+    sleep 0.5
 
-                    echo -e "${CYAN}$output${RESET}"
+    output=$(whois "$domain" 2>&1)
+    status=$?
 
-                    if [[ $status -ne 0 ]]; then
-                        echo -e "\a"
-                        echo -e "${RED}[!] Whois lookup failed (network/command error).${RESET}"
-                        return 1
-                    fi
+    echo -e "${CYAN}$output${RESET}"
 
-                    if echo "$output" | grep -qiE "no match|not found|no data found|status: free"; then
-                        echo -e "\a"
-                        echo -e "${RED}[!] Domain not found or no WHOIS data available.${RESET}"
-                        return 1
-                    fi
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!] Whois lookup failed (network/command error).${RESET}"
+        return 1
+    fi
 
-                    echo -e "${GREEN}[+] Whois lookup completed successfully.${RESET}"
-                    echo
-                    }
-    ping () {
-                    clear
-                    echo
-                    echo -n "Enter item to ping: "
-                    read -r itemping 
+    if echo "$output" | grep -qiE "no match|not found|no data found|status: free"; then
+        echo -e "\a"
+        echo -e "${RED}[!] Domain not found or no WHOIS data available.${RESET}"
+        return 1
+    fi
 
-                    if [[ -z "$itemping" ]]; then
-                        echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
-                        return 1
-                    fi
+    echo -e "${GREEN}[+] Whois lookup completed successfully.${RESET}"
+    echo
+}
 
-                    echo -e "${GREEN}[➜] Pinging $itemping...${RESET}"
-                    sleep 0.5
+ping() {
+    clear
+    echo
+    echo -n "Enter item to ping: "
+    read -r itemping
 
-                    output=$(command ping -c 6 "$itemping" 2>&1)
-                    status=$?
+    if [[ -z "$itemping" ]]; then
+        echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
+        return 1
+    fi
 
-                    echo -e "${CYAN}$output${RESET}"
+    echo -e "${GREEN}[➜] Pinging $itemping...${RESET}"
+    sleep 0.5
 
-                    if [[ $status -ne 0 ]]; then
-                        echo -e "\a"
-                        echo -e "${RED}[!] Ping failed (host unreachable or network issue).${RESET}"
-                        return 1
-                    fi
+    output=$(command ping -c 6 "$itemping" 2>&1)
+    status=$?
 
-                    if echo "$output" | grep -q "100% packet loss"; then
-                        echo -e "\a"
-                        echo -e "${RED}[!] Ping failed (100% packet loss).${RESET}"
-                        return 1
-                    fi
+    echo -e "${CYAN}$output${RESET}"
 
-                    echo -e "${GREEN}[+] Ping completed successfully.${RESET}"
-                    echo
-                    }
-    traceroute () {
-                    clear
-                    echo
-                    echo -n "Enter domain to trace: "
-                    read -r domaintrace 
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!] Ping failed (host unreachable or network issue).${RESET}"
+        return 1
+    fi
 
-                    if [[ -z "$domaintrace" ]]; then
-                        echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
-                        return 1
-                    fi
+    if echo "$output" | grep -q "100% packet loss"; then
+        echo -e "\a"
+        echo -e "${RED}[!] Ping failed (100% packet loss).${RESET}"
+        return 1
+    fi
 
-                    echo -e "${GREEN}[➜] Tracing route to $domaintrace...${RESET}"
-                    sleep 0.5
+    echo -e "${GREEN}[+] Ping completed successfully.${RESET}"
+    echo
+}
 
-                    output=$(command traceroute "$domaintrace" 2>&1)
-                    status=$?
+traceroute() {
+    clear
+    echo
+    echo -n "Enter domain to trace: "
+    read -r domaintrace
 
-                    echo -e "${CYAN}$output${RESET}"
+    if [[ -z "$domaintrace" ]]; then
+        echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
+        return 1
+    fi
 
-                    if [[ $status -ne 0 ]]; then
-                        echo -e "\a"
-                        echo -e "${RED}[!] Traceroute failed (network/DNS issue).${RESET}"
-                        return 1
-                    fi
+    echo -e "${GREEN}[➜] Tracing route to $domaintrace...${RESET}"
+    sleep 0.5
 
-                    if echo "$output" | grep -qE "^\s*[0-9]+\s+\*\s+\*\s+\*"; then
-                        echo -e "\a"
-                        echo -e "${RED}[!] Traceroute failed or blocked (no responses).${RESET}"
-                        return 1
-                    fi
+    output=$(command traceroute "$domaintrace" 2>&1)
+    status=$?
 
-                    echo -e "${GREEN}[+] Traceroute completed successfully.${RESET}"
-                    echo
-                    }
-    dns_info() {
-                    clear
-                    echo
-                    echo -n "Enter domain to get DNS info: "
-                    read -r domaindns 
+    echo -e "${CYAN}$output${RESET}"
 
-                    if [[ -z "$domaindns" ]]; then
-                        echo -e "${YELLOW}[!] Error: Domain cannot be empty.${RESET}"
-                        return 1
-                    fi
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!] Traceroute failed (network/DNS issue).${RESET}"
+        return 1
+    fi
 
-                    echo -e "${GREEN}[➜] Getting DNS info for $domaindns...${RESET}"
-                    sleep 0.5
+    if echo "$output" | grep -qE "^\s*[0-9]+\s+\*\s+\*\s+\*"; then
+        echo -e "\a"
+        echo -e "${RED}[!] Traceroute failed or blocked (no responses).${RESET}"
+        return 1
+    fi
 
-                    output=$(dig "$domaindns" 2>&1)
-                    status=$?
+    echo -e "${GREEN}[+] Traceroute completed successfully.${RESET}"
+    echo
+}
 
-                    echo -e "${CYAN}$output${RESET}"
+dns_info() {
+    clear
+    echo
+    echo -n "Enter domain to get DNS info: "
+    read -r domaindns
 
-                    if [[ $status -ne 0 ]]; then
-                        echo -e "\a"
-                        echo -e "${RED}[!] DNS lookup failed (network/DNS issue).${RESET}"
-                        return 1
-                    fi
+    if [[ -z "$domaindns" ]]; then
+        echo -e "${YELLOW}[!] Error: Domain cannot be empty.${RESET}"
+        return 1
+    fi
 
-                    if echo "$output" | grep -q "status: NXDOMAIN"; then
-                        echo -e "${YELLOW}[!] Domain does not exist (NXDOMAIN).${RESET}"
-                        return 1
-                    fi
+    echo -e "${GREEN}[➜] Getting DNS info for $domaindns...${RESET}"
+    sleep 0.5
 
-                    if ! echo "$output" | grep -q "ANSWER SECTION"; then
-                        echo -e "${YELLOW}[!] No DNS records found.${RESET}"
-                        return 1
-                    fi
+    output=$(dig "$domaindns" 2>&1)
+    status=$?
 
-                    echo -e "${GREEN}[+] DNS info retrieved successfully.${RESET}"
-                    echo
-                    }
-    get_ip() {
-                    clear
-                    echo
-                    echo -e "${GREEN}[➜] Fetching public IP...${RESET}"
-                    sleep 0.5
+    echo -e "${CYAN}$output${RESET}"
 
-                    output=$(curl -s --max-time 5 ifconfig.me 2>&1)
-                    status=$?
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!] DNS lookup failed (network/DNS issue).${RESET}"
+        return 1
+    fi
 
-                    echo -e "${CYAN}$output${RESET}"
+    if echo "$output" | grep -q "status: NXDOMAIN"; then
+        echo -e "${YELLOW}[!] Domain does not exist (NXDOMAIN).${RESET}"
+        return 1
+    fi
 
-                    if [[ $status -ne 0 ]]; then
-                        echo -e "\a"
-                        echo -e "${RED}[!] Failed to fetch public IP (network issue).${RESET}"
-                        return 1
-                    fi
+    if ! echo "$output" | grep -q "ANSWER SECTION"; then
+        echo -e "${YELLOW}[!] No DNS records found.${RESET}"
+        return 1
+    fi
 
-                    echo -e "${GREEN}[+] Public IP fetched successfully.${RESET}"
-                    echo
-                    }
- ip_osint() {
-                    clear
-                    echo
-                    echo "IPinfo https://ipinfo.io/"
-                    read -p "Enter IP or domain: " target
+    echo -e "${GREEN}[+] DNS info retrieved successfully.${RESET}"
+    echo
+}
 
-                    if [[ -z "$target" ]]; then
-                        echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
-                        return 1
-                    fi
+get_ip() {
+    clear
+    echo
+    echo -e "${GREEN}[➜] Fetching public IP...${RESET}"
+    sleep 0.5
 
-                    echo -e "${GREEN}[➜] Fetching OSINT for $target...${RESET}"
-                    sleep 0.5
+    output=$(curl -s --max-time 5 ifconfig.me 2>&1)
+    status=$?
 
-                    data=$(curl -s --max-time 5 "https://ipinfo.io/$target" 2>&1)
-                    status=$?
+    echo -e "${CYAN}$output${RESET}"
 
-                    if [[ $status -ne 0 || -z "$data" ]]; then
-                        echo -e "\a"
-                        echo -e "${RED}[!] Failed to fetch OSINT data.${RESET}"
-                        return 1
-                    fi
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!] Failed to fetch public IP (network issue).${RESET}"
+        return 1
+    fi
 
-                    if ! echo "$data" | jq . >/dev/null 2>&1; then
-                        echo -e "\a"
-                        echo -e "${RED}[!] Invalid response (not JSON or API error).${RESET}"
-                        return 1
-                    fi
+    echo -e "${GREEN}[+] Public IP fetched successfully.${RESET}"
+    echo
+}
 
-                    if echo "$data" | jq -e '.bogon' >/dev/null 2>&1; then
-                        echo -e "${YELLOW}[!] Invalid or private IP address.${RESET}"
-                        return 1
-                    fi
+ip_osint() {
+    clear
+    echo
+    echo "IPinfo https://ipinfo.io/"
+    read -p "Enter IP or domain: " target
 
-                    echo "IP:       $(echo "$data" | jq -r '.ip // "N/A"')"
-                    echo "City:     $(echo "$data" | jq -r '.city // "N/A"')"
-                    echo "Region:   $(echo "$data" | jq -r '.region // "N/A"')"
-                    echo "Country:  $(echo "$data" | jq -r '.country // "N/A"')"
-                    echo "ISP:      $(echo "$data" | jq -r '.org // "N/A"')"
-                    echo "Timezone: $(echo "$data" | jq -r '.timezone // "N/A"')"
+    if [[ -z "$target" ]]; then
+        echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
+        return 1
+    fi
 
-                    echo -e "${GREEN}[+] IP OSINT lookup completed successfully.${RESET}"
-                    return 0
-                    echo
-                    }
-    inspect_cert() {
-                    echo
-                    echo -e "${GREEN}[➜] Inspecting SSL certificate...${RESET}"
-                    echo
+    echo -e "${GREEN}[➜] Fetching OSINT for $target...${RESET}"
+    sleep 0.5
 
-                    read -rp "Enter domain: " domain
+    data=$(curl -s --max-time 5 "https://ipinfo.io/$target" 2>&1)
+    status=$?
 
-                    echo | openssl s_client -connect "$domain:443" -servername "$domain" 2>/dev/null \
-                        | openssl x509 -noout -text
+    if [[ $status -ne 0 || -z "$data" ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!] Failed to fetch OSINT data.${RESET}"
+        return 1
+    fi
 
-                    if [[ $? -eq 0 ]]; then
-                        echo -e "${GREEN}[+] Certificate retrieved.${RESET}"
-                    else
-                        echo -e "${RED}[!] Failed to retrieve certificate.${RESET}"
-                        return 1
-                    fi
-                    echo
-                    }
+    if ! echo "$data" | jq . >/dev/null 2>&1; then
+        echo -e "\a"
+        echo -e "${RED}[!] Invalid response (not JSON or API error).${RESET}"
+        return 1
+    fi
+
+    if echo "$data" | jq -e '.bogon' >/dev/null 2>&1; then
+        echo -e "${YELLOW}[!] Invalid or private IP address.${RESET}"
+        return 1
+    fi
+
+    echo "IP:       $(echo "$data" | jq -r '.ip // "N/A"')"
+    echo "City:     $(echo "$data" | jq -r '.city // "N/A"')"
+    echo "Region:   $(echo "$data" | jq -r '.region // "N/A"')"
+    echo "Country:  $(echo "$data" | jq -r '.country // "N/A"')"
+    echo "ISP:      $(echo "$data" | jq -r '.org // "N/A"')"
+    echo "Timezone: $(echo "$data" | jq -r '.timezone // "N/A"')"
+
+    echo -e "${GREEN}[+] IP OSINT lookup completed successfully.${RESET}"
+    return 0
+    echo
+}
+
+inspect_cert() {
+    echo
+    echo -e "${GREEN}[➜] Inspecting SSL certificate...${RESET}"
+    echo
+
+    read -rp "Enter domain: " domain
+
+    echo | openssl s_client -connect "$domain:443" -servername "$domain" 2>/dev/null \
+        | openssl x509 -noout -text
+
+    if [[ $? -eq 0 ]]; then
+        echo -e "${GREEN}[+] Certificate retrieved.${RESET}"
+    else
+        echo -e "${RED}[!] Failed to retrieve certificate.${RESET}"
+        return 1
+    fi
+    echo
+}
+
 # System
-   update_apps() {
-                    clear
-                    echo
-                    echo -e "${GREEN}[➜] Starting update process...${RESET}"
-                    sleep 0.5
+update_apps() {
+    clear
+    echo
+    echo -e "${GREEN}[➜] Starting update process...${RESET}"
+    sleep 0.5
 
-                    overall_status=0
+    overall_status=0
 
-                        echo "Updating all APT packages..."
-                        echo
+    echo "Updating all APT packages..."
+    echo
 
-                        if sudo apt update && sudo apt upgrade -y; then
-                            echo
-                            echo -e "${GREEN}[+] APT packages updated${RESET}"
-                        else
-                            echo
-                            echo -e "\a"
-                            echo -e "${RED}[!] APT update failed${RESET}"
-                            overall_status=1
-                        fi
-                        echo
-                        echo "Updating all flatpak packages..."
-                        echo
+    if sudo apt update && sudo apt upgrade -y; then
+        echo
+        echo -e "${GREEN}[+] APT packages updated${RESET}"
+    else
+        echo
+        echo -e "\a"
+        echo -e "${RED}[!] APT update failed${RESET}"
+        overall_status=1
+    fi
+    echo
+    echo "Updating all flatpak packages..."
+    echo
 
-                        if command -v flatpak >/dev/null 2>&1; then
-                            if flatpak update -y; then
-                                echo
-                                echo -e "${GREEN}[+] Flatpak updated${RESET}"
-                            else
-                                echo
-                                echo -e "\a"
-                                echo -e "${RED}[!] Flatpak update failed${RESET}"
-                                overall_status=1
-                            fi
-                        else
-                            echo -e "${YELLOW}[!] Flatpak not installed, skipping.${RESET}"
-                        fi
-                        echo
-                        echo "Updating all snap packages..."
-                        echo
+    if command -v flatpak >/dev/null 2>&1; then
+        if flatpak update -y; then
+            echo
+            echo -e "${GREEN}[+] Flatpak updated${RESET}"
+        else
+            echo
+            echo -e "\a"
+            echo -e "${RED}[!] Flatpak update failed${RESET}"
+            overall_status=1
+        fi
+    else
+        echo -e "${YELLOW}[!] Flatpak not installed, skipping.${RESET}"
+    fi
+    echo
+    echo "Updating all snap packages..."
+    echo
 
-                        if command -v snap >/dev/null 2>&1; then
-                            if sudo snap refresh; then
-                                echo
-                                echo -e "${GREEN}[+] Snap packages updated${RESET}"
-                            else
-                                echo
-                                echo -e "\a"
-                                echo -e "${RED}[!] Snap update failed${RESET}"
-                                overall_status=1
-                            fi
-                        else
-                            echo -e "${YELLOW}[!] Snap not installed, skipping.${RESET}"
-                        fi
-                        echo
-                    if [[ $overall_status -eq 0 ]]; then
-                        echo -e "${GREEN}[+] All updates completed successfully.${RESET}"
-                    else
-                        echo -e "\a"
-                        echo -e "${RED}[!] Some updates failed. Check output above.${RESET}"
-                    fi
-                    echo
-                    }
- systeminfo() {
-                    clear
-                    echo
-                    echo "Fastfetch https://github.com/fastfetch-cli/fastfetch"
-                    echo -e "${GREEN}[➜] Gathering system information...${RESET}"
-                    sleep 0.5
+    if command -v snap >/dev/null 2>&1; then
+        if sudo snap refresh; then
+            echo
+            echo -e "${GREEN}[+] Snap packages updated${RESET}"
+        else
+            echo
+            echo -e "\a"
+            echo -e "${RED}[!] Snap update failed${RESET}"
+            overall_status=1
+        fi
+    else
+        echo -e "${YELLOW}[!] Snap not installed, skipping.${RESET}"
+    fi
+    echo
+    if [[ $overall_status -eq 0 ]]; then
+        echo -e "${GREEN}[+] All updates completed successfully.${RESET}"
+    else
+        echo -e "\a"
+        echo -e "${RED}[!] Some updates failed. Check output above.${RESET}"
+    fi
+    echo
+}
 
-                    if command -v fastfetch >/dev/null 2>&1; then
-                        if fastfetch; then
-                            echo
-                            echo -e "${GREEN}[+] System information displayed.${RESET}"
-                        else
-                            echo
-                            echo -e "\a"
-                            echo -e "${RED}[!] Fastfetch failed to run.${RESET}"
-                            return 1
-                        fi
-                    else
-                        echo -e "${YELLOW}[!] fastfetch not installed. Falling back to basic system info...${RESET}"
-                        echo
+systeminfo() {
+    clear
+    echo
+    echo "Fastfetch https://github.com/fastfetch-cli/fastfetch"
+    echo -e "${GREEN}[➜] Gathering system information...${RESET}"
+    sleep 0.5
 
-                        uname -a
-                        echo
-                        lsb_release -a 2>/dev/null
-                        echo
-                        uptime
+    if command -v fastfetch >/dev/null 2>&1; then
+        if fastfetch; then
+            echo
+            echo -e "${GREEN}[+] System information displayed.${RESET}"
+        else
+            echo
+            echo -e "\a"
+            echo -e "${RED}[!] Fastfetch failed to run.${RESET}"
+            return 1
+        fi
+    else
+        echo -e "${YELLOW}[!] fastfetch not installed. Falling back to basic system info...${RESET}"
+        echo
 
-                        echo
-                        echo -e "${GREEN}[+] Basic system information displayed.${RESET}"
-                    fi
-                    echo
-                    }
+        uname -a
+        echo
+        lsb_release -a 2>/dev/null
+        echo
+        uptime
+
+        echo
+        echo -e "${GREEN}[+] Basic system information displayed.${RESET}"
+    fi
+    echo
+}
+
 # Security
-    confirm_paranoia() {
-                        echo
-                        echo -e "\a"
-                        echo -e "${RED}[!] WARNING: Paranoia mode is extremely invasive and may break networking, audio, and system functionality.${RESET}"
-                        echo -e "\a"
-                        echo -e "${RED}[!] Use only in controlled environments (VM recommended).${RESET}"
-                        echo
-                        echo "Type EXACTLY: ENABLE PARANOIA MODE"
-                        read -r input
+confirm_paranoia() {
+    echo
+    echo -e "\a"
+    echo -e "${RED}[!] WARNING: Paranoia mode is extremely invasive and may break networking, audio, and system functionality.${RESET}"
+    echo -e "\a"
+    echo -e "${RED}[!] Use only in controlled environments (VM recommended).${RESET}"
+    echo
+    echo "Type EXACTLY: ENABLE PARANOIA MODE"
+    read -r input
 
-                        if [[ "$input" != "ENABLE PARANOIA MODE" ]]; then
-                            echo -e "${RED}[!] Confirmation failed. Aborting.${RESET}"
-                            return 1
-                        fi
+    if [[ "$input" != "ENABLE PARANOIA MODE" ]]; then
+        echo -e "${RED}[!] Confirmation failed. Aborting.${RESET}"
+        return 1
+    fi
 
-                        return 0
-                        echo
-                    }
-    paranoia_mode() {
-                        clear
-                        echo
-                        local status=0
+    return 0
+    echo
+}
 
-                        echo -e "${GREEN}[➜] Enabling Paranoia mode...${RESET}"
-                        sleep 0.5
+paranoia_mode() {
+    clear
+    echo
+    local status=0
 
-                        if sudo iptables -P OUTPUT DROP; then
-                            sudo iptables -A OUTPUT -d 127.0.0.1 -j ACCEPT
-                        else
-                            echo -e "\a"
-                            echo -e "${RED}[!] iptables failed${RESET}"
-                            status=1
-                        fi
+    echo -e "${GREEN}[➜] Enabling Paranoia mode...${RESET}"
+    sleep 0.5
 
-                        if ! nmcli networking off; then
-                            echo -e "${RED}[!] NetworkManager disable failed${RESET}"
-                            status=1
-                        fi
+    if sudo iptables -P OUTPUT DROP; then
+        sudo iptables -A OUTPUT -d 127.0.0.1 -j ACCEPT
+    else
+        echo -e "\a"
+        echo -e "${RED}[!] iptables failed${RESET}"
+        status=1
+    fi
 
-                        shred -u ~/.bash_history 2>/dev/null || true
-                        history -c 2>/dev/null || true
+    if ! nmcli networking off; then
+        echo -e "${RED}[!] NetworkManager disable failed${RESET}"
+        status=1
+    fi
 
-                        find /tmp -type f -user "$USER" -exec shred -u {} \; 2>/dev/null
+    shred -u ~/.bash_history 2>/dev/null || true
+    history -c 2>/dev/null || true
 
-                        sudo modprobe -r uvcvideo 2>/dev/null || true
-                        sudo modprobe -r snd_hda_intel 2>/dev/null || true
+    find /tmp -type f -user "$USER" -exec shred -u {} \; 2>/dev/null
 
-                        if [[ $status -eq 0 ]]; then
-                            echo -e "${GREEN}[+] Paranoia mode enabled successfully.${RESET}"
-                        else
-                            echo -e "\a"
-                            echo -e "${RED}[!] Paranoia mode partially failed (check output above).${RESET}"
-                        fi
+    sudo modprobe -r uvcvideo 2>/dev/null || true
+    sudo modprobe -r snd_hda_intel 2>/dev/null || true
 
-                        return $status
-                        echo
-                    }
-    secure_empty_trash() {
-                    clear
-                    echo
-                    TRASH_FILES="$HOME/.local/share/Trash/files"
-                    TRASH_INFO="$HOME/.local/share/Trash/info"
+    if [[ $status -eq 0 ]]; then
+        echo -e "${GREEN}[+] Paranoia mode enabled successfully.${RESET}"
+    else
+        echo -e "\a"
+        echo -e "${RED}[!] Paranoia mode partially failed (check output above).${RESET}"
+    fi
 
-                    if [[ -z "$(ls -A "$TRASH_FILES" 2>/dev/null)" && -z "$(ls -A "$TRASH_INFO" 2>/dev/null)" ]]; then
-                        echo "Trash is empty."
-                        return 1
-                    fi
+    return $status
+    echo
+}
 
-                    read -rp "Confirm deletion (y/n): " confirm
-                    if [[ "$confirm" != "y" ]]; then
-                        echo -e "${RED}[!] Deletion aborted.${RESET}"
-                        return 1
-                    fi
+secure_empty_trash() {
+    clear
+    echo
+    TRASH_FILES="$HOME/.local/share/Trash/files"
+    TRASH_INFO="$HOME/.local/share/Trash/info"
 
-                    echo -e "${GREEN}[➜] Securely deleting trash...${RESET}"
-                    sleep 0.5
-                    echo "Deleting files..."
-                    srm -v -r "${TRASH_FILES}/"* 2>/dev/null
+    if [[ -z "$(ls -A "$TRASH_FILES" 2>/dev/null)" && -z "$(ls -A "$TRASH_INFO" 2>/dev/null)" ]]; then
+        echo "Trash is empty."
+        return 1
+    fi
 
-                    echo -e "${GREEN}[➜] Securely deleting trash info...${RESET}"
-                    sleep 0.5
-                    srm -v -r "${TRASH_INFO}/"* 2>/dev/null
+    read -rp "Confirm deletion (y/n): " confirm
+    if [[ "$confirm" != "y" ]]; then
+        echo -e "${RED}[!] Deletion aborted.${RESET}"
+        return 1
+    fi
 
-                    echo -e "${GREEN}[+] Deletion completed.${RESET}"
-                    echo
-                    }
-    secure_overwrite_free_space() {
-                    clear
-                    echo
-                    echo -e "${GREEN}[➜] Securely overwriting free space...${RESET}"
-                    root_partition=$(df / | tail -1 | awk '{print $1}')
+    echo -e "${GREEN}[➜] Securely deleting trash...${RESET}"
+    sleep 0.5
+    echo "Deleting files..."
+    srm -v -r "${TRASH_FILES}/"* 2>/dev/null
 
-                    if ! command -v srm &> /dev/null; then
-                        echo -e "${RED}[!] srm command not found. Please install it to use this feature.${RESET}"
-                        return 1
-                    fi
+    echo -e "${GREEN}[➜] Securely deleting trash info...${RESET}"
+    sleep 0.5
+    srm -v -r "${TRASH_INFO}/"* 2>/dev/null
 
-                    echo
-                    echo -e "${GREEN}[+] Overwriting free space on $root_partition...${RESET}"
-                    srm -v -z -r --free "$root_partition"
+    echo -e "${GREEN}[+] Deletion completed.${RESET}"
+    echo
+}
 
-                    echo -e "${GREEN}[+] Free space securely overwritten.${RESET}"
-                    echo
-                    }
-    system_audit() {
-                    clear
-                    echo
-                    echo "Lynis by CISOfy https://cisofy.com/lynis/"
-                    sleep 0.5
+secure_overwrite_free_space() {
+    clear
+    echo
+    echo -e "${GREEN}[➜] Securely overwriting free space...${RESET}"
+    root_partition=$(df / | tail -1 | awk '{print $1}')
 
-                    echo
-                    echo -e "${GREEN}[➜] Performing system audit with Lynis...${RESET}"
-                    sleep 0.5
-                    echo
+    if ! command -v srm &> /dev/null; then
+        echo -e "${RED}[!] srm command not found. Please install it to use this feature.${RESET}"
+        return 1
+    fi
 
-                    if command -v lynis >/dev/null 2>&1; then
-                        output=$(sudo lynis audit system 2>&1)
-                        status=$?
+    echo
+    echo -e "${GREEN}[+] Overwriting free space on $root_partition...${RESET}"
+    srm -v -z -r --free "$root_partition"
 
-                        echo "$output"
+    echo -e "${GREEN}[+] Free space securely overwritten.${RESET}"
+    echo
+}
 
-                        if [[ $status -eq 0 ]]; then
-                            echo
-                            echo -e "${GREEN}[+] System audit completed successfully.${RESET}"
-                        else
-                            echo
-                            echo -e "\a"
-                            echo -e "${RED}[!] Lynis audit finished with errors (check output above).${RESET}"
-                            return 1
-                        fi
-                    else
-                        echo -e "${RED}[!] Lynis is not installed.${RESET}"
-                        echo -e "${YELLOW}[i] Install with: sudo apt install lynis${RESET}"
-                        return 1
-                    fi
-                    echo
-                    }
-       bleachbit() {
-                    echo
-                    echo "BleachBit by BleachBit Team https://www.bleachbit.org/"
-                    echo -e "${GREEN}[➜] Running BleachBit...${RESET}"
-                    sleep 0.5
+system_audit() {
+    clear
+    echo
+    echo "Lynis by CISOfy https://cisofy.com/lynis/"
+    sleep 0.5
 
-                    if command -v bleachbit >/dev/null 2>&1; then
-                        output=$(sudo bleachbit 2>&1)
-                        status=$?
+    echo
+    echo -e "${GREEN}[➜] Performing system audit with Lynis...${RESET}"
+    sleep 0.5
+    echo
 
-                        echo "$output"
-
-                        if [[ $status -eq 0 ]]; then
-                            echo -e "${GREEN}[+] BleachBit cleanup completed successfully.${RESET}"
-                        else
-                            echo -e "\a"
-                            echo -e "${RED}[!] BleachBit finished with errors.${RESET}"
-                            return 1
-                        fi
-                    else
-                        echo -e "${RED}[!] BleachBit is not installed.${RESET}"
-                        echo -e "${YELLOW}[i] Install with: sudo apt install bleachbit${RESET}"
-                        return 1
-                    fi
-                    echo
-                    }
-    rootkit_hunt() {
-                    clear
-                    echo
-                    echo "chkrootkit by chkrootkit Team https://chkrootkit.org/"
-                    echo -e "${GREEN}[➜] Checking for rootkits with chkrootkit...${RESET}"
-                    sleep 0.5
-
-                    if command -v chkrootkit >/dev/null 2>&1; then
-                        output=$(sudo chkrootkit 2>&1)
-                        status=$?
-
-                        echo "$output"
-
-                        if echo "$output" | grep -qiE "INFECTED|WARNING|suspicious"; then
-                            echo -e "\a"
-                            echo -e "${RED}[!] Potential threats detected! Review output above.${RESET}"
-                            return 1
-                        fi
-
-                        if [[ $status -eq 0 ]]; then
-                            echo -e "${GREEN}[+] Rootkit check completed (no obvious threats).${RESET}"
-                        else
-                            echo -e "\a"
-                            echo -e "${RED}[!] chkrootkit finished with errors.${RESET}"
-                            return 1
-                        fi
-                    else
-                        echo -e "${RED}[!] chkrootkit is not installed.${RESET}"
-                        echo -e "${YELLOW}[i] Install with: sudo apt install chkrootkit${RESET}"
-                        return 1
-                    fi
-                    echo
-                    }
-    remove_temp_files() {
-                    echo
-                    echo -e "${GREEN}[➜] Removing temporary files...${RESET}"
-                    sleep 0.5
-
-                    if rm -rf /tmp/* 2>/dev/null; then
-                        echo -e "${GREEN}[+] Temporary files removed.${RESET}"
-                    else
-                        echo -e "${RED}[!] Failed to remove some temporary files (permissions or in-use files).${RESET}"
-                        return 1
-                    fi
-                    echo
-                    }
-    generate_password() {
-                    echo
-                    echo "OpenSSl by the OpenSSL Project https://openssl.org/"
-                    echo -e "${GREEN}[➜] Generating secure password...${RESET}"
-                    sleep 0.5
-                    echo
-
-                    if command -v openssl >/dev/null 2>&1; then
-                        password=$(openssl rand -base64 12 2>/dev/null)
-                        status=$?
-
-                        if [[ $status -eq 0 && -n "$password" ]]; then
-                            echo -e "${CYAN}$password${RESET}"
-                            echo -e "${GREEN}[+] Password generation completed.${RESET}"
-                        else
-                            echo -e "${RED}[!] Failed to generate password.${RESET}"
-                            return 1
-                        fi
-                    else
-                        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-                        echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
-                        return 1
-                    fi
-                    echo
-                    }
-    delete_file() {
-                    echo
-                    echo -n "Enter file: "
-                    read -r file
-
-                    if [[ -z "$file" ]]; then
-                    echo -e "${YELLOW}[!] No file entered.${RESET}"
-                    elif [[ ! -f "$file" ]]; then
-                    echo -e "${RED}[!] File does not exist.${RESET}"
-                    else
-                    echo -e "${GREEN}[+] Running shred for: $file${RESET}"
-                    shred -u -v -n 5 "$file" 
-                    echo -e "${GREEN}[+] File securely deleted.${RESET}"
-                    fi
-                    }
-                    echo
-    clean_metadata() {
-        echo
-        echo "ExifTool by Phil Harvey https://exiftool.org/"
-        echo -e "${GREEN}[➜] Removing metadata from image...${RESET}"
-        echo
-
-        if ! command -v exiftool >/dev/null 2>&1; then
-            echo -e "${RED}[!] exiftool is not installed.${RESET}"
-            echo -e "${YELLOW}[i] Install with: sudo apt install libimage-exiftool-perl${RESET}"
-            return 1
-        fi
-
-        read -rp "Enter image file: " file
-
-        if [[ ! -f "$file" ]]; then
-            echo -e "${RED}[!] File not found.${RESET}"
-            return 1
-        fi
-
-        read -rp "Output file (e.g. clean.jpg): " outfile
-
-        # remove all metadata
-        exiftool -all= -overwrite_original -o "$outfile" "$file" >/dev/null 2>&1
+    if command -v lynis >/dev/null 2>&1; then
+        output=$(sudo lynis audit system 2>&1)
         status=$?
 
+        echo "$output"
+
         if [[ $status -eq 0 ]]; then
-            echo -e "${GREEN}[+] Metadata removed → $outfile${RESET}"
+            echo
+            echo -e "${GREEN}[+] System audit completed successfully.${RESET}"
         else
-            echo -e "${RED}[!] Failed to remove metadata.${RESET}"
+            echo
+            echo -e "\a"
+            echo -e "${RED}[!] Lynis audit finished with errors (check output above).${RESET}"
             return 1
         fi
-        echo
-    }
+    else
+        echo -e "${RED}[!] Lynis is not installed.${RESET}"
+        echo -e "${YELLOW}[i] Install with: sudo apt install lynis${RESET}"
+        return 1
+    fi
+    echo
+}
+
+bleachbit() {
+    echo
+    echo "BleachBit by BleachBit Team https://www.bleachbit.org/"
+    echo -e "${GREEN}[➜] Running BleachBit...${RESET}"
+    sleep 0.5
+
+    if command -v bleachbit >/dev/null 2>&1; then
+        output=$(sudo bleachbit 2>&1)
+        status=$?
+
+        echo "$output"
+
+        if [[ $status -eq 0 ]]; then
+            echo -e "${GREEN}[+] BleachBit cleanup completed successfully.${RESET}"
+        else
+            echo -e "\a"
+            echo -e "${RED}[!] BleachBit finished with errors.${RESET}"
+            return 1
+        fi
+    else
+        echo -e "${RED}[!] BleachBit is not installed.${RESET}"
+        echo -e "${YELLOW}[i] Install with: sudo apt install bleachbit${RESET}"
+        return 1
+    fi
+    echo
+}
+
+rootkit_hunt() {
+    clear
+    echo
+    echo "chkrootkit by chkrootkit Team https://chkrootkit.org/"
+    echo -e "${GREEN}[➜] Checking for rootkits with chkrootkit...${RESET}"
+    sleep 0.5
+
+    if command -v chkrootkit >/dev/null 2>&1; then
+        output=$(sudo chkrootkit 2>&1)
+        status=$?
+
+        echo "$output"
+
+        if echo "$output" | grep -qiE "INFECTED|WARNING|suspicious"; then
+            echo -e "\a"
+            echo -e "${RED}[!] Potential threats detected! Review output above.${RESET}"
+            return 1
+        fi
+
+        if [[ $status -eq 0 ]]; then
+            echo -e "${GREEN}[+] Rootkit check completed (no obvious threats).${RESET}"
+        else
+            echo -e "\a"
+            echo -e "${RED}[!] chkrootkit finished with errors.${RESET}"
+            return 1
+        fi
+    else
+        echo -e "${RED}[!] chkrootkit is not installed.${RESET}"
+        echo -e "${YELLOW}[i] Install with: sudo apt install chkrootkit${RESET}"
+        return 1
+    fi
+    echo
+}
+
+remove_temp_files() {
+    echo
+    echo -e "${GREEN}[➜] Removing temporary files...${RESET}"
+    sleep 0.5
+
+    if rm -rf /tmp/* 2>/dev/null; then
+        echo -e "${GREEN}[+] Temporary files removed.${RESET}"
+    else
+        echo -e "${RED}[!] Failed to remove some temporary files (permissions or in-use files).${RESET}"
+        return 1
+    fi
+    echo
+}
+
+generate_password() {
+    echo
+    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+    echo -e "${GREEN}[➜] Generating secure password...${RESET}"
+    sleep 0.5
+    echo
+
+    if command -v openssl >/dev/null 2>&1; then
+        password=$(openssl rand -base64 12 2>/dev/null)
+        status=$?
+
+        if [[ $status -eq 0 && -n "$password" ]]; then
+            echo -e "${CYAN}$password${RESET}"
+            echo -e "${GREEN}[+] Password generation completed.${RESET}"
+        else
+            echo -e "${RED}[!] Failed to generate password.${RESET}"
+            return 1
+        fi
+    else
+        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+        echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
+        return 1
+    fi
+    echo
+}
+
+delete_file() {
+    echo
+    echo -n "Enter file: "
+    read -r file
+
+    if [[ -z "$file" ]]; then
+        echo -e "${YELLOW}[!] No file entered.${RESET}"
+    elif [[ ! -f "$file" ]]; then
+        echo -e "${RED}[!] File does not exist.${RESET}"
+    else
+        echo -e "${GREEN}[+] Running shred for: $file${RESET}"
+        shred -u -v -n 5 "$file"
+        echo -e "${GREEN}[+] File securely deleted.${RESET}"
+    fi
+}
+
+clean_metadata() {
+    echo
+    echo "ExifTool by Phil Harvey https://exiftool.org/"
+    echo -e "${GREEN}[➜] Removing metadata from image...${RESET}"
+    echo
+
+    if ! command -v exiftool >/dev/null 2>&1; then
+        echo -e "${RED}[!] exiftool is not installed.${RESET}"
+        echo -e "${YELLOW}[i] Install with: sudo apt install libimage-exiftool-perl${RESET}"
+        return 1
+    fi
+
+    read -rp "Enter image file: " file
+
+    if [[ ! -f "$file" ]]; then
+        echo -e "${RED}[!] File not found.${RESET}"
+        return 1
+    fi
+
+    read -rp "Output file (e.g. clean.jpg): " outfile
+
+    # remove all metadata
+    exiftool -all= -overwrite_original -o "$outfile" "$file" >/dev/null 2>&1
+    status=$?
+
+    if [[ $status -eq 0 ]]; then
+        echo -e "${GREEN}[+] Metadata removed → $outfile${RESET}"
+    else
+        echo -e "${RED}[!] Failed to remove metadata.${RESET}"
+        return 1
+    fi
+    echo
+}
+
 # Encoding
-    encrypt_file_aes256() {
-        echo
-        echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-        echo -e "${GREEN}[➜] Encrypting file (AES-256-CBC)...${RESET}"
-        echo
+encrypt_file_aes256() {
+    echo
+    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+    echo -e "${GREEN}[➜] Encrypting file (AES-256-CBC)...${RESET}"
+    echo
 
-        if ! command -v openssl >/dev/null 2>&1; then
-            echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-            echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
-            return 1
-        fi
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+        echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
+        return 1
+    fi
 
-        read -rp "Enter file to encrypt: " file
+    read -rp "Enter file to encrypt: " file
 
-        if [[ ! -f "$file" ]]; then
-            echo -e "${RED}[!] File not found.${RESET}"
-            return 1
-        fi
+    if [[ ! -f "$file" ]]; then
+        echo -e "${RED}[!] File not found.${RESET}"
+        return 1
+    fi
 
-        read -rp "Output file (e.g. file.enc): " outfile
+    read -rp "Output file (e.g. file.enc): " outfile
 
-        openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$outfile"
-        status=$?
+    openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$outfile"
+    status=$?
 
-        if [[ $status -eq 0 ]]; then
-            echo -e "${GREEN}[+] File encrypted → $outfile${RESET}"
-        else
-            echo -e "${RED}[!] Encryption failed.${RESET}"
-            return 1
-        fi
-        echo
-    }
-    encrypt_file_aes128() {
-        echo
-        echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-        echo -e "${GREEN}[➜] Encrypting file (AES-128-CBC)...${RESET}"
-        echo
+    if [[ $status -eq 0 ]]; then
+        echo -e "${GREEN}[+] File encrypted → $outfile${RESET}"
+    else
+        echo -e "${RED}[!] Encryption failed.${RESET}"
+        return 1
+    fi
+    echo
+}
 
-        if ! command -v openssl >/dev/null 2>&1; then
-            echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-            echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
-            return 1
-        fi
+encrypt_file_aes128() {
+    echo
+    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+    echo -e "${GREEN}[➜] Encrypting file (AES-128-CBC)...${RESET}"
+    echo
 
-        read -rp "Enter file to encrypt: " file
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+        echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
+        return 1
+    fi
 
-        if [[ ! -f "$file" ]]; then
-            echo -e "${RED}[!] File not found.${RESET}"
-            return 1
-        fi
+    read -rp "Enter file to encrypt: " file
 
-        read -rp "Output file (e.g. file.enc): " outfile
+    if [[ ! -f "$file" ]]; then
+        echo -e "${RED}[!] File not found.${RESET}"
+        return 1
+    fi
 
-        openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$outfile"
-        status=$?
+    read -rp "Output file (e.g. file.enc): " outfile
 
-        if [[ $status -eq 0 ]]; then
-            echo -e "${GREEN}[+] File encrypted → $outfile${RESET}"
-        else
-            echo -e "${RED}[!] Encryption failed.${RESET}"
-            return 1
-        fi
-        echo
-    }
-    decrypt_file_aes256() {
-        echo
-        echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-        echo -e "${GREEN}[➜] Decrypting file (AES-256-CBC)...${RESET}"
-        echo
+    openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$outfile"
+    status=$?
 
-        if ! command -v openssl >/dev/null 2>&1; then
-            echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-            return 1
-        fi
+    if [[ $status -eq 0 ]]; then
+        echo -e "${GREEN}[+] File encrypted → $outfile${RESET}"
+    else
+        echo -e "${RED}[!] Encryption failed.${RESET}"
+        return 1
+    fi
+    echo
+}
 
-        read -rp "Enter encrypted file: " file
+decrypt_file_aes256() {
+    echo
+    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+    echo -e "${GREEN}[➜] Decrypting file (AES-256-CBC)...${RESET}"
+    echo
 
-        if [[ ! -f "$file" ]]; then
-            echo -e "${RED}[!] File not found.${RESET}"
-            return 1
-        fi
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+        return 1
+    fi
 
-        read -rp "Output file: " outfile
+    read -rp "Enter encrypted file: " file
 
-        openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -in "$file" -out "$outfile"
-        status=$?
+    if [[ ! -f "$file" ]]; then
+        echo -e "${RED}[!] File not found.${RESET}"
+        return 1
+    fi
 
-        if [[ $status -eq 0 ]]; then
-            echo -e "${GREEN}[+] File decrypted → $outfile${RESET}"
-        else
-            echo -e "${RED}[!] Decryption failed (wrong password or corrupted file).${RESET}"
-            return 1
-        fi
-        echo
-    }
-    decrypt_file_aes128() {
-        echo
-        echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-        echo -e "${GREEN}[➜] Decrypting file (AES-128-CBC)...${RESET}"
-        echo
+    read -rp "Output file: " outfile
 
-        if ! command -v openssl >/dev/null 2>&1; then
-            echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-            return 1
-        fi
+    openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -in "$file" -out "$outfile"
+    status=$?
 
-        read -rp "Enter encrypted file: " file
+    if [[ $status -eq 0 ]]; then
+        echo -e "${GREEN}[+] File decrypted → $outfile${RESET}"
+    else
+        echo -e "${RED}[!] Decryption failed (wrong password or corrupted file).${RESET}"
+        return 1
+    fi
+    echo
+}
 
-        if [[ ! -f "$file" ]]; then
-            echo -e "${RED}[!] File not found.${RESET}"
-            return 1
-        fi
+decrypt_file_aes128() {
+    echo
+    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+    echo -e "${GREEN}[➜] Decrypting file (AES-128-CBC)...${RESET}"
+    echo
 
-        read -rp "Output file: " outfile
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+        return 1
+    fi
 
-        openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -in "$file" -out "$outfile"
-        status=$?
+    read -rp "Enter encrypted file: " file
 
-        if [[ $status -eq 0 ]]; then
-            echo -e "${GREEN}[+] File decrypted → $outfile${RESET}"
-        else
-            echo -e "${RED}[!] Decryption failed (wrong password or corrupted file).${RESET}"
-            return 1
-        fi
-        echo
-    }
-    encrypt_text_ceasar() {
+    if [[ ! -f "$file" ]]; then
+        echo -e "${RED}[!] File not found.${RESET}"
+        return 1
+    fi
+
+    read -rp "Output file: " outfile
+
+    openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -in "$file" -out "$outfile"
+    status=$?
+
+    if [[ $status -eq 0 ]]; then
+        echo -e "${GREEN}[+] File decrypted → $outfile${RESET}"
+    else
+        echo -e "${RED}[!] Decryption failed (wrong password or corrupted file).${RESET}"
+        return 1
+    fi
+    echo
+}
+
+encrypt_text_ceasar() {
     echo
     echo -e "${GREEN}[➜] Caesar Cipher${RESET}"
     echo
@@ -784,13 +797,13 @@ echo -e "${BOLD}${RED}  Version beta 1.6 - Creator: DarkShadowUser - License: MI
     read -rp "Enter shift (e.g. 3 or -3): " shift
 
     echo -e "${CYAN}"
-    result=$(printf "%s" "$text" | tr 'A-Za-z' "$(printf '%s' {A..Z} {a..z} | tr -d ' ' | awk -v s="$shift" '
+    result=$(printf "%s" "$text" | awk -v shift="$shift" '
     BEGIN {
         alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
         len=length(alphabet)
         for (i=1;i<=len;i++) {
             c=substr(alphabet,i,1)
-            new=substr(alphabet,((i-1+s)%len+len)%len+1,1)
+            new=substr(alphabet,((i-1+shift)%len+len)%len+1,1)
             map[c]=new
         }
     }
@@ -799,14 +812,15 @@ echo -e "${BOLD}${RED}  Version beta 1.6 - Creator: DarkShadowUser - License: MI
             c=substr($0,i,1)
             printf "%s", (c in map)?map[c]:c
         }
-    }')")
+    }')
 
     echo -e "${RESET}"
     echo -e "${GREEN}[+] Result: $result${RESET}"
     echo
-    }
-    encrypt_text_vigenere () {
-            echo
+}
+
+encrypt_text_vigenere() {
+    echo
     echo -e "${GREEN}[➜] Vigenère Cipher${RESET}"
     echo
 
@@ -841,337 +855,356 @@ echo -e "${BOLD}${RED}  Version beta 1.6 - Creator: DarkShadowUser - License: MI
     echo -e "${RESET}"
     echo -e "${GREEN}[+] Result: $result${RESET}"
     echo
-    }
-    encrypt_text_aes256() {
-        echo
-        echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-        echo -e "${GREEN}[➜] Encrypting text (AES-256-CBC)...${RESET}"
+}
 
-        if ! command -v openssl >/dev/null 2>&1; then
-            echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-            return 1
-        fi
+encrypt_text_aes256() {
+    echo
+    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+    echo -e "${GREEN}[➜] Encrypting text (AES-256-CBC)...${RESET}"
 
-        echo -e "${CYAN}"
-        read -rp "Enter text: " text
-        echo
-        printf "%s" "$text" | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -a
-        status=$?
-        echo -e "${RESET}"
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+        return 1
+    fi
 
-        if [[ $status -eq 0 ]]; then
-            echo -e "${GREEN}[+] Text encrypted.${RESET}"
-        else
-            echo -e "${RED}[!] Encryption failed.${RESET}"
-            return 1
-        fi
-        echo
-    }
-    encrypt_text_base64() {
-        echo
-        echo -e "${GREEN}[➜] Base64 Encode${RESET}"
+    echo -e "${CYAN}"
+    read -rp "Enter text: " text
+    echo
+    printf "%s" "$text" | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -a
+    status=$?
+    echo -e "${RESET}"
 
-        echo -e "${CYAN}"
-        read -rp "Enter text: " text
-        result=$(printf "%s" "$text" | base64)
-        echo -e "${RESET}"
+    if [[ $status -eq 0 ]]; then
+        echo -e "${GREEN}[+] Text encrypted.${RESET}"
+    else
+        echo -e "${RED}[!] Encryption failed.${RESET}"
+        return 1
+    fi
+    echo
+}
 
-        echo
-        echo -e "${GREEN}[+] Result:${RESET} $result"
-        echo
+encrypt_text_base64() {
+    echo
+    echo -e "${GREEN}[➜] Base64 Encode${RESET}"
+
+    echo -e "${CYAN}"
+    read -rp "Enter text: " text
+    result=$(printf "%s" "$text" | base64)
+    echo -e "${RESET}"
+
+    echo
+    echo -e "${GREEN}[+] Result:${RESET} $result"
+    echo
+}
+
+encrypt_text_aes128() {
+    echo
+    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+    echo -e "${GREEN}[➜] Encrypting text (AES-128-CBC)...${RESET}"
+
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+        return 1
+    fi
+
+    echo -e "${CYAN}"
+    read -rp "Enter text: " text
+    printf "%s" "$text" | openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -a
+    status=$?
+    echo -e "${RESET}"
+
+    if [[ $status -eq 0 ]]; then
+        echo -e "${GREEN}[+] Text encrypted.${RESET}"
+    else
+        echo -e "${RED}[!] Encryption failed.${RESET}"
+        return 1
+    fi
+    echo
+}
+
+rot13_cipher() {
+    echo
+    echo -e "${GREEN}[➜] ROT13 Cipher${RESET}"
+
+    echo -e "${CYAN}"
+    read -rp "Enter text: " text
+    result=$(printf "%s" "$text" | tr 'A-Za-z' 'N-ZA-Mn-za-m')
+    echo -e "${RESET}"
+
+    echo -e "${GREEN}[+] Result:${RESET} $result"
+    echo
+}
+
+decrypt_text_base64() {
+    echo
+    echo -e "${GREEN}[➜] Base64 Decode${RESET}"
+
+    echo -e "${CYAN}"
+    read -rp "Enter Base64 text: " text
+    result=$(printf "%s" "$text" | base64 -d 2>/dev/null)
+    echo -e "${RESET}"
+
+    if [[ $? -ne 0 ]]; then
+        echo -e "${RED}[!] Invalid Base64 input.${RESET}"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+] Result:${RESET} $result"
+    echo
+}
+
+decrypt_text_aes256() {
+    echo
+    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+    echo -e "${GREEN}[➜] Decrypting text (AES-256-CBC)...${RESET}"
+    echo
+
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+        return 1
+    fi
+
+    read -rp "Enter encrypted text: " text
+    echo -e "${CYAN}"
+    printf "%s" "$text" | openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -a
+    status=$?
+    echo -e "${RESET}"
+
+    if [[ $status -eq 0 ]]; then
+        echo -e "${GREEN}[+] Text decrypted.${RESET}"
+    else
+        echo -e "${RED}[!] Decryption failed.${RESET}"
+        return 1
+    fi
+    echo
+}
+
+decrypt_text_aes128() {
+    echo
+    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+    echo -e "${GREEN}[➜] Decrypting text (AES-128-CBC)...${RESET}"
+    echo
+
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+        return 1
+    fi
+
+    read -rp "Enter encrypted text: " text
+
+    echo -e "${CYAN}"
+    printf "%s" "$text" | openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -a
+    status=$?
+    echo -e "${RESET}"
+    if [[ $status -eq 0 ]]; then
+        echo -e "${GREEN}[+] Text decrypted.${RESET}"
+    else
+        echo -e "${RED}[!] Decryption failed.${RESET}"
+        return 1
+    fi
+    echo
+}
+
+decrypt_text_ceasar() {
+    echo
+    echo -e "${GREEN}[➜] Caesar Decipher${RESET}"
+
+    read -rp "Enter text: " text
+    read -rp "Enter shift (e.g. 3): " shift
+
+    # reverse shift
+    shift=$(( -shift ))
+
+    echo -e "${CYAN}"
+    result=$(printf "%s" "$text" | awk -v shift="$shift" '
+    BEGIN {
+        alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+        len=length(alphabet)
+
+        for (i=1;i<=len;i++) {
+            c=substr(alphabet,i,1)
+            new=substr(alphabet,((i-1+shift)%len+len)%len+1,1)
+            map[c]=new
         }
-    encrypt_text_aes128() {
-            echo
-            echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-            echo -e "${GREEN}[➜] Encrypting text (AES-128-CBC)...${RESET}"
-
-            if ! command -v openssl >/dev/null 2>&1; then
-                echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-                return 1
-            fi
-
-            echo -e "${CYAN}"
-            read -rp "Enter text: " text
-            printf "%s" "$text" | openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -a
-            status=$?
-            echo -e "${RESET}"
-
-            if [[ $status -eq 0 ]]; then
-                echo -e "${GREEN}[+] Text encrypted.${RESET}"
-            else
-                echo -e "${RED}[!] Encryption failed.${RESET}"
-                return 1
-            fi
-            echo
-        }
-    rot13_cipher() {
-        echo
-        echo -e "${GREEN}[➜] ROT13 Cipher${RESET}"
-        
-        echo -e "${CYAN}"
-        read -rp "Enter text: " text
-        result=$(printf "%s" "$text" | tr 'A-Za-z' 'N-ZA-Mn-za-m')
-        echo -e "${RESET}"
-
-        echo -e "${GREEN}[+] Result:${RESET} $result"
-        echo
-        }
-        decrypt_text_base64() {
-            echo
-            echo -e "${GREEN}[➜] Base64 Decode${RESET}"
-
-            echo -e "${CYAN}"
-            read -rp "Enter Base64 text: " text
-            result=$(printf "%s" "$text" | base64 -d 2>/dev/null)
-            echo -e "${RESET}"
-
-            if [[ $? -ne 0 ]]; then
-                echo -e "${RED}[!] Invalid Base64 input.${RESET}"
-                return 1
-            fi
-
-            echo -e "${GREEN}[+] Result:${RESET} $result"
-            echo
-        }
-    decrypt_text_aes256() {
-        echo
-        echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-        echo -e "${GREEN}[➜] Decrypting text (AES-256-CBC)...${RESET}"
-        echo
-
-        if ! command -v openssl >/dev/null 2>&1; then
-            echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-            return 1
-        fi
-        
-        read -rp "Enter encrypted text: " text
-        echo -e "${CYAN}"
-        printf "%s" "$text" | openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -a
-        status=$?
-        echo -e "${RESET}"
-
-        if [[ $status -eq 0 ]]; then
-            echo -e "${GREEN}[+] Text decrypted.${RESET}"
-        else
-            echo -e "${RED}[!] Decryption failed.${RESET}"
-            return 1
-        fi
-        echo
     }
-    decrypt_text_aes128() {
-        echo
-        echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-        echo -e "${GREEN}[➜] Decrypting text (AES-128-CBC)...${RESET}"
-        echo
+    {
+        for (i=1;i<=length($0);i++) {
+            c=substr($0,i,1)
+            printf "%s", (c in map)?map[c]:c
+        }
+    }')
 
-        if ! command -v openssl >/dev/null 2>&1; then
-            echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-            return 1
-        fi
+    echo -e "${RESET}"
+    echo -e "${GREEN}[+] Result: $result${RESET}"
+    echo
+}
 
-        read -rp "Enter encrypted text: " text
+decrypt_text_vigenere() {
+    echo
+    echo -e "${GREEN}[➜] Vigenère Decipher${RESET}"
+    echo
 
-        echo -e "${CYAN}"
-        printf "%s" "$text" | openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -a
-        status=$?
-        echo -e "${RESET}"
-        if [[ $status -eq 0 ]]; then
-            echo -e "${GREEN}[+] Text decrypted.${RESET}"
-        else
-            echo -e "${RED}[!] Decryption failed.${RESET}"
-            return 1
-        fi
-        echo
-    }
-    decrypt_text_ceasar() {
-        echo
-        echo -e "${GREEN}[➜] Caesar Decipher${RESET}"
+    read -rp "Enter text: " text
+    read -rp "Enter key: " key
 
-        read -rp "Enter text: " text
-        read -rp "Enter shift (e.g. 3): " shift
+    echo -e "${CYAN}"
+    result=$(awk -v text="$text" -v key="$key" '
+    function ord(c) { return index("ABCDEFGHIJKLMNOPQRSTUVWXYZ", c) }
+    function chr(n) { return substr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", n, 1) }
 
-        # reverse shift
-        shift=$(( -shift ))
+    BEGIN {
+        key = toupper(key)
+        text = toupper(text)
+        keylen = length(key)
+        j = 1
 
-        echo -e "${CYAN}"
-        result=$(printf "%s" "$text" | awk -v shift="$shift" '
-        BEGIN {
-            alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-            len=length(alphabet)
+        for (i = 1; i <= length(text); i++) {
+            c = substr(text, i, 1)
 
-            for (i=1;i<=len;i++) {
-                c=substr(alphabet,i,1)
-                new=substr(alphabet,((i-1+shift)%len+len)%len+1,1)
-                map[c]=new
+            if (c ~ /[A-Z]/) {
+                shift = ord(substr(key, j, 1)) - 1
+
+                new = (ord(c) - shift - 1)
+                new = (new % 26 + 26) % 26 + 1
+
+                printf "%s", chr(new)
+                j = (j % keylen) + 1
+            } else {
+                printf "%s", c
             }
         }
-        {
-            for (i=1;i<=length($0);i++) {
-                c=substr($0,i,1)
-                printf "%s", (c in map)?map[c]:c
-            }
-        }')
+    }')
 
-        echo -e "${RESET}"
-        echo -e "${GREEN}[+] Result: $result${RESET}"
-        echo
-        }
-    decrypt_text_vigenere() {
-        echo
-        echo -e "${GREEN}[➜] Vigenère Decipher${RESET}"
-        echo
+    echo -e "${RESET}"
+    echo -e "${GREEN}[+] Result: $result${RESET}"
+    echo
+}
 
-        read -rp "Enter text: " text
-        read -rp "Enter key: " key
-
-        echo -e "${CYAN}"
-        result=$(awk -v text="$text" -v key="$key" '
-        function ord(c) { return index("ABCDEFGHIJKLMNOPQRSTUVWXYZ", c) }
-        function chr(n) { return substr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", n, 1) }
-
-        BEGIN {
-            key = toupper(key)
-            text = toupper(text)
-            keylen = length(key)
-            j = 1
-
-            for (i = 1; i <= length(text); i++) {
-                c = substr(text, i, 1)
-
-                if (c ~ /[A-Z]/) {
-                    shift = ord(substr(key, j, 1)) - 1
-
-                    new = (ord(c) - shift - 1)
-                    new = (new % 26 + 26) % 26 + 1
-
-                    printf "%s", chr(new)
-                    j = (j % keylen) + 1
-                } else {
-                    printf "%s", c
-                }
-            }
-        }')
-
-        echo -e "${RESET}"
-        echo -e "${GREEN}[+] Result: $result${RESET}"
-        echo
-        }
 # Misc
-    matrix () {
-                        
-                        if command -v cmatrix >/dev/null 2>&1; then
-                            cmatrix -s -C green 
-                        else
-                            echo -e "${RED}[!] cmatrix is not installed.${RESET}"
-                            echo -e "${YELLOW}[i] Install with: sudo apt install cmatrix${RESET}"
-                            return 1
-                        fi
-                    }
-    hacked () {
-                        clear
-                        if command -v hollywood >/dev/null 2>&1; then
-                            hollywood 
-                        else
-                            echo -e "${RED}[!] hollywood is not installed.${RESET}"
-                            echo -e "${YELLOW}[i] Install with: sudo apt install hollywood${RESET}"
-                            return 1
-                        fi
-                    }
-    hacking () {
-                    # IMPORTANT NOTICE
-                    # This is just for fun and does not actually perform any hacking activities. It is meant to simulate a "hacker code" effect for entertainment purposes only. Do not use this code for any malicious or illegal activities. Always use your skills and knowledge ethically and responsibly.
-                    # The following code simulates a hacking scenario where the user "connects" to a target server, "scans" for vulnerabilities, "exploits" a known vulnerability, and "gains root access". It then simulates connecting to a high-profile target (the DoD server) and "extracting sensitive data". This is purely fictional and should not be taken seriously.
-                    # No real commands are executed in this code, and it is only meant for entertainment purposes. Always use your skills and knowledge ethically and responsibly.
-                    clear
-                    echo -e "${GREEN}"
-                    echo "Starting exploit"
-                    sleep 0.5
-                    echo "Connecting to target..." | pv -qL 5
-                    echo "ssh 158.238.44.210" | pv -qL 5 
-                    sleep 0.5
-                    echo "Made connection with 158.238.44.210" | pv -qL 5
-                    sleep 0.5
-                    echo "Scanning server for vulnerabilities..." | pv -qL 5
-                    sleep 3
-                    echo "Bypassing firewall..."  | pv -qL 5
-                    echo "[*] Initializing neural bypass engine..." | pv -qL 5
-                    sleep 1
-                    echo "[*] Generating polymorphic packets..." | pv -qL 5
-                    sleep 1 
-                    echo "[*] Obfuscating traffic signatures..." | pv -qL 5
-                    sleep 1
-                    echo "[*] Injecting spoofed credentials..." | pv -qL 5
-                    sleep 1
-                    echo "[*] Bypassing IDS/IPS systems..." | pv -qL 5
-                    sleep 1
-                    echo "[*] Establishing covert channel..." | pv -qL 5
-                    echo 
-                    sleep 1
-                    echo "Firewall bypassed." | pv -qL 5
-                    echo
-                    sleep 0.3
-                    echo "Exploiting vulnerability CVE-2021-44228..." | pv -qL 5
-                    sleep 0.5
-                    echo "Executing aribtrary code remotely on target system..." | pv -qL 5 
-                    echo
-                    sleep 1
-                    echo "Escalating privileges..." | pv -qL 5
-                    sleep 0.5
-                    echo "Gaining root access..." | pv -qL 5
-                    echo "[PAYLOAD] Uploading encrypted payload..." | pv -qL 5
-                    sleep 1
-                    echo "[PAYLOAD] Executing remote shell..." | pv -qL 5
-                    sleep 1
-                    echo "Root access granted." | pv -qL 5
-                    echo
-                    echo "________________________________________________"
-                    echo
-                        cat <<'EOF'
- ____                        _                        _            __       _       __                     
-|  _ \  ___ _ __   __ _ _ __| |_ _ __ ___   ___ _ __ | |_    ___  / _|   __| | ___ / _| ___ _ __  ___  ___ 
+matrix() {
+    clear
+    if command -v cmatrix >/dev/null 2>&1; then
+        cmatrix -s -C green
+    else
+        echo -e "${RED}[!] cmatrix is not installed.${RESET}"
+        echo -e "${YELLOW}[i] Install with: sudo apt install cmatrix${RESET}"
+        return 1
+    fi
+}
+
+hacked() {
+    clear
+    if command -v hollywood >/dev/null 2>&1; then
+        hollywood
+    else
+        echo -e "${RED}[!] hollywood is not installed.${RESET}"
+        echo -e "${YELLOW}[i] Install with: sudo apt install hollywood${RESET}"
+        return 1
+    fi
+}
+
+hacking() {
+    # IMPORTSNT NOTE:
+    # This is just for fun and does not actually perform any hacking activities. It is meant to simulate a "hacker code" effect for entertainment purposes only. Do not use this code for any malicious or illegal activities. Always use your skills and knowledge ethically and responsibly.
+    # The following code simulates a hacking scenario where the user "connects" to a target server, "scans" for vulnerabilities, "exploits" a known vulnerability, and "gains root access". It then simulates connecting to a high-profile target (the DoD server) and "extracting sensitive data". This is purely fictional and should not be taken seriously.
+    # No real commands are executed in this code, and it is only meant for entertainment purposes only. Always use your skills and knowledge ethically and responsibly.
+    clear
+    echo -e "${GREEN}"
+    echo "Starting exploit"
+    sleep 0.5
+    echo "Connecting to target..." | pv -qL 5
+    echo "ssh 158.238.44.210" | pv -qL 5
+    sleep 0.5
+    echo "Made connection with 158.238.44.210" | pv -qL 5
+    sleep 0.5
+    echo "Scanning server for vulnerabilities..." | pv -qL 5
+    sleep 3
+    echo "Bypassing firewall..." | pv -qL 5
+    echo "[*] Initializing neural bypass engine..." | pv -qL 5
+    sleep 1
+    echo "Made connection with 158.238.44.210" | pv -qL 5
+    sleep 0.5
+    echo "Scanning server for vulnerabilities..." | pv -qL 5
+    sleep 3
+    echo "Bypassing firewall..." | pv -qL 5
+    echo "[*] Initializing neural bypass engine..." | pv -qL 5
+    sleep 1
+    echo "[*] Generating polymorphic packets..." | pv -qL 5
+    sleep 1
+    echo "[*] Obfuscating traffic signatures..." | pv -qL 5
+    sleep 1
+    echo "[*] Injecting spoofed credentials..." | pv -qL 5
+    sleep 1
+    echo "[*] Bypassing IDS/IPS systems..." | pv -qL 5
+    sleep 1
+    echo "[*] Establishing covert channel..." | pv -qL 5
+    echo
+    sleep 1
+    echo "Firewall bypassed." | pv -qL 5
+    echo
+    sleep 0.3
+    echo "Exploiting vulnerability CVE-2021-44228..." | pv -qL 5
+    sleep 0.5
+    echo "Executing arbitrary code remotely on target system..." | pv -qL 5
+    echo
+    sleep 1
+    echo "Escalating privileges..." | pv -qL 5
+    sleep 0.5
+    echo "Gaining root access..." | pv -qL 5
+    echo "[PAYLOAD] Uploading encrypted payload..." | pv -qL 5
+    sleep 1
+    echo "[PAYLOAD] Executing remote shell..." | pv -qL 5
+    sleep 1
+    echo "Root access granted." | pv -qL 5
+    echo
+    echo "________________________________________________"
+    echo
+    cat <<'EOF'
+ ____                        _                        _            __       _       __
+|  _ \  ___ _ __   __ _ _ __| |_ _ __ ___   ___ _ __ | |_    ___  / _|   __| | ___ / _| ___ _ __  ___  ___
 | | | |/ _ \ '_ \ / _` | '__| __| '_ ` _ \ / _ \ '_ \| __|  / _ \| |_   / _` |/ _ \ |_ / _ \ '_ \/ __|/ _ \
 | |_| |  __/ |_) | (_| | |  | |_| | | | | |  __/ | | | |_  | (_) |  _| | (_| |  __/  _|  __/ | | \__ \  __/
 |____/ \___| .__/ \__,_|_|   \__|_| |_| |_|\___|_| |_|\__|  \___/|_|    \__,_|\___|_|  \___|_| |_|___/\___|
-           |_|                                                                                             
-                                                  
+           |_|
 EOF
-                    echo "Connected with United States Department of Defense DoD server" | pv -qL 10
-                    sleep 0.5
-                    echo "Running malicious code on DoD server..." | pv -qL 5
-                    echo "Execute ~/DoD/malicous.sh" | pv -ql 10
-                    sleep 1.2
-                    echo "Extracting sensitive data from DoD server..."   | pv -qL 5
-                    echo "Scanning file system" | pv -ql 5
-                    echo "Delete" | pv -ql 10
-                    sleep 2
-                    echo "Send to dark web" | pv -qL 5
-                    echo "Ping https+tor://marketplace.tor" | pv -ql 10
-                    sleep 2
-                    echo "[+] send!"
-                    echo
-                    echo "Removing traces of attack..." | pv -qL 5
-                    echo 
-                    sleep 0.5
-                    echo "Clearing logs..." | pv -qL 5
-                    sleep 0.5
-                    echo "sudo rm -rf /var/log/" | pv -ql 10
-                    echo "Logs cleared." | pv -qL 5
-                    sleep 0.5
-                    echo "Deleting exploit files..." | pv -qL 5
-                    echo "sudo rm ./exploit" | pv -ql 10
-                    sleep 0.5
-                    echo "Exploit files deleted." | pv -qL 5
-                    echo 
-                    echo "Exiting DoD server..." | pv -qL 5
-                    echo "ssh exit" | pv -ql 10
-                    sleep 0.5
-                    echo "Connection closed."   | pv -qL 5
-                    echo -e "${RESET}"
-                    clear
-                    }
-    license() {
-            cat <<'EOF'
+    echo "Connected with United States Department of Defense DoD server" | pv -qL 10
+    sleep 0.5
+    echo "Running malicious code on DoD server..." | pv -qL 5
+    echo "Execute ~/DoD/malicous.sh" | pv -qL 10
+    sleep 1.2
+    echo "Extracting sensitive data from DoD server..." | pv -qL 5
+    echo "Scanning file system" | pv -qL 5
+    echo "Delete" | pv -qL 10
+    sleep 2
+    echo "Send to dark web" | pv -qL 5
+    echo "Ping https+tor://marketplace.tor" | pv -qL 10
+    sleep 2
+    echo "[+] send!"
+    echo
+    echo "Removing traces of attack..." | pv -qL 5
+    echo
+    sleep 0.5
+    echo "Clearing logs..." | pv -qL 5
+    sleep 0.5
+    echo "sudo rm -rf /var/log/" | pv -qL 10
+    echo "Logs cleared." | pv -qL 5
+    sleep 0.5
+    echo "Deleting exploit files..." | pv -qL 5
+    echo "sudo rm ./exploit" | pv -qL 10
+    sleep 0.5
+    echo "Exploit files deleted." | pv -qL 5
+    echo
+    echo "Exiting DoD server..." | pv -qL 5
+    echo "ssh exit" | pv -qL 10
+    sleep 0.5
+    echo "Connection closed." | pv -qL 5
+    echo -e "${RESET}"
+    clear
+}
 
+# OTHER
+license() {
+    cat <<'EOF'
 MIT License
 
 Copyright (c) 2026 DarkShadowUser https://github.com/DarkShadowUser/
@@ -1193,82 +1226,79 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
 EOF
-            }
-    clone_source() {
-                echo
-                echo -e "${GREEN}[➜] Cloning source code from GitHub...${RESET}"
-                sleep 0.5
+}
 
-                if command -v git >/dev/null 2>&1; then
-                    if git clone https://github.com/DarkShadowUser/jas.git; then    
-                        echo -e "${GREEN}[+] Source code cloned successfully.${RESET}"
-                    else
-                        echo -e "${RED}[!] Failed to clone source code.${RESET}"
-                        return 1
-                    fi
-                else
-                    echo -e "${RED}[!] Git is not installed.${RESET}"
-                    return 1
-                fi
-            }
-    version() {
-                echo
-                echo -e "${CYAN}JAS Version 1.6"
-                echo "Release: stable, received testing"
-                echo "Last updated on 29-3"
-                echo -e "${RESET}"
-            }
+clone_source() {
+    echo
+    echo -e "${GREEN}[➜] Cloning source code from GitHub...${RESET}"
+    sleep 0.5
+
+    if command -v git >/dev/null 2>&1; then
+        if git clone https://github.com/DarkShadowUser/jas.git; then
+            echo -e "${GREEN}[+] Source code cloned successfully.${RESET}"
+        else
+            echo -e "${RED}[!] Failed to clone source code.${RESET}"
+            return 1
+        fi
+    else
+        echo -e "${RED}[!] Git is not installed.${RESET}"
+        return 1
+    fi
+}
+
+version() {
+    echo
+    echo -e "${CYAN}JAS ${MAIN_VERSION}${SUB_VERSION}${RESET}"
+    echo "Release: $TESTED_RELEASE $TESTED_ON"
+    echo -e "${RESET}"
+}
 
 # -------------------
 # Network Tools Submenu
 # -------------------
 network_tools() {
     clear
-    echo -e "${RED}"
+    echo -e "${BOLD}${PURPLE}"
     cat <<'EOF'
- _   _ _____ _______        _____  ____  _  __
-| \ | | ____|_   _\ \      / / _ \|  _ \| |/ /
-|  \| |  _|   | |  \ \ /\ / / | | | |_) | ' / 
-| |\  | |___  | |   \ V  V /| |_| |  _ <| . \ 
-|_| \_|_____| |_|    \_/\_/  \___/|_| \_\_|\_\
+____________________________________
+▗▖  ▗▖▗▄▄▄▖▗▄▄▄▖▗▖ ▗▖ ▗▄▖ ▗▄▄▖ ▗▖ ▗▖
+▐▛▚▖▐▌▐▌     █  ▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▌▗▞▘
+▐▌ ▝▜▌▐▛▀▀▘  █  ▐▌ ▐▌▐▌ ▐▌▐▛▀▚▖▐▛▚▖
+▐▌  ▐▌▐▙▄▄▖  █  ▐▙█▟▌▝▚▄▞▘▐▌ ▐▌▐▌ ▐▌
+____________________________________
 EOF
     echo -e "${RESET}"
-    while true; do
-        PS3="Network Tools Menu: "
-        options=("Whois" "Ping" "Trace" "DNS info" "get IP" "IP osint" "Back")
-        select opt in "${options[@]}"; do
-            case $REPLY in
-                1)
-                    whois_lookup
-                    ;;
-                2)
-                    ping
-                    ;;
-                3)
-                    traceroute
-                    ;;
-                4)
-                    dns_info
-                    ;;
-                5)
-                    get_ip
-                    ;;
-                6)
-                    ip_osint
-                    ;;
-                7)
-                    return
-                    ;;
-                q)
-                    return
-                    ;;
-                *)
-                    echo -e "${RED} [✖] Invalid option${RESET}" 
-                    ;;
-            esac
-        done
+    PS3="Network Tools Menu: "
+    options=("Whois" "Ping" "Trace" "DNS info" "get IP" "IP osint" "Back")
+    select opt in "${options[@]}"; do
+        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
+        case "$REPLY" in
+            1)
+                whois_lookup
+                ;;
+            2)
+                ping
+                ;;
+            3)
+                traceroute
+                ;;
+            4)
+                dns_info
+                ;;
+            5)
+                get_ip
+                ;;
+            6)
+                ip_osint
+                ;;
+            7)
+                break
+                ;;
+            *)
+                echo -e "${RED} [✖] Invalid option${RESET}"
+                ;;
+        esac
     done
 }
 
@@ -1277,44 +1307,40 @@ EOF
 # -------------------
 system_tools() {
     clear
-    echo -e "${YELLOW}"
+    echo -e "${BOLD}${ORANGE}"
     cat <<'EOF'
- ______   ______ _____ _____ __  __ 
-/ ___\ \ / / ___|_   _| ____|  \/  |
-\___ \\ V /\___ \ | | |  _| | |\/| |
-___) || |  ___) || | | |___| |  | |
-|____/ |_| |____/ |_| |_____|_|  |_|
+_______________________________
+ ▗▄▄▖▗▖  ▗▖▗▄▄▖▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖
+▐▌    ▝▚▞▘▐▌     █  ▐▌   ▐▛▚▞▜▌
+ ▝▀▚▖  ▐▌  ▝▀▚▖  █  ▐▛▀▀▘▐▌  ▐▌
+▗▄▄▞▘  ▐▌ ▗▄▄▞▘  █  ▐▙▄▄▖▐▌  ▐▌
+_______________________________
 EOF
     echo -e "${RESET}"
-    while true; do
-        PS3="System Tools Menu: "
-        options=("Updating all apps" "See system information" "Paranoia mode" "Exit")
-        select opt in "${options[@]}"; do
-            case $REPLY in
-                1)
-                    update_apps
-                    ;;
-                2)
-                    systeminfo
-                    ;;
-                3)   
-                    if confirm_paranoia; then
-                        paranoia_mode
-                    else
-                        return
-                    fi
-                    ;;
-                4)
-                    return
-                    ;;
-                q)
-                    return
-                    ;;
-                *)
-                    echo -e "${RED}[✖] Invalid option${RESET}"
-                    ;;
-            esac
-        done
+    PS3="System Tools Menu: "
+    options=("Updating all apps" "See system information" "Paranoia mode" "Exit")
+
+    select opt in "${options[@]}"; do
+        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
+        case "$REPLY" in
+            1)
+                update_apps
+                ;;
+            2)
+                systeminfo
+                ;;
+            3)
+                if confirm_paranoia; then
+                    paranoia_mode
+                fi
+                ;;
+            4)
+                break
+                ;;
+            *)
+                echo -e "${RED}[✖] Invalid option${RESET}"
+                ;;
+        esac
     done
 }
 
@@ -1323,272 +1349,260 @@ EOF
 # -------------------
 privacy_tools() {
     clear
-    echo -e "${BLUE}"
+    echo -e "${BOLD}${CYAN}"
     cat <<'EOF'
-  ____  ____  _____     ___    ______   __     __
-|  _ \|  _ \|_ _\ \   / / \  / ___\ \ / /    / /
-| |_) | |_) || | \ \ / / _ \| |    \ V /    / / 
-|  __/|  _ < | |  \ V / ___ \ |___  | |    / /  
-|_|__ |_|_\_\___| _\_/_/___\_\____|_|_|__ /_/_  
-
-/ ___|| ____/ ___| | | |  _ \|_ _|_   _\ \ / /  
-\___ \|  _|| |   | | | | |_) || |  | |  \ V /   
- ___) | |__| |___| |_| |  _ < | |  | |   | |    
-|____/|_____\____|\___/|_| \_\___| |_|   |_|    
+________________________________________________________________________________
+▗▄▄▖ ▗▄▄▖ ▗▄▄▄▖▗▖  ▗▖ ▗▄▖  ▗▄▄▖▗▖  ▗▖   ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▖ ▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖
+▐▌ ▐▌▐▌ ▐▌  █  ▐▌  ▐▌▐▌ ▐▌▐▌    ▝▚▞▘   ▐▌   ▐▌   ▐▌   ▐▌ ▐▌▐▌ ▐▌  █    █   ▝▚▞▘
+▐▛▀▘ ▐▛▀▚▖  █  ▐▌  ▐▌▐▛▀▜▌▐▌     ▐▌     ▝▀▚▖▐▛▀▀▘▐▌   ▐▌ ▐▌▐▛▀▚▖  █    █    ▐▌
+▐▌   ▐▌ ▐▌▗▄█▄▖ ▝▚▞▘ ▐▌ ▐▌▝▚▄▄▖  ▐▌    ▗▄▄▞▘▐▙▄▄▖▝▚▄▄▖▝▚▄▞▘▐▌ ▐▌▗▄█▄▖  █    ▐▌
+________________________________________________________________________________
 EOF
     echo -e "${RESET}"
     echo -e "${YELLOW}[!] Note: Some of these tools can be dangerous if used improperly. Make sure you understand what each tool does before using it. Always use these tools responsibly and ethically.${RESET}"
-    while true; do
-        PS3="Privacy/Security Menu: "
-        options=("Securely wipe trash" "Securely overwrite free space" "Peform system audit" "Peform system cleanup" "Check for rootkits" "Remove temporary files" "Generate secure password" "Delete file" "Clean metadata" "Exit")
-        select opt in "${options[@]}"; do
-            case $REPLY in
-                1)
-                    secure_empty_trash
-                    ;;
-                2)
-                    secure_overwrite_free_space
-                    ;;
-                3)  
-                    system_audit
-                    ;;
-                4)
-                    bleachbit
-                    ;;
-                5)
-                    rootkit_hunt
-                    ;;
-                6)
-                    remove_temp_files
-                    ;;
-                7)  
-                    generate_password
-                    ;;
-                8)    
-                    delete_file
-                    ;; 
-                9)
-                    clean_metadata
-                    ;;
-                10)
-                    return
-                    ;;
-                q)
-                    return
-                    ;;
-                *)
-                    echo -e "${RED}[✖] Invalid option.${RESET}" 
-                    ;;
-            esac
-        done
+    PS3="Privacy/Security Menu: "
+    options=("Securely wipe trash" "Securely overwrite free space" "Peform system audit" "Peform system cleanup" "Check for rootkits" "Remove temporary files" "Generate secure password" "Delete file" "Clean metadata" "Exit")
+    select opt in "${options[@]}"; do
+        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
+        case "$REPLY" in
+            1)
+                secure_empty_trash
+                ;;
+            2)
+                secure_overwrite_free_space
+                ;;
+            3)
+                system_audit
+                ;;
+            4)
+                bleachbit
+                ;;
+            5)
+                rootkit_hunt
+                ;;
+            6)
+                remove_temp_files
+                ;;
+            7)
+                generate_password
+                ;;
+            8)
+                delete_file
+                ;;
+            9)
+                clean_metadata
+                ;;
+            10)
+                break
+                ;;
+            *)
+                echo -e "${RED}[✖] Invalid option.${RESET}"
+                ;;
+        esac
     done
 }
+
 # -------------------
 # Encrypt files sub-sub menu
 # -------------------
 encrypt_files() {
     echo
-    while true; do
-        PS3="Encryption Menu: "
-        options=("AES-256" "AES-128")
-        select opt in "${options[@]}"; do
-            case $REPLY in
-                1)
-                    encrypt_file_aes256 ;;
-                2)
-                    encrypt_file_aes128 ;;
-                q)
-                    return
-                    ;;
-                *)
-                    echo -e "${RED}[✖] Invalid option.${RESET}" 
-                    ;;
-            esac
-        done
+    PS3="Encryption Menu: "
+    options=("AES-256" "AES-128")
+    select opt in "${options[@]}"; do
+        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
+        case "$REPLY" in
+            1)
+                encrypt_file_aes256
+                ;;
+            2)
+                encrypt_file_aes128
+                ;;
+            *)
+                echo -e "${RED}[✖] Invalid option.${RESET}"
+                ;;
+        esac
     done
 }
+
 # -------------------
 # Decrypt files sub-sub menu
 # -------------------
-encrypt_files() {
+decrypt_files() {
     echo
-    while true; do
-        PS3="Encryption Menu: "
-        options=("AES-256" "AES-128")
-        select opt in "${options[@]}"; do
-            case $REPLY in
-                1)
-                    decrypt_file_aes256
-                    ;;
-                2)
-                    decrypt_file_aes128
-                    ;;
-                q)
-                    return
-                    ;;
-                *)
-                    echo -e "${RED}[✖] Invalid option.${RESET}" 
-                    ;;
-            esac
-        done
+    PS3="Decryption Menu: "
+    options=("AES-256" "AES-128")
+    select opt in "${options[@]}"; do
+        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
+        case "$REPLY" in
+            1)
+                decrypt_file_aes256
+                ;;
+            2)
+                decrypt_file_aes128
+                ;;
+            *)
+                echo -e "${RED}[✖] Invalid option.${RESET}"
+                ;;
+        esac
     done
 }
+
 # -------------------
 # Encrypt texts sub-sub menu
 # -------------------
 encrypt_texts() {
     echo
-    echo -e "${YELLOW}[!]For real security use AES, for education or fun Ceasar or Vigenere and for encoding Base64 or ROT13${RESET}"
+    echo -e "${YELLOW}[!] For real security use AES, for education or fun Caesar or Vigenere and for encoding Base64 or ROT13${RESET}"
     echo
-    while true; do
-        PS3="Encryption Menu: "
-        options=("AES-256" "AES-128" "vigenere" "ceasar" "base64" "ROT13")
-        select opt in "${options[@]}"; do
-            case $REPLY in
-                1)
-                    encrypt_text_aes256
-                    ;;
-                2)
-                    encrypt_text_aes128
-                    ;;
-                3)
-                    encrypt_text_vigenere
-                    ;;
-                4)
-                    encrypt_text_ceasar
-                    ;;
-                5)
-                    encrypt_text_base64
-                    ;;
-                6)
-                    rot13_cipher
-                    ;;
-                q)
-                    return
-                    ;;
-                *)
-                    echo -e "${RED}[✖] Invalid option.${RESET}" 
-                    ;;
-            esac
-        done
+    PS3="Encryption Menu: "
+    options=("AES-256" "AES-128" "vigenere" "ceasar" "base64" "ROT13")
+    select opt in "${options[@]}"; do
+        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
+        case "$REPLY" in
+            1)
+                encrypt_text_aes256
+                ;;
+            2)
+                encrypt_text_aes128
+                ;;
+            3)
+                encrypt_text_vigenere
+                ;;
+            4)
+                encrypt_text_ceasar
+                ;;
+            5)
+                encrypt_text_base64
+                ;;
+            6)
+                rot13_cipher
+                ;;
+            *)
+                echo -e "${RED}[✖] Invalid option.${RESET}"
+                ;;
+        esac
     done
 }
+
 # -------------------
 # Decrypt texts sub-sub menu
 # -------------------
 decrypt_texts() {
     echo
-    echo -e "${YELLOW}[!]For real security use AES, for education or fun Ceasar or Vigenere and for encoding Base64 or ROT13${RESET}"
+    echo -e "${YELLOW}[!] For real security use AES, for education or fun Caesar or Vigenere and for encoding Base64 or ROT13${RESET}"
     echo
-    while true; do
-        PS3="Encryption Menu: "
-        options=("AES-256" "AES-128" "vigenere" "ceasar" "base64" "ROT13")
-        select opt in "${options[@]}"; do
-            case $REPLY in
-                1)
-                    decrypt_text_aes256
-                    ;;
-                2)
-                    decrypt_text_aes128
-                    ;;
-                3)
-                    decrypt_text_vigenere
-                    ;;
-                4)
-                    decrypt_text_ceasar
-                    ;;
-                5)
-                    decrypt_text_base64
-                    ;;
-                6)
-                    rot13_cipher
-                    ;;
-                q)
-                    return
-                    ;;
-                *)
-                    echo -e "${RED}[✖] Invalid option.${RESET}" 
-                    ;;
-            esac
-        done
+    PS3="Encryption Menu: "
+    options=("AES-256" "AES-128" "vigenere" "ceasar" "base64" "ROT13")
+    select opt in "${options[@]}"; do
+        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
+        case "$REPLY" in
+            1)
+                decrypt_text_aes256
+                ;;
+            2)
+                decrypt_text_aes128
+                ;;
+            3)
+                decrypt_text_vigenere
+                ;;
+            4)
+                decrypt_text_ceasar
+                ;;
+            5)
+                decrypt_text_base64
+                ;;
+            6)
+                rot13_cipher
+                ;;
+            *)
+                echo -e "${RED}[✖] Invalid option.${RESET}"
+                ;;
+        esac
     done
 }
+
 # -------------------
 # Encryptions Tools Submenu
 # -------------------
 encryptions_tools() {
     clear
-        echo -e "${GREEN}"
-          cat <<'EOF'
- _____ _   _  ____ ______   ______ _____ ___ ___  _   _ 
-| ____| \ | |/ ___|  _ \ \ / /  _ \_   _|_ _/ _ \| \ | |
-|  _| |  \| | |   | |_) \ V /| |_) || |  | | | | |  \| |
-| |___| |\  | |___|  _ < | | |  __/ | |  | | |_| | |\  |
-|_____|_| \_|\____|_| \_\|_| |_|    |_| |___\___/|_| \_|
+    echo -e "${BOLD}${GREEN}"
+    cat <<'EOF'
+___________________________________________________
+▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖▗▄▄▖▗▖  ▗▖▗▄▄▖▗▄▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
+▐▌   ▐▛▚▖▐▌▐▌   ▐▌ ▐▌▝▚▞▘ ▐▌ ▐▌ █    █  ▐▌ ▐▌▐▛▚▖▐▌
+▐▛▀▀▘▐▌ ▝▜▌▐▌   ▐▛▀▚▖ ▐▌  ▐▛▀▘  █    █  ▐▌ ▐▌▐▌ ▝▜▌
+▐▙▄▄▖▐▌  ▐▌▝▚▄▄▖▐▌ ▐▌ ▐▌  ▐▌    █  ▗▄█▄▖▝▚▄▞▘▐▌  ▐▌
+___________________________________________________
 EOF
     echo -e "${RESET}"
-    while true; do
-        PS3="Encryption Tools Menu: "
-        options=("Encrypt files" "Decrypt files" "Encrypt texts" "Decrypt texts" "Exit")
-        select opt in "${options[@]}"; do
-            case $REPLY in
-                1)
-                    encrypt_files
-                    ;;
-                2)
-                    decrypt_files
-                    ;;
-                3)
-                   encrypt_texts
-                   ;; 
-                4)
-                    decrypt_texts
-                    ;;
-                5)
-                    return
-                    ;;
-                q)
-                    return
-                    ;;
-                *)
-                    echo -e "${RED}[✖] Invalid option.${RESET}" 
-                    ;;
-            esac
-        done
+    PS3="Encryption Tools Menu: "
+    options=("Encrypt files" "Decrypt files" "Encrypt texts" "Decrypt texts" "Exit")
+    select opt in "${options[@]}"; do
+        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
+        case "$REPLY" in
+            1)
+                encrypt_files
+                ;;
+            2)
+                decrypt_files
+                ;;
+            3)
+                encrypt_texts
+                ;;
+            4)
+                decrypt_texts
+                ;;
+            5)
+                break
+                ;;
+            *)
+                echo -e "${RED}[✖] Invalid option.${RESET}"
+                ;;
+        esac
     done
 }
+
 # -------------------
 # Misc Tools Submenu
 # -------------------
 misc_tools() {
     clear
-    while true; do
-        PS3="Misc Tools Menu: "
-        options=("Matrix" "Look hacked" "Hacker code (fake)" "Exit")
-        select opt in "${options[@]}"; do
-            case $REPLY in
-                1)
-                    matrix
-                    ;;
-                2)
-                    hacked
-                    ;;
-                3)
-                    hacking
-                    ;;
-                4)
-                    return
-                    ;;
-                q)
-                    return
-                    ;;
-                *)
-                    echo -e "${RED}[!] Invalid option.${RESET}" 
-                    ;;   
-            esac
-        done
+    echo -e "${BOLD}${YELLOW}"
+    cat <<'EOF'
+___________________________________________________________________
+▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖ ▗▄▄▖▗▄▄▄▖▗▖   ▗▖    ▗▄▖ ▗▖  ▗▖▗▄▄▄▖ ▗▄▖ ▗▖ ▗▖ ▗▄▄▖
+▐▛▚▞▜▌  █  ▐▌   ▐▌   ▐▌   ▐▌   ▐▌   ▐▌ ▐▌▐▛▚▖▐▌▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌
+▐▌  ▐▌  █   ▝▀▚▖▐▌   ▐▛▀▀▘▐▌   ▐▌   ▐▛▀▜▌▐▌ ▝▜▌▐▛▀▀▘▐▌ ▐▌▐▌ ▐▌ ▝▀▚▖
+▐▌  ▐▌▗▄█▄▖▗▄▄▞▘▝▚▄▄▖▐▙▄▄▖▐▙▄▄▖▐▙▄▄▖▐▌ ▐▌▐▌  ▐▌▐▙▄▄▖▝▚▄▞▘▝▚▄▞▘▗▄▄▞▘
+___________________________________________________________________
+EOF
+    echo -e "${RESET}"
+    PS3="Misc Tools Menu: "
+    options=("Matrix" "Look hacked" "Hacker code (fake)" "Exit")
+    select opt in "${options[@]}"; do
+        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
+        case "$REPLY" in
+            1)
+                matrix
+                ;;
+            2)
+                hacked
+                ;;
+            3)
+                hacking
+                ;;
+            4)
+                break
+                ;;
+            *)
+                echo -e "${RED}[!] Invalid option.${RESET}"
+                ;;
+        esac
     done
 }
+
 # -------------------
 # Help Menu
 # -------------------
@@ -1627,7 +1641,7 @@ Commands:
     bleachbit                    Clean system junk
     rootkit_hunt / audit         Scan for rootkits
     remove_temp_files / rm-temp  Clear /tmp directory
-    generate_password /psswd     Generate secure password
+    generate_password / psswd    Generate secure password
     delete_file / del            Securely delete a file
     clean_metadata               Remove metadata from files
 
@@ -1638,24 +1652,32 @@ Commands:
 
   ENCRYPTING:
     encrypt_file_aes256      Encrypt a file with AES-256
-    decrypt_file_aes256      Dencrypt a file with AES-256
+    decrypt_file_aes256      Decrypt a file with AES-256
     encrypt_text_aes256      Encrypt text with AES-256
-    decrypt_text_aes256      Dencrypt text with AES-256
+    decrypt_text_aes256      Decrypt text with AES-256
     encrypt_file_aes128      Encrypt a file with AES-128
-    decrypt_file_aes128      Dencrypt a file with AES-128
+    decrypt_file_aes128      Decrypt a file with AES-128
     encrypt_text_aes128      Encrypt text with AES-128
-    decrypt_text_aes128      Dencrypt text with AES-128
+    decrypt_text_aes128      Decrypt text with AES-128
     encrypt_text_vigenere    Encrypt text with Vigenere cipher
     decrypt_text_vigenere    Decrypt text with Vigenere cipher
-    encrypt_text_ceasar      Encrypt text with Ceasar cipher
-    decrypt_text_ceasar      Decrypt text with Ceasar cipher
-    encrypt_text_base64      Encrypt text with Base64
-    decrypt_text_base64      Dencrypt text with Base64
+    encrypt_text_ceasar      Encrypt text with Caesar cipher
+    decrypt_text_ceasar      Decrypt text with Caesar cipher
+    encrypt_text_base64      Encode text with Base64
+    decrypt_text_base64      Decode text with Base64
     rot13_cipher             Encrypt/Decrypt text with ROT13
+
+  OPEN SUB-MENUS:
+    network_tools            Open network tools menu
+    system_tools             Open system tools menu
+    privacy_tools            Open privacy/security tools menu
+    encryptions_tools        Open encrypting tools menu
+    misc_tools               Open miscellaneous tools menu
+
   OTHER:
     license / -l             Show license information
-    clone_source / -c   Clone project repository
-    help / -h / --h      Show this help message
+    clone_source / -c        Clone project repository
+    help / -h / --help       Show this help message
 
 Notes:
   - Some commands require sudo privileges.
@@ -1671,12 +1693,14 @@ EOF
 # -------------------
 if [[ -n "$1" ]]; then
     case "$1" in
+        # NETWORK
         whois_lookup|whois) whois_lookup ;;
         ping) ping ;;
         traceroute|trace) traceroute ;;
         dns_info|dns) dns_info ;;
         get_ip|ip) get_ip ;;
         ip_osint|osint) ip_osint ;;
+        # SYSTEM
         update_apps) update_apps ;;
         systeminfo|sys-info) systeminfo ;;
         paranoia_mode)
@@ -1686,6 +1710,7 @@ if [[ -n "$1" ]]; then
                 exit 1
             fi
             ;;
+        # PRIVACY & SECURITY
         secure_empty_trash|SET) secure_empty_trash ;;
         secure_overwrite_free_space|SOFC) secure_overwrite_free_space ;;
         system_audit|audit) system_audit ;;
@@ -1694,30 +1719,38 @@ if [[ -n "$1" ]]; then
         remove_temp_files|rm-temp) remove_temp_files ;;
         generate_password|psswd) generate_password ;;
         delete_file|del) delete_file ;;
-        encrypt_file_aes256) encrpt_file_aes256 ;;
+        clean_metadata) clean_metadata ;;
+        # ENCRYPTING
+        encrypt_file_aes256) encrypt_file_aes256 ;;
         decrypt_file_aes256) decrypt_file_aes256 ;;
         encrypt_text_aes256) encrypt_text_aes256 ;;
         decrypt_text_aes256) decrypt_text_aes256 ;;
-        encrypt_file_aes128) encrpt_file_aes128 ;;
+        encrypt_file_aes128) encrypt_file_aes128 ;;
         decrypt_file_aes128) decrypt_file_aes128 ;;
         encrypt_text_aes128) encrypt_text_aes128 ;;
         decrypt_text_aes128) decrypt_text_aes128 ;;
-        decrypt_text_vigenere) decrypt_text_vigenere ;;
+        encrypt_text_vigenere) encrypt_text_vigenere ;;
         decrypt_text_vigenere) decrypt_text_vigenere ;;
         encrypt_text_ceasar) encrypt_text_ceasar ;;
         decrypt_text_ceasar) decrypt_text_ceasar ;;
         encrypt_text_base64) encrypt_text_base64 ;;
         decrypt_text_base64) decrypt_text_base64 ;;
         rot13_cipher) rot13_cipher ;;
+        # MISC
         matrix|-m) matrix ;;
         hacked) hacked ;;
         hacking) hacking ;;
+        # OTHER
         license|-l) license ;;
         clone_source|clone) clone_source ;;
         help|-h|--help) show_help ;;
         version|-v) version ;;
+        # MENUS
+        misc_tools) misc_tools ;;
+        system_tools) system_tools ;;
+        privacy_tools) privacy_tools ;;
+        network_tools) network_tools ;;
         encryptions_tools) encryptions_tools ;;
-        clean_metadata) clean_metadata ;;
         *)
             echo -e "${RED}[!] Unknown command: $1${RESET}"
             echo "Use 'jas help' to see available commands."
@@ -1727,39 +1760,57 @@ if [[ -n "$1" ]]; then
     exit 0
 fi
 
-
 # -------------------
 # Interactive Menu
 # -------------------
-ASCII_ART
+clear
+while IFS= read -r line; do
+    COLOR="\e[38;2;${COLORS[$(( i % ${#COLORS[@]} ))]}m"
+    printf "%b%s%b\n" "$COLOR" "$line" "$RESET"
+    ((i++))
+done <<'EOF'
+   ___  ___   _____      _____ _____  _____ _     ______  _______   __
+  |_  |/ _ \ /  ___|    |_   _|  _  ||  _  | |    | ___ \|  _  \ \ / /
+    | / /_\ \\ `--. ______| | | | | || | | | |    | |_/ /| | | |\ V /
+    | |  _  | `--. \______| | | | | || | | | |    | ___ \| | | |/   \
+/\__/ / | | |/\__/ /      | | \ \_/ /\ \_/ / |____| |_/ /\ \_/ / /^\ \
+\____/\_| |_/\____/       \_/  \___/  \___/\_____/\____/  \___/\/   \/
+EOF
+
+echo -e "${BOLD}${RED}  Version: ${MAIN_VERSION}${SUB_VERSION} - Creator: DarkShadowUser - ${LICENSE}${RESET}"
 echo
 while true; do
     PS3="Main Menu: "
-    main_options=("Network Tools" "System Tools" "Privacy/Security Tools" "Encrypting tools" "Miscellaneous Tools" "License" "Clone source code"  "Exit")
+    main_options=("Network Tools" "System Tools" "Privacy/Security Tools" "Encrypting tools" "Miscellaneous Tools" "License" "Clone source code" "Exit")
     select opt in "${main_options[@]}"; do
-        case $REPLY in
-            1) 
-            network_tools ;;
-            2) 
-            system_tools ;;
-            3) 
-            privacy_tools ;;
+        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && exit 0
+        case "$REPLY" in
+            1)
+                network_tools
+                ;;
+            2)
+                system_tools
+                ;;
+            3)
+                privacy_tools
+                ;;
             4)
-            encryptions_tools ;;
+                encryptions_tools
+                ;;
             5)
-            misc_tools ;;
+                misc_tools
+                ;;
             6)
-            license ;;
-            7) 
-            clone_source ;;
-            8) 
+                license
+                ;;
+            7)
+                clone_source
+                ;;
+            8)
                 exit 0
                 ;;
-            q) 
-                exit 0
-                ;;
-            *) 
-                echo -e "${RED}[!] Invalid option.${RESET}" 
+            *)
+                echo -e "${RED}[!] Invalid option.${RESET}"
                 ;;
         esac
     done
