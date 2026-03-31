@@ -1,4 +1,4 @@
-# Jas-toolbox v1.6
+# Jas-toolbox v1.6.1
 
 A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security tasks.
 
@@ -21,9 +21,11 @@ fastfetch – for fast system info display
 
 srm – for secure file deletion
 
+exiftool - metadata cleaning
+
 chkrootkit – for rootkit scanning
 
-openssl – for generating secure passwords
+openssl – for crypotography purposes
 
 jq - for IP osint
 
