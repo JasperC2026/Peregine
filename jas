@@ -26,17 +26,23 @@ i=0
 
 # Other variables
 MAIN_VERSION="1.6"
-SUB_VERSION=".1"
-TESTED="Yes"
-TESTED_ON="31-3-2026"
-TESTED_RELEASE="Stable"
+SUB_VERSION=".2"
+TESTED="No"
+TESTED_ON="1-1-2026"
+TESTED_RELEASE="Beta"
 LICENSE="MIT License"
 
 # Commands
 
 # Networking
+run_with_tor() {
+    if [[ "$USE_TOR" == "y" ]]; then
+        torsocks "$@"
+    else
+        "$@"
+    fi
+}
 whois_lookup() {
-    clear
     echo
     echo -n "Enter domain (ex: example.com): "
     read -r domain
@@ -46,10 +52,14 @@ whois_lookup() {
         return 1
     fi
 
+    echo -e "${PURPLE}"
+    read -p "Route through Tor? (y/n): " USE_TOR
+    echo -e "${RESET}"
+
     echo -e "${GREEN}[➜] Performing Whois lookup for $domain...${RESET}"
     sleep 0.5
 
-    output=$(whois "$domain" 2>&1)
+    output=$(run_with_tor whois "$domain" 2>&1)
     status=$?
 
     echo -e "${CYAN}$output${RESET}"
@@ -71,7 +81,6 @@ whois_lookup() {
 }
 
 ping() {
-    clear
     echo
     echo -n "Enter item to ping: "
     read -r itemping
@@ -80,9 +89,6 @@ ping() {
         echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
         return 1
     fi
-
-    echo -e "${GREEN}[➜] Pinging $itemping...${RESET}"
-    sleep 0.5
 
     output=$(command ping -c 6 "$itemping" 2>&1)
     status=$?
@@ -106,7 +112,6 @@ ping() {
 }
 
 traceroute() {
-    clear
     echo
     echo -n "Enter domain to trace: "
     read -r domaintrace
@@ -116,7 +121,7 @@ traceroute() {
         return 1
     fi
 
-    echo -e "${GREEN}[➜] Tracing route to $domaintrace...${RESET}"
+    echo -e "${YELLOW}[!] Traceroute is unreliable over Tor. Running normally.${RESET}"
     sleep 0.5
 
     output=$(command traceroute "$domaintrace" 2>&1)
@@ -141,7 +146,6 @@ traceroute() {
 }
 
 dns_info() {
-    clear
     echo
     echo -n "Enter domain to get DNS info: "
     read -r domaindns
@@ -151,10 +155,14 @@ dns_info() {
         return 1
     fi
 
+    echo -e "${PURPLE}"
+    read -p "Route through Tor? (y/n): " USE_TOR
+    echo -e "${RESET}"
+
     echo -e "${GREEN}[➜] Getting DNS info for $domaindns...${RESET}"
     sleep 0.5
 
-    output=$(dig "$domaindns" 2>&1)
+    output=$(run_with_tor dig "$domaindns" 2>&1)
     status=$?
 
     echo -e "${CYAN}$output${RESET}"
@@ -180,12 +188,14 @@ dns_info() {
 }
 
 get_ip() {
-    clear
-    echo
+    echo -e "${PURPLE}"
+    read -p "Route through Tor? (y/n): " USE_TOR
+    echo -e "${RESET}"
+
     echo -e "${GREEN}[➜] Fetching public IP...${RESET}"
     sleep 0.5
 
-    output=$(curl -s --max-time 5 ifconfig.me 2>&1)
+    output=$(run_with_tor curl -s --max-time 5 ifconfig.me 2>&1)
     status=$?
 
     echo -e "${CYAN}$output${RESET}"
@@ -201,7 +211,6 @@ get_ip() {
 }
 
 ip_osint() {
-    clear
     echo
     echo "IPinfo https://ipinfo.io/"
     read -p "Enter IP or domain: " target
@@ -211,10 +220,14 @@ ip_osint() {
         return 1
     fi
 
+    echo -e "${PURPLE}"
+    read -p "Route through Tor? (y/n): " USE_TOR
+    echo -e "${RESET}"
+
     echo -e "${GREEN}[➜] Fetching OSINT for $target...${RESET}"
     sleep 0.5
 
-    data=$(curl -s --max-time 5 "https://ipinfo.io/$target" 2>&1)
+    data=$(run_with_tor curl -s --max-time 5 "https://ipinfo.io/$target" 2>&1)
     status=$?
 
     if [[ $status -ne 0 || -z "$data" ]]; then
@@ -253,10 +266,18 @@ inspect_cert() {
 
     read -rp "Enter domain: " domain
 
-    echo | openssl s_client -connect "$domain:443" -servername "$domain" 2>/dev/null \
-        | openssl x509 -noout -text
+    echo -e "${PURPLE}"
+    read -p "Route through Tor? (y/n): " USE_TOR
+    echo -e "${RESET}"
 
-    if [[ $? -eq 0 ]]; then
+    output=$(echo | run_with_tor openssl s_client -connect "$domain:443" -servername "$domain" 2>/dev/null \
+        | openssl x509 -noout -text)
+
+    status=$?
+
+    echo -e "${CYAN}$output${RESET}"
+
+    if [[ $status -eq 0 ]]; then
         echo -e "${GREEN}[+] Certificate retrieved.${RESET}"
     else
         echo -e "${RED}[!] Failed to retrieve certificate.${RESET}"
@@ -265,6 +286,88 @@ inspect_cert() {
     echo
 }
 
+maigret_search() {
+    echo
+    echo -e "${GREEN}[➜] Maigret Username OSINT${RESET}"
+    echo
+
+    if ! command -v maigret &>/dev/null; then
+        echo -e "${RED}[!] Maigret not installed.${RESET}"
+        echo -e "${YELLOW}[➜] Install with: pipx install maigret${RESET}"
+        return
+    fi
+
+    read -p "Enter username to search: " username
+
+    echo -e "${PURPLE}"
+    read -p "Route through Tor? (y/n): " USE_TOR
+    echo -e "${RESET}"
+
+    output_file="maigret_${username}_$(date +%s).json"
+
+    echo -e "${GREEN}[➜] Searching for username: ${username}${RESET}"
+    echo -e "${YELLOW}[!] Note: Requests go to external sites.${RESET}"
+    echo
+
+    run_with_tor maigret "$username" --json "$output_file" --top-sites 50 --timeout 5
+
+    echo
+    echo -e "${GREEN}[+] Scan completed.${RESET}"
+    echo -e "${GREEN}[➜] Results saved to: ${output_file}${RESET}"
+}
+tor_connect() {
+    clear
+    echo -e "${PURPLE}"
+    cat << "EOF"
+                                            =                       
+                                      == ==                     
+..........................         ======                       
+..........................        ======                        
+..........................       =====                          
+..........................    @@@===                            
+..........................     @.:%@@                           
+ .     ............            @=.-=@                   ........
+        ...........           @@....%@               ...........
+        ...........         @@:...:=..+@@           ............
+        ...........      @@-....-.=.::...#@        .............
+        ...........    @@....:+....=.+.....%@     ..............
+        ...........   @#...*........+.+.....=@    ...........   
+        ...........   @...-....:..=..:@......@@   .........     
+        ...........  %%..-...*.....-.=@.......@   .........     
+        ...........  @#.:..::....::.:=@.......@   .........     
+        ...........   @..-.*...::.*.%+@......@@   .........     
+        ...........   @%..:%...+..-.#+@.....=@    .........     
+        ...........    @@..-%..+..=.=#.....%@     .........     
+        ...........      @@-++-.+.%#@=..:@@       .........     
+        ..........          @@@@@@@@#@@@          .........     
+
+EOF
+    echo -e "${RESET}"
+    echo -e "${PURPLE}[➜] Initializing Tor connection...${RESET}"
+    
+    if ! command -v tor &>/dev/null; then
+        echo -e "${RED}[!] Tor is not installed.${RESET}"
+        echo -e "${YELLOW}[➜] Install with: sudo apt install tor torsocks${RESET}"
+        return
+    fi
+
+    echo -e "${PURPLE}[➜] Starting Tor service...${RESET}"
+    sudo systemctl start tor
+
+    if systemctl is-active --quiet tor; then
+        echo -e "${PURPLE}[+] Tor is running.${RESET}"
+    else
+        echo -e "${RED}[!] Failed to start Tor.${RESET}"
+        return
+    fi
+
+    echo
+    echo -e "${PURPLE}[➜] Checking Tor IP...${RESET}"
+    sleep 1
+    torsocks curl -s https://check.torproject.org/api/ip | grep -o '"IP":"[^"]*' | cut -d'"' -f4
+    echo
+    echo -e "${PURPLE}[+] Traffic is now routed through Tor (torsocks).${RESET}"
+}
 # System
 update_apps() {
     clear
@@ -1270,7 +1373,7 @@ ____________________________________
 EOF
     echo -e "${RESET}"
     PS3="Network Tools Menu: "
-    options=("Whois" "Ping" "Trace" "DNS info" "get IP" "IP osint" "Back")
+    options=("Whois" "Ping" "Trace" "DNS info" "get IP" "IP osint" "Inspect SSL Certificate" "Connect through Tor" "Back")
     select opt in "${options[@]}"; do
         [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
         case "$REPLY" in
@@ -1293,6 +1396,12 @@ EOF
                 ip_osint
                 ;;
             7)
+                inspect_cert
+                ;;
+            8)
+                tor_connect
+                ;;
+            9)
                 break
                 ;;
             *)
@@ -1700,6 +1809,9 @@ if [[ -n "$1" ]]; then
         dns_info|dns) dns_info ;;
         get_ip|ip) get_ip ;;
         ip_osint|osint) ip_osint ;;
+        inspect_cert) inspect_cert ;;
+        tor_connect) tor_connect ;;
+        maigret_search) maigret_search ;;
         # SYSTEM
         update_apps) update_apps ;;
         systeminfo|sys-info) systeminfo ;;
