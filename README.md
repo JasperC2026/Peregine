@@ -1,4 +1,4 @@
-# Jas-toolbox v1.6.1
+# Jas-toolbox Beta v1.6.2
 
 A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security tasks.
 
@@ -38,6 +38,8 @@ bleachbit - system cleaning
 cmatrix - matrix effect
 
 hollywood - hacked effect
+
+torsockets - running commands trough the TOR network
 
 ## Notes
 Toolkit is tested on Ubuntu, on other distro's it should function probably but there could be some isseus.
