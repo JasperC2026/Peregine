@@ -10,10 +10,11 @@
 /\__/ / | | |/\__/ /      | | \ \_/ /\ \_/ / |____| |_/ /\ \_/ / /^\ \
 \____/\_| |_/\____/       \_/  \___/  \___/\_____/\____/  \___/\/   \/
 ```
-![Version](https://img.shields.io/badge/version-1.6.4-red)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Platform](https://img.shields.io/badge/platform-Linux-blue)
-![Shell](https://img.shields.io/badge/shell-Bash-orange)
+![Version](https://img.shields.io/badge/Version-1.6.4-ff0033?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-ff0033?style=for-the-badge)
+![Shell](https://img.shields.io/badge/Shell-Bash-black?style=for-the-badge&logo=gnubash&logoColor=black)
+![Platform](https://img.shields.io/badge/Platform-Linux-black?style=for-the-badge&logo=linux&logoColor=black)
+
 ---
 ## What is Jas-toolbox?
 
