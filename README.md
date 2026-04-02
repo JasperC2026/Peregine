@@ -15,12 +15,13 @@
 ![Shell](https://img.shields.io/badge/Shell-Bash-black?style=for-the-badge&logo=gnubash&logoColor=black)
 ![Platform](https://img.shields.io/badge/Platform-Linux-black?style=for-the-badge&logo=linux&logoColor=black)
 
+
 ---
 ## What is Jas-toolbox?
 
 Jas-toolbox is a modular, terminal-based CLI toolkit for Linux users who want fast access to a wide range of tools — without juggling a dozen different utilities. It combines networking, system management, privacy, security, and encryption into a single interactive menu-driven interface. Every tool can also be called directly as a command.
 
-Built for speed, simplicity, and control.
+Built for speed, simplicity, privacy-first and control.
 
 ## Features
 
