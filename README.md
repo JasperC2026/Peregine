@@ -64,4 +64,4 @@ Delete_file uses secure deletion (irreversible)
 If you encounter any bugs feel free to open a pull reqeust or send a message. 
 
 ## MIT license - Copyright (c) 2026 DarkShadowUser
-
+<img width="1362" height="211" alt="image" src="https://github.com/user-attachments/assets/6eaa4e32-03f1-4ee6-9b75-d9349a761d93" />
