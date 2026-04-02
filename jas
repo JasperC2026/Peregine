@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Jas - A simple command line toolbox for networking, system managing and privacy/security. Version 1.0.
+# Jas - A simple command line toolbox for networking, system managing and privacy/security. Version 1.6
 
 # -------------------
 # Colors for ASCII art and use in output messages
@@ -1600,6 +1600,7 @@ network_tools() {
  [_____________]   ____________________________________             
 EOF
     echo -e "${RESET}"
+    local __old_ps3=$PS3
     PS3="Network Tools Menu: "
     options=("Whois" "Ping" "Trace" "DNS info" "get IP" "IP osint" "Inspect SSL Certificate" "Connect through Tor" "Back")
     select opt in "${options[@]}"; do
@@ -1630,7 +1631,7 @@ EOF
                 tor_connect
                 ;;
             9|q|Q)
-                return 0
+                break
                 ;;
             *)
                 echo -e "\a"
@@ -1638,6 +1639,9 @@ EOF
                 ;;
         esac
     done
+
+    PS3="$__old_ps3"
+    return 0
 }
 
 # -------------------
@@ -1655,6 +1659,7 @@ system_tools() {
 |1|0|1|0|1| _______________________________
 EOF
     echo -e "${RESET}"
+    local __old_ps3=$PS3
     PS3="System Tools Menu: "
     options=("Updating all apps" "See system information" "Paranoia mode" "Install usefull tools" "Exit")
 
@@ -1676,7 +1681,7 @@ EOF
                 useful_tools
                 ;;
             5|q|Q)
-                return 0
+                break
                 ;;
             *)
                 echo -e "\a"
@@ -1684,6 +1689,9 @@ EOF
                 ;;
         esac
     done
+
+    PS3="$__old_ps3"
+    return 0
 }
 
 # -------------------
@@ -1703,6 +1711,7 @@ EOF
     echo -e "${RESET}"
     echo -e "\a"
     echo -e "${YELLOW}[!] Note: Some of these tools can be dangerous if used improperly. Make sure you understand what each tool does before using it. Always use these tools responsibly and ethically.${RESET}"
+    local __old_ps3=$PS3
     PS3="Privacy/Security Menu: "
     options=("Securely wipe trash" "Securely overwrite free space" "Peform system audit" "Peform system cleanup" "Check for rootkits" "Remove temporary files" "Generate secure password" "Delete file" "Clean metadata" "Exit")
     select opt in "${options[@]}"; do
@@ -1736,7 +1745,7 @@ EOF
                 clean_metadata
                 ;;
             10|q|Q)
-                return 0
+                break
                 ;;
             *)
                 echo -e "\a"
@@ -1744,6 +1753,9 @@ EOF
                 ;;
         esac
     done
+
+    PS3="$__old_ps3"
+    return 0
 }
 
 # -------------------
@@ -1751,6 +1763,7 @@ EOF
 # -------------------
 encrypt_files() {
     echo
+    local __old_ps3=$PS3
     PS3="Encryption Menu: "
     options=("AES-256" "AES-128")
     select opt in "${options[@]}"; do
@@ -1768,6 +1781,9 @@ encrypt_files() {
                 ;;
         esac
     done
+
+    PS3="$__old_ps3"
+    return 0
 }
 
 # -------------------
@@ -1775,6 +1791,7 @@ encrypt_files() {
 # -------------------
 decrypt_files() {
     echo
+    local __old_ps3=$PS3
     PS3="Decryption Menu: "
     options=("AES-256" "AES-128")
     select opt in "${options[@]}"; do
@@ -1792,6 +1809,9 @@ decrypt_files() {
                 ;;
         esac
     done
+
+    PS3="$__old_ps3"
+    return 0
 }
 
 # -------------------
@@ -1801,6 +1821,7 @@ encrypt_texts() {
     echo
     echo -e "${YELLOW}[!] For real security use AES, for education or fun Caesar or Vigenere and for encoding Base64 or ROT13${RESET}"
     echo
+    local __old_ps3=$PS3
     PS3="Encryption Menu: "
     options=("AES-256" "AES-128" "vigenere" "ceasar" "base64" "ROT13")
     select opt in "${options[@]}"; do
@@ -1830,6 +1851,9 @@ encrypt_texts() {
                 ;;
         esac
     done
+
+    PS3="$__old_ps3"
+    return 0
 }
 
 # -------------------
@@ -1839,6 +1863,7 @@ decrypt_texts() {
     echo
     echo -e "${YELLOW}[!] For real security use AES, for education or fun Caesar or Vigenere and for encoding Base64 or ROT13${RESET}"
     echo
+    local __old_ps3=$PS3
     PS3="Encryption Menu: "
     options=("AES-256" "AES-128" "vigenere" "ceasar" "base64" "ROT13")
     select opt in "${options[@]}"; do
@@ -1868,6 +1893,9 @@ decrypt_texts() {
                 ;;
         esac
     done
+
+    PS3="$__old_ps3"
+    return 0
 }
 
 # -------------------
@@ -1892,6 +1920,7 @@ encryptions_tools() {
           %%%%%%%%%%%%%%           
 EOF
     echo -e "${RESET}"
+    local __old_ps3=$PS3
     PS3="Encryption Tools Menu: "
     options=("Encrypt files" "Decrypt files" "Encrypt texts" "Decrypt texts" "Exit")
     select opt in "${options[@]}"; do
@@ -1910,7 +1939,7 @@ EOF
                 decrypt_texts
                 ;;
             5|q|Q)
-                return 0
+                break
                 ;;
             *)
                 echo -e "\a"
@@ -1918,6 +1947,9 @@ EOF
                 ;;
         esac
     done
+
+    PS3="$__old_ps3"
+    return 0
 }
 
 # -------------------
@@ -1934,6 +1966,7 @@ ___________________________________________________________________
 ___________________________________________________________________
 EOF
     echo -e "${RESET}"
+    local __old_ps3=$PS3
     PS3="Misc Tools Menu: "
     options=("Matrix" "Look hacked" "Hacker code (fake)" "Exit")
     select opt in "${options[@]}"; do
@@ -1949,7 +1982,7 @@ EOF
                 hacking
                 ;;
             4|q|Q)
-                exit 0
+                break
                 ;;
             *)
                 echo -e "\a"
@@ -1957,6 +1990,9 @@ EOF
                 ;;
         esac
     done
+
+    PS3="$__old_ps3"
+    return 0
 }
 
 # -------------------
