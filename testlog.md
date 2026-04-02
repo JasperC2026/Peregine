@@ -3,11 +3,11 @@ Pre-release v1.6.2 and v1.6.3 testing results:
 Results:
 - Cloning source code works
 - License works 
-- Misc tools work
-- Encryption tools work
-- Privacy/security tools work
-- System tools work
-- Network tools work
+- Misc tools works
+- Encryption tools works
+- Privacy/security tools works
+- System tools works
+- Network tools works
 
 Bugs: 
 - Got loop with exiting sub-menus 
