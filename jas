@@ -5,7 +5,8 @@
 # -------------------
 # Colors for ASCII art and use in output messages
 # -------------------
-
+BLACK="\e[0;30m"
+WHITE="\e[1;37m"
 RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
@@ -36,13 +37,147 @@ rainbow() {
 # Other variables
 MAIN_VERSION="1.6"
 SUB_VERSION=".4"
-TESTED="Yes"
-TESTED_ON="2-4-2026"
+TESTED="No"
+TESTED_ON=""
 TESTED_RELEASE="Stable"
 LICENSE="MIT License"
 
 # Commands
+show_command_info() {
+    case "$1" in
 
+        # NETWORK
+        whois|whois_lookup)
+            ;;
+        ping)
+            ;;
+        traceroute|trace)
+            ;;
+        dns|dns_info)
+            ;;
+        ip|get_ip)
+            ;;
+        osint|ip_osint)
+            ;;
+        inspect_cert)
+            ;;
+        tor_connect)
+            ;;
+        maigret_search)
+            ;;
+
+        # SYSTEM
+        update_apps)
+            ;;
+        sys-info|systeminfo)
+            ;;
+        paranoia_mode)
+            ;;
+        useful_tools)
+            ;;
+        setup_clamav)
+            ;;
+        setup_usbguard)
+            ;;
+        setup_ufw)
+            ;;
+
+        # PRIVACY & SECURITY
+        set|secure_empty_trash)
+            ;;
+        sofc|secure_overwrite_free_space)
+            ;;
+        audit|system_audit)
+            ;;
+        bleachbit)
+            ;;
+        rootkit|rootkit_hunt)
+            ;;
+        rm-temp|remove_temp_files)
+            ;;
+        psswd|generate_password)
+            ;;
+        del|delete_file)
+            ;;
+        clean_metadata)
+            ;;
+
+        # ENCRYPTING
+        encrypt_file_aes256)
+            ;;
+        decrypt_file_aes256)
+            ;;
+        encrypt_text_aes256)
+            ;;
+        decrypt_text_aes256)
+            ;;
+        encrypt_file_aes128)
+            ;;
+        decrypt_file_aes128)
+            ;;
+        encrypt_text_aes128)
+            ;;
+        decrypt_text_aes128)
+            ;;
+        encrypt_text_vigenere)
+            ;;
+        decrypt_text_vigenere)
+            ;;
+        encrypt_text_ceasar)
+            ;;
+        decrypt_text_ceasar)
+            ;;
+        encrypt_text_base64)
+            ;;
+        decrypt_text_base64)
+            ;;
+        rot13_cipher)
+            ;;
+
+        # MISC
+        matrix|-m)
+            ;;
+        hacked)
+            ;;
+        hacking)
+            ;;
+
+        # OTHER
+        license|-l)
+            echo "Show license"
+            ;;
+        clone_source|clone)
+            echo "Clone repository"
+            ;;
+        help|-h|--help)
+            echo "Show help menu"
+            ;;
+        version|-v)
+            echo "Show version"
+            ;;
+
+        # MENUS
+        misc_tools)
+            echo "Open misc tools menu"
+            ;;
+        system_tools)
+            echo "Open system tools menu"
+            ;;
+        privacy_tools)
+            echo "Open privacy tools menu"
+            ;;
+        network_tools)
+            echo "Open network tools menu"
+            ;;
+        encryptions_tools)
+            echo "Open encryption tools menu"
+            ;;
+
+        *)
+            echo "No info available"
+            ;;
+    esac
+}
 # Networking
 run_with_tor() {
     if [[ "$USE_TOR" == "y" ]]; then
@@ -2001,98 +2136,117 @@ EOF
 show_help() {
 clear
 cat << "EOF"
-JAS Toolbox - Command Line Interface
-===================================
+┌───────────────────────────────────────────────┐
+│              JAS Toolbox v1.6                 │
+│  Networking • System • Privacy • Encryption   │
+└───────────────────────────────────────────────┘
 
 Usage:
   jas <command> [options]
 
 Description:
-  Multi-purpose toolbox for networking, system management,
-  privacy, and security operations.
+  Multi-purpose CLI toolbox focused on networking,
+  system management, privacy, and security operations.
 
-Commands:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[ NETWORK ]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  whois_lookup | whois        → WHOIS lookup on domain
+  ping                       → Send ICMP requests
+  traceroute  | trace        → Trace network route
+  dns_info    | dns          → Retrieve DNS records
+  get_ip      | ip           → Show public IP address
+  ip_osint    | osint        → Gather IP intelligence
+  inspect_cert               → Inspect SSL/TLS certificate
+  tor_connect                → Connect via Tor
+  maigret_search             → Username OSINT search
 
-  NETWORK:
-    whois_lookup / whois     Perform WHOIS lookup on a domain
-    ping                     Send ICMP requests to a host
-    traceroute / trace       Trace route to a target
-    dns_info / dns           Retrieve DNS records
-    get_ip / ip              Show public IP address
-    ip_osint / osint         Gather IP intelligence data
-    inspect_cert             Inspect SSL/TLS certificate of a domain
-    tor_connect              Connect to a server through Tor
-    maigret_search               Search for username across data breaches
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[ SYSTEM ]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  update_apps                → Update APT/Flatpak/Snap
+  systeminfo  | sys-info     → System information
+  paranoia_mode              → Extreme lockdown (⚠)
+  useful_tools               → Install useful tools
+  setup_clamav               → Install & configure ClamAV
+  setup_usbguard             → Install & configure USBGuard
+  setup_ufw                  → Install & configure UFW
 
-  SYSTEM:
-    update_apps              Update system packages (APT/Flatpak/Snap)
-    systeminfo / sys-info    Display system information
-    paranoia_mode            Extreme lockdown mode (WARNING)
-    useful_tools             Install useful tools
-    setup_clamav             Install and set up ClamAV antivirus
-    setup_usbguard           Install and set up USBGuard
-    setup_ufw                Install and set up UFW firewall
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[ PRIVACY & SECURITY ]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  secure_empty_trash | set   → Securely empty trash
+  secure_overwrite_free_space | sofc
+                             → Overwrite free disk space
+  system_audit | audit       → Run Lynis audit
+  bleachbit                  → Clean system junk
+  rootkit_hunt               → Scan for rootkits
+  remove_temp_files | rm-temp→ Clear /tmp directory
+  generate_password | psswd  → Generate password
+  delete_file | del          → Secure file deletion
+  clean_metadata             → Remove file metadata
 
-  PRIVACY & SECURITY:
-    secure_empty_trash / set     Securely empty trash
-    secure_overwrite_free_space / SOFC
-                                 Overwrite free disk space
-    system_audit / audit         Run system audit (Lynis)
-    bleachbit                    Clean system junk
-    rootkit_hunt / audit         Scan for rootkits
-    remove_temp_files / rm-temp  Clear /tmp directory
-    generate_password / psswd    Generate secure password
-    delete_file / del            Securely delete a file
-    clean_metadata               Remove metadata from files
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[ ENCRYPTING ]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  encrypt_file_aes256        → AES-256 file encryption
+  decrypt_file_aes256        → AES-256 file decryption
+  encrypt_text_aes256        → AES-256 text encryption
+  decrypt_text_aes256        → AES-256 text decryption
 
-  MISC:
-    matrix / -m              Matrix-style terminal effect
-    hacked                   Hollywood-style terminal effect
-    hacking                  Fake hacking simulation
+  encrypt_file_aes128        → AES-128 file encryption
+  decrypt_file_aes128        → AES-128 file decryption
+  encrypt_text_aes128        → AES-128 text encryption
+  decrypt_text_aes128        → AES-128 text decryption
 
-  ENCRYPTING:
-    encrypt_file_aes256      Encrypt a file with AES-256
-    decrypt_file_aes256      Decrypt a file with AES-256
-    encrypt_text_aes256      Encrypt text with AES-256
-    decrypt_text_aes256      Decrypt text with AES-256
-    encrypt_file_aes128      Encrypt a file with AES-128
-    decrypt_file_aes128      Decrypt a file with AES-128
-    encrypt_text_aes128      Encrypt text with AES-128
-    decrypt_text_aes128      Decrypt text with AES-128
-    encrypt_text_vigenere    Encrypt text with Vigenere cipher
-    decrypt_text_vigenere    Decrypt text with Vigenere cipher
-    encrypt_text_ceasar      Encrypt text with Caesar cipher
-    decrypt_text_ceasar      Decrypt text with Caesar cipher
-    encrypt_text_base64      Encode text with Base64
-    decrypt_text_base64      Decode text with Base64
-    rot13_cipher             Encrypt/Decrypt text with ROT13
+  encrypt_text_vigenere      → Vigenère cipher
+  decrypt_text_vigenere      → Vigenère decipher
+  encrypt_text_ceasar        → Caesar cipher
+  decrypt_text_ceasar        → Caesar decipher
+  encrypt_text_base64        → Base64 encode
+  decrypt_text_base64        → Base64 decode
+  rot13_cipher               → ROT13 cipher
 
-  OPEN SUB-MENUS:
-    network_tools            Open network tools menu
-    system_tools             Open system tools menu
-    privacy_tools            Open privacy/security tools menu
-    encryptions_tools        Open encrypting tools menu
-    misc_tools               Open miscellaneous tools menu
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[ MISC ]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  matrix | -m                → Matrix effect
+  hacked                    → Hollywood terminal
+  hacking                   → Fake hacking sim
 
-  OTHER:
-    license / -l             Show license information
-    clone_source / -c        Clone project repository
-    help / -h / --help       Show this help message
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[ SUB-MENUS ]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  network_tools             → Network menu
+  system_tools              → System menu
+  privacy_tools             → Privacy/Security menu
+  encryptions_tools         → Encryption menu
+  misc_tools                → Misc menu
 
-Notes:
-  - Some commands require sudo privileges.
-  - External tools may be required (whois, dig, lynis, etc.).
-  - Destructive actions (e.g., overwrite, shred) are irreversible.
-  - paranoia_mode can disrupt networking and system behavior.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[ OTHER ]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  license | -l              → Show license
+  clone_source | -c         → Clone repository
+  help | -h | --help        → Show this menu
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[ NOTES ]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  • Some commands require sudo privileges
+  • External tools may be required (whois, dig, lynis, etc.)
+  • Destructive actions are irreversible (wipe, shred, overwrite)
+  • paranoia_mode may disrupt networking/system behavior
 
 EOF
 }
 
-# -------------------
+##-------------------
 # Command Dispatcher
 # -------------------
 if [[ -n "$1" ]]; then
     case "$1" in
+
         # NETWORK
         whois_lookup|whois) whois_lookup ;;
         ping) ping ;;
@@ -2103,6 +2257,7 @@ if [[ -n "$1" ]]; then
         inspect_cert) inspect_cert ;;
         tor_connect) tor_connect ;;
         maigret_search) maigret_search ;;
+
         # SYSTEM
         update_apps) update_apps ;;
         systeminfo|sys-info) systeminfo ;;
@@ -2117,6 +2272,7 @@ if [[ -n "$1" ]]; then
         setup_clamav) setup_clamav ;;
         setup_usbguard) setup_usbguard ;;
         setup_ufw) setup_ufw ;;
+
         # PRIVACY & SECURITY
         secure_empty_trash|SET) secure_empty_trash ;;
         secure_overwrite_free_space|SOFC) secure_overwrite_free_space ;;
@@ -2127,6 +2283,7 @@ if [[ -n "$1" ]]; then
         generate_password|psswd) generate_password ;;
         delete_file|del) delete_file ;;
         clean_metadata) clean_metadata ;;
+
         # ENCRYPTING
         encrypt_file_aes256) encrypt_file_aes256 ;;
         decrypt_file_aes256) decrypt_file_aes256 ;;
@@ -2143,21 +2300,34 @@ if [[ -n "$1" ]]; then
         encrypt_text_base64) encrypt_text_base64 ;;
         decrypt_text_base64) decrypt_text_base64 ;;
         rot13_cipher) rot13_cipher ;;
+
         # MISC
         matrix|-m) matrix ;;
         hacked) hacked ;;
         hacking) hacking ;;
+
         # OTHER
         license|-l) license ;;
         clone_source|clone) clone_source ;;
         help|-h|--help) show_help ;;
         version|-v) version ;;
+
         # MENUS
         misc_tools) misc_tools ;;
         system_tools) system_tools ;;
         privacy_tools) privacy_tools ;;
         network_tools) network_tools ;;
         encryptions_tools) encryptions_tools ;;
+
+        # INFO SYSTEM
+        info)
+            if [[ -z "$2" ]]; then
+                echo "Usage: jas info <command>"
+            else
+                show_command_info "$2"
+            fi
+            ;;
+
         *)
             echo -e "\a"
             echo -e "${RED}[!] Unknown command: $1${RESET}"
@@ -2165,6 +2335,7 @@ if [[ -n "$1" ]]; then
             exit 1
             ;;
     esac
+
     exit 0
 fi
 
@@ -2185,7 +2356,7 @@ done <<'EOF'
 \____/\_| |_/\____/       \_/  \___/  \___/\_____/\____/  \___/\/   \/
 EOF
 
-echo -e "${BOLD}${RED}  Version: ${MAIN_VERSION}${SUB_VERSION} - Creator: DarkShadowUser - ${LICENSE}${RESET}"
+echo -e "${BOLD}${CYAN}  Version: ${MAIN_VERSION}${SUB_VERSION} - Creator: DarkShadowUser - ${LICENSE}${RESET}"
 echo
 while true; do
     PS3="Main Menu: "
