@@ -1,4 +1,4 @@
-# Jas-toolbox Beta v1.6.2
+# Jas-toolbox Beta v1.6.3
 
 A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security tasks.
 
@@ -64,3 +64,4 @@ Delete_file uses secure deletion (irreversible)
 If you encounter any bugs feel free to open a pull reqeust or send a message. 
 
 ## MIT license - Copyright (c) 2026 DarkShadowUser
+
