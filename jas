@@ -26,7 +26,7 @@ i=0
 
 # Other variables
 MAIN_VERSION="1.6"
-SUB_VERSION=".2"
+SUB_VERSION=".3"
 TESTED="No"
 TESTED_ON="1-1-2026"
 TESTED_RELEASE="Beta"
@@ -363,10 +363,17 @@ EOF
 
     echo
     echo -e "${PURPLE}[➜] Checking Tor IP...${RESET}"
-    sleep 1
     torsocks curl -s https://check.torproject.org/api/ip | grep -o '"IP":"[^"]*' | cut -d'"' -f4
     echo
     echo -e "${PURPLE}[+] Traffic is now routed through Tor (torsocks).${RESET}"
+
+    echo
+    read -p "Install tor browser? (y/n): " install_tor_browser
+    if [[ "$install_tor_browser" == "y" ]]; then
+        echo -e "${PURPLE}[➜] Installing Tor Browser...${RESET}"
+        sudo apt install torbrowser-launcher
+        echo -e "${PURPLE}[+] Tor Browser installed successfully.${RESET}"
+    fi
 }
 # System
 update_apps() {
@@ -432,7 +439,6 @@ update_apps() {
     fi
     echo
 }
-
 systeminfo() {
     clear
     echo
@@ -465,7 +471,180 @@ systeminfo() {
     fi
     echo
 }
+useful_tools() {
 
+echo -e "${GREEN}[➜] Installing flatpak..${RESET}"
+sudo apt install flatpak
+sudo apt install gnome-software-plugin-flatpak
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+read -p "Download office packages: (y/n): " download_office
+if [[ "$download_office" == "y" ]]; then
+    echo -e "${GREEN}[➜] Downloading office packages...${RESET}"
+    sudo apt install libreoffice
+    sudo apt install okular
+    sudo apt install onlyoffice-desktopeditors
+    sudo apt install firefox
+    echo -e "${GREEN}[+] Office packages installed successfully.${RESET}"
+fi
+
+read -p "Download media players: (y/n): " download_media
+if [[ "$download_media" == "y" ]]; then
+    echo -e "${GREEN}[➜] Downloading media players...${RESET}"
+    sudo apt install vlc
+    sudo apt install mpv
+    echo -e "${GREEN}[+] Media players installed successfully.${RESET}"
+fi
+
+read -p "Download image viewers/editors: (y/n): " download_images
+if [[ "$download_images" == "y" ]]; then
+    echo -e "${GREEN}[➜] Downloading image viewers/editors...${RESET}"
+    sudo apt install gimp
+    sudo apt install krita
+    echo -e "${GREEN}[+] Image viewers/editors installed successfully.${RESET}"
+fi
+
+read -p "Download privacy/security tools: (y/n): " download_privacy_security
+if [[ "$download_privacy_security" == "y" ]]; then
+    echo -e "${GREEN}[➜] Downloading privacy/security tools...${RESET}"
+    echo "Some require SNAP"
+    sudo apt install torbrowser-launcher
+    sudo apt install tor
+    sudo apt install torsocks
+    sudo apt install exiftool
+    sudo apt install bleachbit
+    sudo apt install chkrootkit
+    sudo apt install lynis
+    sudo apt install srm
+    sudo apt install obfuscate
+    sudo apt install veracrypt
+    sudo apt install clamav
+    sudo apt install usbguard
+    sudo flatpak install flathub com.github.arshubham.cipher
+    sudo flatpak install flathub com.github.tchx84.Flatseal
+    sudo flatpak install flathub com.belmoussaoui.Authenticator
+    sudo snap install keepassxc
+    sudo snap install ufw                                   
+    echo -e "${GREEN}[+] Privacy/security tools installed successfully.${RESET}"
+fi
+
+read -p "Other useful tools: (y/n): " download_other
+if [[ "$download_other" == "y" ]]; then
+    echo -e "${GREEN}[➜] Downloading other useful tools...${RESET}"
+    echo "Some require SNAP"
+    sudo apt install fastfetch
+    sudo snap install spotify
+    sudo snap install signal-desktop
+    sudo snap install code
+    sudo snap install element-desktop
+    echo -e "${GREEN}[+] Other useful tools installed successfully.${RESET}"
+fi
+}
+setup_clamav() {
+    echo
+    echo -e "${GREEN}[➜] Installing ClamAV...${RESET}"
+    sleep 0.5
+
+    sudo apt update
+    sudo apt install -y clamav clamav-daemon
+
+    echo
+    echo -e "${GREEN}[➜] Stopping services before update...${RESET}"
+    sudo systemctl stop clamav-freshclam
+
+    echo
+    echo -e "${GREEN}[➜] Updating virus database...${RESET}"
+    sudo freshclam
+
+    echo
+    echo -e "${GREEN}[➜] Enabling automatic updates...${RESET}"
+    sudo systemctl enable clamav-freshclam
+    sudo systemctl start clamav-freshclam
+
+    echo
+    echo -e "${GREEN}[➜] Enabling ClamAV daemon (real-time scanning)...${RESET}"
+    sudo systemctl enable clamav-daemon
+    sudo systemctl start clamav-daemon
+
+    echo
+    echo -e "${GREEN}[➜] Fixing permissions...${RESET}"
+    sudo chown -R clamav:clamav /var/lib/clamav
+
+    echo
+    echo -e "${GREEN}[➜] Testing installation...${RESET}"
+    clamscan --version
+
+    echo
+    echo -e "${GREEN}[+] ClamAV setup completed successfully.${RESET}"
+    echo -e "${YELLOW}[!] Quick scan example: clamscan -r ~/Downloads${RESET}"
+}
+setup_usbguard() {
+    echo
+    echo -e "${GREEN}[➜] Installing USBGuard...${RESET}"
+    sleep 0.5
+
+    sudo apt update
+    sudo apt install -y usbguard
+
+    echo
+    echo -e "${GREEN}[➜] Generating initial policy (VERY IMPORTANT)...${RESET}"
+    echo -e "${YELLOW}[!] Make sure all trusted USB devices are plugged in!${RESET}"
+    sleep 3
+
+    sudo usbguard generate-policy > /tmp/usbguard-rules.conf
+
+    echo
+    echo -e "${GREEN}[➜] Applying policy...${RESET}"
+    sudo mv /tmp/usbguard-rules.conf /etc/usbguard/rules.conf
+    sudo chown root:root /etc/usbguard/rules.conf
+    sudo chmod 600 /etc/usbguard/rules.conf
+
+    echo
+    echo -e "${GREEN}[➜] Enabling USBGuard service...${RESET}"
+    sudo systemctl enable usbguard
+    sudo systemctl start usbguard
+
+    echo
+    echo -e "${GREEN}[+] USBGuard is now active.${RESET}"
+    echo -e "${YELLOW}[!] New USB devices will be BLOCKED by default.${RESET}"
+}
+setup_ufw() {
+    echo
+    echo -e "${GREEN}[➜] Installing UFW...${RESET}"
+    sleep 0.5
+
+    sudo apt update
+    sudo apt install -y ufw
+
+    echo
+    echo -e "${GREEN}[➜] Setting default policies...${RESET}"
+    sudo ufw default deny incoming
+    sudo ufw default allow outgoing
+
+    echo
+    echo -e "${GREEN}[➜] Allowing essential services...${RESET}"
+
+    read -p "Allow SSH (port 22)? (y/n): " allow_ssh
+    if [[ "$allow_ssh" == "y" ]]; then
+        sudo ufw allow 22/tcp
+        echo -e "${GREEN}[+] SSH allowed${RESET}"
+    fi
+
+    sudo ufw allow from 192.168.0.0/16
+    sudo ufw allow from 10.0.0.0/8
+
+    echo
+    echo -e "${GREEN}[➜] Enabling firewall...${RESET}"
+    sudo ufw enable
+
+    echo
+    echo -e "${GREEN}[➜] Current status:${RESET}"
+    sudo ufw status verbose
+
+    echo
+    echo -e "${GREEN}[+] UFW setup completed.${RESET}"
+    echo -e "${YELLOW}[!] Incoming connections are BLOCKED by default.${RESET}"
+}
 # Security
 confirm_paranoia() {
     echo
@@ -1427,7 +1606,7 @@ _______________________________
 EOF
     echo -e "${RESET}"
     PS3="System Tools Menu: "
-    options=("Updating all apps" "See system information" "Paranoia mode" "Exit")
+    options=("Updating all apps" "See system information" "Paranoia mode" "Install usefull tools" "Exit")
 
     select opt in "${options[@]}"; do
         [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
@@ -1444,6 +1623,9 @@ EOF
                 fi
                 ;;
             4)
+                useful_tools
+                ;;
+            5)
                 break
                 ;;
             *)
@@ -1736,11 +1918,18 @@ Commands:
     dns_info / dns           Retrieve DNS records
     get_ip / ip              Show public IP address
     ip_osint / osint         Gather IP intelligence data
+    inspect_cert             Inspect SSL/TLS certificate of a domain
+    tor_connect              Connect to a server through Tor
+    maigret_search               Search for username across data breaches
 
   SYSTEM:
     update_apps              Update system packages (APT/Flatpak/Snap)
     systeminfo / sys-info    Display system information
     paranoia_mode            Extreme lockdown mode (WARNING)
+    useful_tools             Install useful tools
+    setup_clamav             Install and set up ClamAV antivirus
+    setup_usbguard           Install and set up USBGuard
+    setup_ufw                Install and set up UFW firewall
 
   PRIVACY & SECURITY:
     secure_empty_trash / set     Securely empty trash
@@ -1822,6 +2011,10 @@ if [[ -n "$1" ]]; then
                 exit 1
             fi
             ;;
+        useful_tools) useful_tools ;;
+        setup_clamav) setup_clamav ;;
+        setup_usbguard) setup_usbguard ;;
+        setup_ufw) setup_ufw ;;
         # PRIVACY & SECURITY
         secure_empty_trash|SET) secure_empty_trash ;;
         secure_overwrite_free_space|SOFC) secure_overwrite_free_space ;;
