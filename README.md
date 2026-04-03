@@ -3,12 +3,13 @@
 > A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface.
 
 ```
-   ___  ___   _____      _____ _____  _____ _     ______  _______   __
-  |_  |/ _ \ /  ___|    |_   _|  _  ||  _  | |    | ___ \|  _  \ \ / /
-    | / /_\ \\ `--. ______| | | | | || | | | |    | |_/ /| | | |\ V /
-    | |  _  | `--. \______| | | | | || | | | |    | ___ \| | | |/   \
-/\__/ / | | |/\__/ /      | | \ \_/ /\ \_/ / |____| |_/ /\ \_/ / /^\ \
-\____/\_| |_/\____/       \_/  \___/  \___/\_____/\____/  \___/\/   \/
+___             __       ___           _______.        
+\  \           |  |     /   \         /       |        
+ \  \          |  |    /  ^  \       |   (----`        
+  >  >   .--.  |  |   /  /_\  \       \   \            
+ /  /    |  `--'  |  /  _____  \  .----)   |           
+/__/      \______/  /__/     \__\ |_______/     ______ 
+                                               |______|
 ```
 ![Version](https://img.shields.io/badge/Version-1.6.4-ff0033?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-ff0033?style=for-the-badge)
