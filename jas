@@ -2657,7 +2657,7 @@ EOF
     echo -e "${RESET}"
     local __old_ps3=$PS3
     PS3="Encryption Tools Menu: "
-    options=("Encrypt files" "Decrypt files" "Encrypt texts" "Decrypt texts" "Exit")
+    options=("Encrypt files" "Decrypt files" "Encrypt texts" "Decrypt texts" "Get AES-256 Key" "Get AES-128 Key" "Exit")
     select opt in "${options[@]}"; do
         [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
         case "$REPLY" in
@@ -2673,7 +2673,13 @@ EOF
             4)
                 decrypt_texts
                 ;;
-            5|q|Q)
+            5)
+                get_aes256_key
+                ;;
+            6)
+                get_aes128_key
+                ;;
+            7|q|Q)
                 break
                 ;;
             *)
@@ -2703,7 +2709,7 @@ EOF
     echo -e "${RESET}"
     local __old_ps3=$PS3
     PS3="Misc Tools Menu: "
-    options=("Matrix" "Look hacked" "Hacker code (fake)" "Exit")
+    options=("Matrix" "Look hacked" "Hacker code (fake)" "Read Nerd News" "Exit")
     select opt in "${options[@]}"; do
         [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
         case "$REPLY" in
@@ -2716,7 +2722,10 @@ EOF
             3)
                 hacking
                 ;;
-            4|q|Q)
+            4)
+                read_nerd_news
+                ;;
+            5|q|Q)
                 break
                 ;;
             *)
