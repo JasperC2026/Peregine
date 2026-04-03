@@ -36,7 +36,7 @@ rainbow() {
 
 # Other variables
 MAIN_VERSION="1.6"
-SUB_VERSION=".4"
+SUB_VERSION=".5"
 TESTED="No"
 TESTED_ON=""
 TESTED_RELEASE="Stable"
@@ -48,61 +48,359 @@ show_command_info() {
 
         # NETWORK
         whois|whois_lookup)
+            cat <<'EOF'
+Performs a WHOIS lookup on a domain or IP address.
+
+WHOIS is a query and response protocol used to retrieve information about registered domain names, IP addresses, and autonomous systems.
+This command queries the WHOIS database to return ownership details, registration dates, expiry dates, name servers, and registrar information.
+Useful for investigating domain ownership, checking domain availability, or gathering reconnaissance data on a target.
+Be aware that many domains use WHOIS privacy protection services, which may obscure the true owner's details.
+This script uses the whois utility, available on most Unix-like systems.
+
+https://www.iana.org/whois / https://github.com/nicowillis/whois
+EOF
             ;;
+
         ping)
+            cat <<'EOF'
+Sends ICMP echo requests to a host to test network connectivity and measure round-trip time.
+Ping is one of the most fundamental network diagnostic tools, used to determine whether a host is reachable and how long packets take to travel to it and back.
+
+This command reports packet loss, latency (in milliseconds), and jitter — key indicators of network health.
+Note that some hosts and firewalls are configured to block ICMP packets, so a non-response does not always mean the host is offline.
+Useful for basic connectivity testing, latency diagnostics, and detecting packet loss on a link.
+This script uses the system ping utility, built into all major operating systems.
+
+https://en.wikipedia.org/wiki/Ping_(networking_utility)
+
+EOF
             ;;
+
         traceroute|trace)
+            cat <<'EOF'
+Traces the network path (hops) packets take to reach a destination host.
+
+Traceroute works by sending packets with incrementally increasing TTL (Time To Live) values, causing each router along the path to return an ICMP "time exceeded" message, revealing its IP address and latency.
+This command is essential for diagnosing where network delays or failures occur between your machine and a target.
+Each hop displayed represents a router or gateway the packet passed through, along with its round-trip time.
+Some hops may appear as * * * if the router is configured to not respond to traceroute probes.
+This script uses traceroute. 
+
+https://en.wikipedia.org/wiki/Traceroute
+EOF
             ;;
+
         dns|dns_info)
+            cat <<'EOF'
+Performs DNS lookups and retrieves detailed DNS record information for a domain.
+
+DNS (Domain Name System) is the internet's phonebook, translating human-readable domain names into IP addresses.
+This command queries DNS records including A, AAAA, MX, NS, TXT, CNAME, SOA, and PTR records, giving a full picture of a domain's DNS configuration.
+Useful for diagnosing DNS propagation issues, verifying mail server configurations, or performing reconnaissance on a domain's infrastructure.
+DNS information is publicly accessible by design, making it a valuable starting point for network investigations.
+
+This script uses dig (DNS lookup utility) and/or nslookup, available via the dnsutils package.
+
+https://www.isc.org/bind/ / https://linux.die.net/man/1/dig
+EOF
             ;;
+
         ip|get_ip)
+            cat <<'EOF'
+Retrieves your current public and/or local IP address information.
+
+Your public IP address is the address visible to the outside internet, assigned by your ISP or VPN provider. Your local IP is your address within your local network (LAN).
+This command fetches both, along with geolocation metadata such as country, city, ISP, and ASN (Autonomous System Number) associated with your public IP.
+Knowing your public IP is essential when configuring firewalls, port forwarding, or verifying whether a VPN or proxy is active and masking your real address.
+This script queries public IP APIs of ipinfo.io, and uses ip addr or ifconfig for local addresses.
+
+https://ipinfo.io 
+
+EOF
             ;;
+
         osint|ip_osint)
+            cat <<'EOF'
+Performs Open Source Intelligence (OSINT) gathering on an IP address or domain.
+
+OSINT refers to the collection and analysis of information from publicly available sources. For IP addresses and domains, this includes geolocation, ASN data, abuse reports, open ports, reverse DNS, and historical WHOIS records.
+This command aggregates data from multiple public threat intelligence and lookup services to build a comprehensive profile of a target IP or domain.
+Useful for investigating suspicious connections, attributing malicious traffic, or performing pre-engagement reconnaissance in authorized penetration tests.
+Always ensure you have proper authorization before conducting OSINT on any target. This tool is intended for defensive and educational use.
+This script integrates tools of ipinfo.io.
+
+https://ipinfo.io 
+
+EOF
             ;;
+
         inspect_cert)
+            cat <<'EOF'
+Inspects and displays the SSL/TLS certificate details of a remote host.
+
+SSL/TLS certificates are used to authenticate the identity of a server and establish encrypted connections. They contain information such as the issuer, subject, validity period, Subject Alternative Names (SANs), and the public key algorithm used.
+This command connects to a target host and retrieves its certificate chain, displaying all relevant fields in a human-readable format.
+Useful for verifying certificate validity, checking expiry dates, auditing cipher configurations, or investigating suspicious HTTPS endpoints.
+An expired or mis-issued certificate can indicate misconfiguration or a potential man-in-the-middle attack.
+
+This script uses OpenSSL's s_client command to retrieve and parse certificate information.
+
+https://www.openssl.org/ / https://github.com/openssl/openssl
+
+EOF
             ;;
+
         tor_connect)
+            cat <<'EOF'
+Routes your network traffic through the Tor anonymity network.
+
+Tor (The Onion Router) anonymizes internet traffic by encrypting it and routing it through a series of volunteer-operated relays around the world, making it extremely difficult to trace the origin of the traffic.
+This command configures your system or a specific application to use Tor as a SOCKS5 proxy, masking your real IP address and bypassing censorship or geo-restrictions.
+Tor is widely used by journalists, activists, security researchers, and privacy-conscious users. However, it significantly reduces connection speed due to the multi-hop routing.
+
+Note: Tor does not make you fully anonymous on its own. Application-level leaks (cookies, WebRTC, DNS) can still expose your identity if not properly handled.
+This script uses the Tor daemon and optionally proxychains to tunnel traffic through the Tor network.
+
+https://www.torproject.org / https://github.com/torproject/tor
+EOF
             ;;
+
         maigret_search)
+            cat <<'EOF'
+Searches for a username across hundreds of websites and social networks using Maigret.
+
+Maigret is an OSINT tool that takes a single username and checks its existence across a large database of websites, generating a detailed report of where that username is registered.
+This command is useful for investigating a person's online footprint, tracking usernames across platforms, or gathering intelligence during authorized investigations.
+Maigret can detect accounts on social media platforms, forums, gaming networks, dating sites, developer communities, and many more — all from a single username query.
+Results are presented as a structured report and can be exported to HTML, PDF, or JSON formats.
+
+Always use this tool ethically and only on usernames you are authorized to investigate. Unauthorized OSINT can have legal implications.
+
+This script uses the Maigret Python tool: https://github.com/soxoj/maigret
+https://github.com/soxoj/maigret
+EOF
             ;;
 
         # SYSTEM
         update_apps)
+            cat <<'EOF'
+Updates all installed system packages and applications to their latest versions.
+
+Keeping software up to date is one of the most critical security practices. The majority of successful cyberattacks exploit known vulnerabilities in outdated software for which patches already exist.
+This command runs a full system update using the appropriate package manager for your OS (apt, brew, dnf, pacman, etc.), fetching the latest package lists and upgrading all outdated software.
+It may also update Flatpak, Snap, pip, or other package ecosystems if present on your system.
+Regular updates reduce your attack surface and ensure you benefit from the latest performance improvements and bug fixes.
+It is recommended to run this command at least weekly, or automate it via a scheduled task.
+EOF
             ;;
+
         sys-info|systeminfo)
+            cat <<'EOF'
+Displays a comprehensive overview of your system's hardware and software configuration.
+
+This command collects and presents key system information including: OS version and kernel, CPU model and core count, total and available RAM, disk usage and filesystem layout, GPU information, network interfaces and their addresses, uptime, and currently logged-in users.
+System information is essential for troubleshooting, performance analysis, asset inventory, and security auditing.
+Knowing your exact system configuration helps identify outdated components, misconfigured services, or hardware bottlenecks.
+
+This tool uses fastfetch, a modern and highly customizable system information tool that provides a visually appealing output with support for various themes and formats.
+
+https://github.com/svenstaro/fetch 
+
+EOF
             ;;
+
         paranoia_mode)
+            cat <<'EOF'
+Activates an enhanced privacy and security lockdown mode for your system.
+
+Paranoia Mode applies a series of hardening measures designed to minimize your system's attack surface and reduce the risk of surveillance, data leakage, or unauthorized access.
+Actions may include: disabling unnecessary network interfaces, clearing clipboard contents, killing non-essential background processes, enabling stricter firewall rules, disabling Bluetooth and camera access, clearing DNS cache, and terminating active remote sessions.
+
+This mode is intended for high-risk situations such as working on sensitive data in untrusted environments, crossing borders, or when you suspect your system may be compromised.
+Some actions taken in Paranoia Mode may affect system usability and should be reversed once the threat level decreases.
+Use with caution — understand each action being applied before enabling this mode in a production environment.
+
+EOF
             ;;
+
         useful_tools)
+            cat <<'EOF'
+Downloads and installs a curated set of useful tools for networking, system management, and security.
+EOF
             ;;
+
         setup_clamav)
+            cat <<'EOF'
+Installs and configures ClamAV, an open-source antivirus engine for detecting malware and malicious files.
+
+ClamAV is a widely used antivirus solution for Unix-like systems, capable of scanning files, directories, email attachments, and archives for known malware signatures.
+This command installs ClamAV and its daemon, updates the virus definition database via freshclam, and optionally configures scheduled scans using cron.
+While ClamAV is not a replacement for a full endpoint security suite, it provides a solid baseline of protection against known threats, particularly for file servers and mail gateways.
+
+The virus definition database is updated regularly by the ClamAV community and should be refreshed frequently to maintain effectiveness against new threats.
+ClamAV can be integrated with other tools such as SpamAssassin and Postfix for mail filtering pipelines.
+
+https://www.clamav.net / https://github.com/Cisco-Talos/clamav
+
+EOF
             ;;
+
         setup_usbguard)
+            cat <<'EOF'
+Installs and configures USBGuard, a framework for protecting your system against unauthorized USB devices.
+
+USB-based attacks (such as BadUSB, rubber ducky attacks, and rogue HID devices) are a well-known physical attack vector that can bypass traditional network-based security controls.
+USBGuard enforces a policy-based whitelist of allowed USB devices. Any device not explicitly permitted by the policy will be blocked when plugged in, preventing malicious or unauthorized peripherals from interacting with your system.
+
+This command installs USBGuard, generates an initial policy based on currently connected trusted devices, and enables the daemon to enforce the policy at boot.
+Particularly useful in high-security environments, shared workstations, or systems that should never accept unknown USB peripherals.
+Policies can be customized to allow or block devices based on vendor ID, product ID, serial number, and device class.
+
+https://usbguard.github.io / https://github.com/USBGuard/usbguard
+
+EOF
             ;;
+
         setup_ufw)
+            cat <<'EOF'
+Installs and configures UFW (Uncomplicated Firewall), a user-friendly frontend for managing iptables firewall rules.
+
+A firewall is a critical component of any secure system, controlling which network traffic is allowed in and out of your machine based on defined rules.
+UFW simplifies the management of Linux's powerful but complex iptables rule system, providing intuitive commands for allowing, denying, and limiting traffic by port, protocol, and IP address.
+
+This command installs UFW, applies a secure default policy (deny all incoming, allow all outgoing), and enables common rules such as allowing SSH while blocking all other inbound connections.
+Properly configured firewall rules significantly reduce your attack surface by ensuring only explicitly permitted services are accessible from the network.
+UFW also supports rate limiting to protect against brute-force attacks and can log blocked connection attempts for auditing purposes.
+
+https://help.ubuntu.com/community/UFW / https://github.com/chaifeng/ufw-docker
+
+EOF
             ;;
 
         # PRIVACY & SECURITY
         set|secure_empty_trash)
-            ;;
-        sofc|secure_overwrite_free_space)
-            ;;
-        audit|system_audit)
-            ;;
-        bleachbit)
-            ;;
-        rootkit|rootkit_hunt)
-            ;;
-        rm-temp|remove_temp_files)
-            ;;
-        psswd|generate_password)
-            ;;
-        del|delete_file)
-            ;;
-        clean_metadata)
+            cat <<'EOF'
+Securely deletes the contents of your Trash by overwriting files before removal.
+
+Standard file deletion in most operating systems simply removes the file's reference in the filesystem, leaving the actual data on disk until it is overwritten by new data — making it trivially recoverable with common forensic tools.
+This command overwrites the contents of trashed files with random data (multiple passes) before deleting them, making recovery significantly more difficult or practically impossible.
+Secure deletion is particularly important before selling, donating, or discarding storage media, and when handling sensitive documents.
+
+This tool uses SRM a security uttility to securely delete files, which implements the Gutmann method of overwriting data multiple times with different patterns.
+
+Note: On SSDs and flash storage, secure overwriting is less reliable due to wear leveling and over-provisioning. Full-disk encryption is the recommended solution for SSDs.
+This script uses tools such as shred, srm, or secure-delete depending on your OS.
+
+https://sourceforge.net/projects/srm 
+
+EOF
             ;;
 
+        sofc|secure_overwrite_free_space)
+            cat <<'EOF'
+Overwrites all free (unallocated) space on a disk to eliminate traces of previously deleted files.
+
+When files are deleted normally, their data remains on disk in unallocated sectors until overwritten. Forensic tools can recover this data — sometimes months or years after deletion.
+This command fills all free space on the target filesystem with random or zero data, effectively wiping any recoverable remnants of previously deleted files without affecting currently existing data.
+This is useful after bulk deletion of sensitive files, before transferring ownership of a device, or as part of a periodic privacy maintenance routine.
+The process can be time-consuming depending on the size of the drive and the number of overwrite passes selected.
+As with secure file deletion, this is less reliable on SSDs due to how flash storage manages data internally. Full-disk encryption remains the gold standard.
+This script uses tools such as sfill (from the secure-delete suite) or dd.
+
+https://sourceforge.net/projects/srm / https://www.gnu.org/software/coreutils/manual/html_node/shred-invocation.html
+
+EOF
+            ;;
+
+        audit|system_audit)
+            cat <<'EOF'
+Performs a comprehensive security audit of your system, checking for common vulnerabilities and misconfigurations.
+
+A system audit examines your machine's configuration against security best practices, identifying weaknesses before an attacker can exploit them.
+This command checks for items such as: world-writable files and directories, SUID/SGID binaries, open network ports and listening services, weak file permissions on sensitive files, unpatched software, SSH configuration hardening, password policy enforcement, active cron jobs, and unusual user accounts.
+The audit produces a report categorizing findings by severity, helping you prioritize remediation efforts.
+Regular security audits are a fundamental part of a proactive security posture and are required by many compliance frameworks (CIS, NIST, ISO 27001).
+
+This script uses tools such as Lynis, a battle-tested open-source security auditing tool for Unix-based systems.
+
+https://cisofy.com/lynis / https://github.com/CISOfy/lynis
+
+EOF
+            ;;
+
+        bleachbit)
+            cat <<'EOF'
+Runs BleachBit to clean system junk, free disk space, and eliminate privacy-sensitive data traces.
+
+BleachBit is a powerful open-source system cleaner and privacy tool that deletes unnecessary files, clears application caches, removes browser history and cookies, wipes temporary files, and shreds logs.
+This command invokes BleachBit with a curated set of cleaning rules targeting common privacy leaks across browsers (Firefox, Chrome, Chromium), system logs, package manager caches, thumbnail caches, and application traces.
+
+Regular cleaning reduces the amount of forensically recoverable data on your system and can recover significant amounts of disk space.
+
+BleachBit also supports Gutmann-method overwriting for sensitive files, making it suitable for privacy-critical workflows.
+
+Use with care — some cleaning options are irreversible and may remove data you still need (e.g., saved passwords or browser sessions).
+
+https://www.bleachbit.org / https://github.com/bleachbit/bleachbit
+
+EOF
+            ;;
+
+        rootkit|rootkit_hunt)
+            cat <<'EOF'
+Scans your system for rootkits, backdoors, and other signs of compromise using multiple detection tools.
+
+A rootkit is a type of malware designed to gain persistent, stealthy root-level access to a system while hiding its presence from the OS and security tools. Detecting rootkits is notoriously difficult because they operate at a privileged level.
+This command runs one or more rootkit detection tools that check for known rootkit signatures, suspicious kernel modules, hidden processes, modified system binaries, and anomalous file timestamps.
+Multiple scanners are used in combination because no single tool catches everything — cross-referencing results increases detection confidence.
+
+A clean scan does not guarantee a clean system, but a positive finding is a strong indicator of compromise requiring immediate investigation and incident response.
+This script uses chkrootkit.
+
+https://rkhunter.sourceforge.net / http://www.chkrootkit.org / https://github.com/Magentron/chkrootkit
+
+EOF
+            ;;
+
+        rm-temp|remove_temp_files)
+            cat <<'EOF'
+Removes temporary files and directories from common system and application temp locations.
+
+Temporary files accumulate over time from system operations, application crashes, software installations, and normal usage. Left unchecked, they consume disk space and may contain sensitive data fragments from past sessions.
+This command clears temp directories such as /tmp, /var/tmp, ~/.cache, and application-specific temp folders, safely removing files that are no longer needed by any running process.
+Regular temp file cleanup reduces disk usage, can improve system performance, and limits the amount of sensitive residual data an attacker or forensic investigator could access.
+
+The script checks for files in use before deletion to avoid disrupting active processes.
+This is a non-destructive operation targeting only known temporary locations — it does not touch user documents or application data.
+
+https://www.freedesktop.org/software/systemd/man/systemd-tmpfiles.html
+
+EOF
+            ;;
+
+        psswd|generate_password)
+            cat <<'EOF'
+Generates a cryptographically secure random password of configurable length and complexity.
+Weak or reused passwords remain one of the leading causes of account compromise. A strong password should be long, random, and unique to each account or use case.
+
+This command generates passwords using a cryptographically secure random number generator (CSPRNG), ensuring the output is unpredictable and resistant to brute-force attacks.
+
+EOF
         # ENCRYPTING
+        generate_aes256_key)
+            cat <<'EOF'
+Generates a random AES-256 encryption key.
+AES (Advanced Encryption Standard) is a widely used symmetric encryption algorithm that provides strong security. 
+
+EOF
+            ;;
+        generate_aes128_key)
+            cat <<'EOF'
+Generates a random AES-128 encryption key.
+AES (Advanced Encryption Standard) is a widely used symmetric encryption algorithm that provides strong security.
+
+EOF
+            ;;
         encrypt_file_aes256)
             cat <<'EOF'
 Encrypts files using AES-256 encryption.
@@ -114,6 +412,8 @@ AES-256 is considered very secure and is recommended for protecting sensitive in
 This script uses OpenSSL to perform AES-256 encryption, which is a widely supported and robust encryption method. 
 The user will be prompted to enter a password, which will be used to derive the encryption key. 
 The encrypted file will have a .aes extension added to the original filename.
+
+It also has an option to remove the original file after encryption for added security, but use with caution as this will permanently delete the original unencrypted file.
 
 https://www.openssl.org/ / https://github.com/openssl/openssl
 
@@ -178,6 +478,8 @@ AES-128 is considered secure for most purposes, but it is recommended to use AES
 This script uses OpenSSL to perform AES-128 encryption, which is a widely supported and robust encryption method. 
 The user will be prompted to enter a password, which will be used to derive the encryption key. 
 The encrypted file will have a .aes extension added to the original filename.
+
+It also has an option to remove the original file after encryption for added security, but use with caution as this will permanently delete the original unencrypted file.
 
 https://www.openssl.org/ / https://github.com/openssl/openssl
 
@@ -316,7 +618,12 @@ It is meant to provide a visually interesting display in the terminal, often use
 
 EOF
             ;;
-
+        read_nerd_news)
+                cat <<'EOF'
+Fetches and displays the latest news from a tech news source, WIRED and Arstechnica.
+This command uses the NewsAPI to retrieve the latest headlines and summaries from the specified news sources.
+EOF
+            ;;
         # OTHER
         license|-l)
             echo "Show license"
@@ -347,7 +654,6 @@ EOF
         encryptions_tools)
             echo "Open encryption tools menu"
             ;;
-
         *)
             echo "No info available"
             ;;
@@ -1274,6 +1580,60 @@ clean_metadata() {
 }
 
 # Encoding
+generate_aes256_key () {
+    echo
+    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+    echo -e "${GREEN}[➜] Generating AES-256 key...${RESET}"
+    sleep 0.5
+    echo
+
+    if command -v openssl >/dev/null 2>&1; then
+        key=$(openssl rand -hex 32 2>/dev/null)
+        status=$?
+
+        if [[ $status -eq 0 && -n "$key" ]]; then
+            echo -e "${CYAN}$key${RESET}"
+            echo -e "${GREEN}[+] AES-256 key generated successfully.${RESET}"
+        else
+            echo -e "\a"
+            echo -e "${RED}[!] Failed to generate key.${RESET}"
+            return 1
+        fi
+    else
+        echo -e "\a"
+        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+        echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
+        return 1
+    fi
+    echo
+}
+generate_aes128_key () {
+    echo
+    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
+    echo -e "${GREEN}[➜] Generating AES-128 key...${RESET}"
+    sleep 0.5
+    echo
+
+    if command -v openssl >/dev/null 2>&1; then
+        key=$(openssl rand -hex 16 2>/dev/null)
+        status=$?
+
+        if [[ $status -eq 0 && -n "$key" ]]; then
+            echo -e "${CYAN}$key${RESET}"
+            echo -e "${GREEN}[+] AES-128 key generated successfully.${RESET}"
+        else
+            echo -e "\a"
+            echo -e "${RED}[!] Failed to generate key.${RESET}"
+            return 1
+        fi
+    else
+        echo -e "\a"
+        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
+        echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
+        return 1
+    fi
+    echo
+}
 encrypt_file_aes256() {
     echo
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
@@ -1301,6 +1661,17 @@ encrypt_file_aes256() {
 
     if [[ $status -eq 0 ]]; then
         echo -e "${GREEN}[+] File encrypted → $outfile${RESET}"
+
+        read -rp "Remove original file? (y/n): " remove_original
+        if [[ "$remove_original" == "y" ]]; then
+            if command -v shred >/dev/null 2>&1; then
+                shred -u -- "$file"
+                echo -e "${GREEN}[+] Original securely removed (shred).${RESET}"
+            else
+                rm -- "$file"
+                echo -e "${YELLOW}[i] shred not found, file removed normally.${RESET}"
+            fi
+        fi
     else
         echo -e "\a"
         echo -e "${RED}[!] Encryption failed.${RESET}"
@@ -1337,6 +1708,17 @@ encrypt_file_aes128() {
 
     if [[ $status -eq 0 ]]; then
         echo -e "${GREEN}[+] File encrypted → $outfile${RESET}"
+
+        read -rp "Remove original file? (y/n): " remove_original
+        if [[ "$remove_original" == "y" ]]; then
+            if command -v shred >/dev/null 2>&1; then
+                shred -u -- "$file"
+                echo -e "${GREEN}[+] Original securely removed (shred).${RESET}"
+            else
+                rm -- "$file"
+                echo -e "${YELLOW}[i] shred not found, file removed normally.${RESET}"
+            fi
+        fi
     else
         echo -e "\a"
         echo -e "${RED}[!] Encryption failed.${RESET}"
@@ -1839,7 +2221,50 @@ EOF
     echo -e "${RESET}"
     clear
 }
+read_nerd_news () {
+    # RSS News Reader - WIRED & Ars Technica
+    WIRED_RSS="https://www.wired.com/feed/rss"
+    ARS_RSS="https://feeds.arstechnica.com/arstechnica/index"
 
+    echo ""
+    echo "########################################"
+    echo "#        RSS FEED READER               #"
+    echo "########################################"
+    echo " Fetching latest headlines..."
+
+    fetch_feed "WIRED" "$WIRED_RSS" 5
+    fetch_feed "ARS TECHNICA" "$ARS_RSS" 5
+
+    echo "========================================"
+    echo " Done."
+    echo "========================================"
+}
+fetch_feed() {
+    local source="$1"
+    local url="$2"
+    local limit="${3:-5}"
+
+    echo ""
+    echo "========================================"
+    echo " $source"
+    echo "========================================"
+
+    curl -s "$url" | xmllint --xpath "//item" - 2>/dev/null | \
+    grep -oP '(?<=<title>).*?(?=</title>)|(?<=<link>).*?(?=</link>)|(?<=<pubDate>).*?(?=</pubDate>)' | \
+    awk -v limit="$limit" '
+        NR % 3 == 1 { title=$0 }
+        NR % 3 == 2 { link=$0 }
+        NR % 3 == 0 {
+            count++
+            if (count <= limit) {
+                print count". " title
+                print "   " $0
+                print "   " link
+                print ""
+            }
+        }
+    '
+}
 # OTHER
 license() {
     clear
@@ -2364,6 +2789,9 @@ Description:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 [ ENCRYPTING ]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  generate_aes256_key        → Generate AES-256 key
+  generate_aes128_key        → Generate AES-128 key
+
   encrypt_file_aes256        → AES-256 file encryption
   decrypt_file_aes256        → AES-256 file decryption
   encrypt_text_aes256        → AES-256 text encryption
@@ -2385,9 +2813,10 @@ Description:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 [ MISC ]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  matrix | -m                → Matrix effect
+  matrix | -m               → Matrix effect
   hacked                    → Hollywood terminal
   hacking                   → Fake hacking sim
+  read_nerd_news            → Fetch latest tech news
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 [ SUB-MENUS ]
@@ -2460,6 +2889,8 @@ if [[ -n "$1" ]]; then
         clean_metadata) clean_metadata ;;
 
         # ENCRYPTING
+        generate_aes256_key) generate_aes256_key ;;
+        generate_aes128_key) generate_aes128_key ;;
         encrypt_file_aes256) encrypt_file_aes256 ;;
         decrypt_file_aes256) decrypt_file_aes256 ;;
         encrypt_text_aes256) encrypt_text_aes256 ;;
@@ -2480,7 +2911,7 @@ if [[ -n "$1" ]]; then
         matrix|-m) matrix ;;
         hacked) hacked ;;
         hacking) hacking ;;
-
+        read_nerd_news) read_nerd_news ;;
         # OTHER
         license|-l) license ;;
         clone_source|clone) clone_source ;;
