@@ -2317,8 +2317,8 @@ clone_source() {
 
 version() {
     echo
-    echo -e "${CYAN}JAS ${MAIN_VERSION}${SUB_VERSION}${RESET}"
-    echo "Release: $TESTED_RELEASE $TESTED_ON"
+    echo -e "${WHITE}JAS ${MAIN_VERSION}${SUB_VERSION}${RESET}" | pv -qL 10
+    echo "Release: $TESTED_RELEASE $TESTED_ON" | pv -qL 10
     echo -e "${RESET}"
 }
 
@@ -2844,7 +2844,8 @@ Description:
   license | -l              → Show license
   clone_source | -c         → Clone repository
   help | -h | --help        → Show this menu
-
+  info <command>            → Show detailed info on command
+  version | -v              → Show version information
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 [ NOTES ]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -2960,20 +2961,18 @@ fi
 # Interactive Menu
 # -------------------
 clear
-while IFS= read -r line; do
-    COLOR="\e[38;2;${COLORS[$(( i % ${#COLORS[@]} ))]}m"
-    printf "%b%s%b\n" "$COLOR" "$line" "$RESET"
-    ((i++))
-done <<'EOF'
-   ___  ___   _____      _____ _____  _____ _     ______  _______   __
-  |_  |/ _ \ /  ___|    |_   _|  _  ||  _  | |    | ___ \|  _  \ \ / /
-    | / /_\ \\ `--. ______| | | | | || | | | |    | |_/ /| | | |\ V /
-    | |  _  | `--. \______| | | | | || | | | |    | ___ \| | | |/   \
-/\__/ / | | |/\__/ /      | | \ \_/ /\ \_/ / |____| |_/ /\ \_/ / /^\ \
-\____/\_| |_/\____/       \_/  \___/  \___/\_____/\____/  \___/\/   \/
+echo -e "${BOLD}${WHITE}"
+cat <<'EOF'
+___             __       ___           _______.        
+\  \           |  |     /   \         /       |        
+ \  \          |  |    /  ^  \       |   (----`        
+  >  >   .--.  |  |   /  /_\  \       \   \            
+ /  /    |  `--'  |  /  _____  \  .----)   |           
+/__/      \______/  /__/     \__\ |_______/     ______ 
+                                               |______|
 EOF
 
-echo -e "${BOLD}${CYAN}  Version: ${MAIN_VERSION}${SUB_VERSION} - Creator: DarkShadowUser - ${LICENSE}${RESET}"
+echo -e "${BOLD}${WHITE}  Version: ${MAIN_VERSION}${SUB_VERSION} - Creator: DarkShadowUser - ${LICENSE}${RESET}"
 echo
 while true; do
     PS3="Main Menu: "
@@ -3002,7 +3001,7 @@ while true; do
             7)
                 clone_source
                 ;;
-            8)
+            8|q|Q)
                 exit 0
                 ;;
             *)
