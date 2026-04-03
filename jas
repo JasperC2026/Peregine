@@ -2222,9 +2222,9 @@ EOF
     clear
 }
 read_nerd_news () {
-    # RSS News Reader - WIRED & Ars Technica
     WIRED_RSS="https://www.wired.com/feed/rss"
     ARS_RSS="https://feeds.arstechnica.com/arstechnica/index"
+    404_RSS="https://www.404media.co/rss"
 
     echo ""
     echo "########################################"
@@ -2234,6 +2234,7 @@ read_nerd_news () {
 
     fetch_feed "WIRED" "$WIRED_RSS" 5
     fetch_feed "ARS TECHNICA" "$ARS_RSS" 5
+    fetch_feed "404 MEDIA" "$404_RSS" 5
 
     echo "========================================"
     echo " Done."
