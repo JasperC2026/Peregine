@@ -387,6 +387,7 @@ This command generates passwords using a cryptographically secure random number 
 
 EOF
         # ENCRYPTING
+        ;;
         generate_aes256_key)
             cat <<'EOF'
 Generates a random AES-256 encryption key.
