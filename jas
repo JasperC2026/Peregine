@@ -104,42 +104,217 @@ show_command_info() {
 
         # ENCRYPTING
         encrypt_file_aes256)
+            cat <<'EOF'
+Encrypts files using AES-256 encryption.
+AES (Advanced Encryption Standard) is a widely used symmetric encryption algorithm that provides strong security. 
+This command takes a file as input and applies the AES-256 encryption process using a specified key to produce an encrypted output file. 
+It is important to use a strong key and initialization vector (IV) to ensure the security of the encrypted data. 
+AES-256 is considered very secure and is recommended for protecting sensitive information.
+
+This script uses OpenSSL to perform AES-256 encryption, which is a widely supported and robust encryption method. 
+The user will be prompted to enter a password, which will be used to derive the encryption key. 
+The encrypted file will have a .aes extension added to the original filename.
+
+https://www.openssl.org/ / https://github.com/openssl/openssl
+
+EOF
             ;;
         decrypt_file_aes256)
+            cat <<'EOF'
+Decrypts files that have been encrypted using AES-256 encryption. 
+AES (Advanced Encryption Standard) is a widely used symmetric encryption algorithm that provides strong security. 
+This command takes an encrypted file as input and applies the AES-256 decryption process using a specified key to produce the original plaintext file. 
+It is important to use the correct key and initialization vector (IV) that were used during encryption to successfully decrypt the file. 
+AES-256 is considered very secure and is recommended for protecting sensitive information.
+
+This script uses OpenSSL to perform AES-256 decryption, which is a widely supported and robust encryption method. 
+The user will be prompted to enter the password that was used during encryption, which will be used to derive the decryption key. 
+The decrypted file will have the .aes extension removed from the original filename.
+
+https://www.openssl.org/ / https://github.com/openssl/openssl
+
+EOF
             ;;
         encrypt_text_aes256)
+            cat <<'EOF'
+Encrypts text using AES-256 encryption. 
+AES (Advanced Encryption Standard) is a widely used symmetric encryption algorithm that provides strong security. 
+This command takes plain text input and applies the AES-256 encryption process using a specified key to produce encrypted output. 
+It is important to use a strong key and initialization vector (IV) to ensure the security of the encrypted data. 
+AES-256 is considered very secure and is recommended for protecting sensitive information.
+
+This script uses OpenSSL to perform AES-256 encryption, which is a widely supported and robust encryption method. 
+The user will be prompted to enter a password, which will be used to derive the encryption key. 
+The encrypted text will be output in Base64 format for easy storage and transmission.
+
+https://www.openssl.org/ / https://github.com/openssl/openssl
+
+EOF
             ;;
         decrypt_text_aes256)
+                cat <<'EOF'
+Decrypts text that has been encrypted using AES-256 encryption. 
+AES (Advanced Encryption Standard) is a widely used symmetric encryption algorithm that provides strong security. 
+This command takes encrypted text input and applies the AES-256 decryption process using a specified key to produce the original plaintext. 
+It is important to use the correct key and initialization vector (IV) that were used during encryption to successfully decrypt the text. 
+AES-256 is considered very secure and is recommended for protecting sensitive information.
+
+This script uses OpenSSL to perform AES-256 decryption, which is a widely supported and robust encryption method. 
+The user will be prompted to enter the password that was used during encryption, which will be used to derive the decryption key. 
+The decrypted text will be output in plain text format.
+
+https://www.openssl.org/ / https://github.com/openssl/openssl
+
+EOF
             ;;
         encrypt_file_aes128)
+                cat <<'EOF'
+Encrypts files using AES-128 encryption.
+AES (Advanced Encryption Standard) is a widely used symmetric encryption algorithm that provides strong security.
+This command takes a file as input and applies the AES-128 encryption process using a specified key to produce an encrypted output file. 
+It is important to use a strong key and initialization vector (IV) to ensure the security of the encrypted data. 
+AES-128 is considered secure for most purposes, but it is recommended to use AES-256 for higher security needs.
+
+This script uses OpenSSL to perform AES-128 encryption, which is a widely supported and robust encryption method. 
+The user will be prompted to enter a password, which will be used to derive the encryption key. 
+The encrypted file will have a .aes extension added to the original filename.
+
+https://www.openssl.org/ / https://github.com/openssl/openssl
+
+EOF
             ;;
         decrypt_file_aes128)
+            cat <<'EOF'
+Decrypts files that have been encrypted using AES-128 encryption. 
+AES (Advanced Encryption Standard) is a widely used symmetric encryption algorithm that provides strong security. 
+This command takes an encrypted file as input and applies the AES-128 decryption process using a specified key to produce the original plaintext file.
+It is important to use the correct key and initialization vector (IV) that were used during encryption to successfully decrypt the file.
+AES-128 is considered secure for most purposes, but it is recommended to use AES-256 for higher security needs.
+
+This script uses OpenSSL to perform AES-128 decryption, which is a widely supported and robust encryption method.
+The user will be prompted to enter the password that was used during encryption, which will be used to derive the decryption key. 
+The decrypted file will have the .aes extension removed from the original filename.
+
+https://www.openssl.org/ / https://github.com/openssl/openssl
+
+EOF
             ;;
         encrypt_text_aes128)
+            cat <<'EOF'
+Encrypts text using AES-128 encryption. 
+AES (Advanced Encryption Standard) is a widely used symmetric encryption algorithm that provides strong security. 
+This command takes plain text input and applies the AES-128 encryption process using a specified key to produce encrypted output.
+It is important to use a strong key and initialization vector (IV) to ensure the security of the encrypted data.
+AES-128 is considered secure for most purposes, but it is recommended to use AES-256 for higher security needs.
+
+This script uses OpenSSL to perform AES-128 encryption, which is a widely supported and robust encryption method.
+The user will be prompted to enter a password, which will be used to derive the encryption key.
+The encrypted text will be output in Base64 format for easy storage and transmission.
+
+https://www.openssl.org/ / https://github.com/openssl/openssl
+
+EOF
             ;;
         decrypt_text_aes128)
+            cat <<'EOF'
+Decrypts text that has been encrypted using AES-128 encryption.
+AES (Advanced Encryption Standard) is a widely used symmetric encryption algorithm that provides strong security. 
+This command takes encrypted text input and applies the AES-128 decryption process using a specified key to produce the original plaintext.
+It is important to use the correct key and initialization vector (IV) that were used during encryption to successfully decrypt the text.
+AES-128 is considered secure for most purposes, but it is recommended to use AES-256 for higher security needs.
+
+This script uses OpenSSL to perform AES-128 decryption, which is a widely supported and robust encryption method.
+The user will be prompted to enter the password that was used during encryption, which will be used to derive the decryption key.
+The decrypted text will be output in plain text format.
+
+https://www.openssl.org/ / https://github.com/openssl/openssl
+
+EOF
             ;;
         encrypt_text_vigenere)
+            cat <<'EOF'
+Encrypts text using the Vigenère cipher, which is a method of encrypting alphabetic text by using a simple form of polyalphabetic substitution.
+The user provides a keyword, and each letter of the plaintext is shifted along the alphabet by a number of positions determined by the corresponding letter in the keyword. This command takes plain text input and applies the Vigenère cipher encryption process to produce the encrypted output.
+While more secure than simple substitution ciphers, it is still vulnerable to various forms of cryptanalysis and should not be used for protecting sensitive information.
+
+EOF
             ;;
         decrypt_text_vigenere)
+            cat <<'EOF'
+Decrypts text using the Vigenère cipher, which is a method of encrypting alphabetic text by using a simple form of polyalphabetic substitution. 
+The user provides a keyword, and each letter of the plaintext is shifted along the alphabet by a number of positions determined by the corresponding letter in the keyword. 
+This command takes encrypted text input and applies the Vigenère cipher decryption process to produce the original plaintext output. 
+While more secure than simple substitution ciphers, it is still vulnerable to various forms of cryptanalysis and should not be used for protecting sensitive information.
+
+EOF
             ;;
         encrypt_text_ceasar)
+            cat <<'EOF'
+Encrypts text using a Caesar cipher, which is a type of substitution cipher where each letter in the plaintext is shifted a certain number of places down or up the alphabet. 
+The user specifies the shift value (number of positions to shift), and the command takes plain text input and applies the Caesar cipher to produce the encrypted output. 
+This method is simple and not secure for modern use, but it serves as an educational example of basic encryption techniques.
+
+EOF
             ;;
         decrypt_text_ceasar)
+            cat <<'EOF'
+Decrypts text using a Caesar cipher, which is a type of substitution cipher where each letter in the plaintext is shifted a certain number of places down or up the alphabet.
+The user specifies the shift value (number of positions to shift), and the command takes plain text input and applies the Caesar cipher to produce the encrypted output. 
+This method is simple and not secure for modern use, but it serves as an educational example of basic encryption techniques.
+
+EOF
             ;;
         encrypt_text_base64)
+            cat <<'EOF'
+Encrypts text using Base64 encoding. 
+Base64 is a binary-to-text encoding scheme that represents binary data in an ASCII string format by translating it into a radix-64 representation. 
+This command takes plain text input and encodes it into Base64 format, which can be useful for safely transmitting data over media that are designed to handle textual data, such as email or URLs. 
+The resulting Base64 string can be decoded back to its original form using the corresponding decode command.
+
+EOF
             ;;
         decrypt_text_base64)
+            cat <<'EOF'
+Decrypts text that has been encoded using Base64. 
+Base64 is a binary-to-text encoding scheme that represents binary data in an ASCII string format by translating it into a radix-64 representation. 
+It is commonly used to encode data that needs to be stored and transferred over media that are designed to deal with textual data. 
+This command takes Base64-encoded input and decodes it back to its original form, which can be either text or binary data.
+
+EOF
             ;;
         rot13_cipher)
+            cat <<'EOF'
+ROT13 is a simple letter substitution cipher that replaces each letter with the letter 13 positions after it in the alphabet. 
+It is a special case of the Caesar cipher, which shifts letters by a specified number of positions. 
+ROT13 is often used to obfuscate text, such as spoilers or puzzle solutions, because applying ROT13 twice returns the original text. 
+It is not a secure encryption method and should not be used for protecting sensitive information.
+
+EOF
             ;;
 
         # MISC
         matrix|-m)
+                cat <<'EOF'
+Uses Cmatrix, a terminal-based "Matrix" screensaver, to create a visually appealing effect. It simulates the falling green characters seen in the Matrix movies. This command is purely for entertainment and has no functional purpose beyond providing a cool visual display in the terminal.
+https://github.com/abishekvashok/cmatrix
+
+EOF
             ;;
         hacked)
+                cat <<'EOF'
+Uses Hollywood, is a utility will split a computer console into a multiple panes of genuine technical melodrama, perfectly suitable for busy-looking computers in the background.
+
+https://a.hollywood.computer/
+
+EOF
             ;;
         hacking)
+                cat <<'EOF'
+Shows a custom ASCII art with a "hacking" theme. 
+This command is purely for fun and does not perform any actual hacking activities. 
+It is meant to provide a visually interesting display in the terminal, often used for entertainment or to create a "hacker vibe" during presentations or demonstrations.
+
+EOF
             ;;
 
         # OTHER
