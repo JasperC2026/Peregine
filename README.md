@@ -11,8 +11,8 @@ ___             __       ___           _______.
 /__/      \______/  /__/     \__\ |_______/     ______ 
                                                |______|
 ```
-![Version](https://img.shields.io/badge/Version-1.6.4-ff0033?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-ff0033?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-1.6.4-00008b?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-00008b?style=for-the-badge)
 ![Shell](https://img.shields.io/badge/Shell-Bash-black?style=for-the-badge&logo=gnubash&logoColor=black)
 ![Platform](https://img.shields.io/badge/Platform-Linux-black?style=for-the-badge&logo=linux&logoColor=black)
 
