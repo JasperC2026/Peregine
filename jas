@@ -9,7 +9,7 @@ BLACK="\e[0;30m"
 WHITE="\e[1;37m"
 RED="\e[31m"
 GREEN="\e[32m"
-YELLOW="\e[33m"
+YELLOW="\e[93m"
 BLUE="\e[34m"
 CYAN="\e[36m"
 PURPLE="\e[35m"
@@ -33,16 +33,19 @@ rainbow() {
     ((i++))
   done
 }
-
+#############################################################################################################################
 # Other variables
+#############################################################################################################################
 MAIN_VERSION="1.6"
-SUB_VERSION=".5"
-TESTED="No"
-TESTED_ON=""
+SUB_VERSION=".6"
+TESTED="Yes"
+TESTED_ON="4-4-2026"
 TESTED_RELEASE="Stable"
 LICENSE="MIT License"
 
+#############################################################################################################################
 # Commands
+#############################################################################################################################
 show_command_info() {
     case "$1" in
 
@@ -660,7 +663,9 @@ EOF
             ;;
     esac
 }
+#############################################################################################################################
 # Networking
+#############################################################################################################################
 run_with_tor() {
     if [[ "$USE_TOR" == "y" ]]; then
         torsocks "$@"
@@ -669,7 +674,7 @@ run_with_tor() {
     fi
 }
 whois_lookup() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -n "Enter domain (ex: example.com): "
     read -r domain
 
@@ -703,11 +708,10 @@ whois_lookup() {
     fi
 
     echo -e "${GREEN}[+] Whois lookup completed successfully.${RESET}"
-    echo
+    echo "---------------------------------------------------------------"
 }
-
 ping() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -n "Enter item to ping: "
     read -r itemping
 
@@ -734,11 +738,10 @@ ping() {
     fi
 
     echo -e "${GREEN}[+] Ping completed successfully.${RESET}"
-    echo
+    echo "---------------------------------------------------------------"
 }
-
 traceroute() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -n "Enter domain to trace: "
     read -r domaintrace
 
@@ -768,11 +771,10 @@ traceroute() {
     fi
 
     echo -e "${GREEN}[+] Traceroute completed successfully.${RESET}"
-    echo
+    echo "---------------------------------------------------------------"
 }
-
 dns_info() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -n "Enter domain to get DNS info: "
     read -r domaindns
 
@@ -810,11 +812,10 @@ dns_info() {
     fi
 
     echo -e "${GREEN}[+] DNS info retrieved successfully.${RESET}"
-    echo
+    echo "---------------------------------------------------------------"
 }
-
 get_ip() {
-    echo -e "${PURPLE}"
+    echo -e "${PURPLE}----------------------------------------------------------------${RESET}"
     read -p "Route through Tor? (y/n): " USE_TOR
     echo -e "${RESET}"
 
@@ -833,11 +834,10 @@ get_ip() {
     fi
 
     echo -e "${GREEN}[+] Public IP fetched successfully.${RESET}"
-    echo
+    echo "---------------------------------------------------------------"
 }
-
 ip_osint() {
-    echo
+    echo "---------------------------------------------------------------"
     echo "IPinfo https://ipinfo.io/"
     read -p "Enter IP or domain: " target
 
@@ -882,11 +882,10 @@ ip_osint() {
 
     echo -e "${GREEN}[+] IP OSINT lookup completed successfully.${RESET}"
     return 0
-    echo
+    echo "---------------------------------------------------------------"
 }
-
 inspect_cert() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Inspecting SSL certificate...${RESET}"
     echo
 
@@ -910,11 +909,10 @@ inspect_cert() {
         echo -e "${RED}[!] Failed to retrieve certificate.${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
-
 maigret_search() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Maigret Username OSINT${RESET}"
     echo
 
@@ -942,10 +940,11 @@ maigret_search() {
     echo
     echo -e "${GREEN}[+] Scan completed.${RESET}"
     echo -e "${GREEN}[➜] Results saved to: ${output_file}${RESET}"
+    echo "---------------------------------------------------------------"
 }
 tor_connect() {
     clear
-    echo -e "${PURPLE}"
+    echo -e "${PURPLE}----------------------------------------------------------------${RESET}"
     cat << "EOF"
                                             =                       
                                       == ==                     
@@ -1004,11 +1003,14 @@ EOF
         sudo apt install torbrowser-launcher
         echo -e "${PURPLE}[+] Tor Browser installed successfully.${RESET}"
     fi
+    echo "---------------------------------------------------------------"
 }
+#############################################################################################################################
 # System
+#############################################################################################################################
 update_apps() {
     clear
-    echo
+    echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Starting update process...${RESET}"
     sleep 0.5
 
@@ -1067,11 +1069,11 @@ update_apps() {
         echo -e "\a"
         echo -e "${RED}[!] Some updates failed. Check output above.${RESET}"
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 systeminfo() {
     clear
-    echo
+    echo "---------------------------------------------------------------"
     echo "Fastfetch https://github.com/fastfetch-cli/fastfetch"
     echo -e "${GREEN}[➜] Gathering system information...${RESET}"
     sleep 0.5
@@ -1099,79 +1101,80 @@ systeminfo() {
         echo
         echo -e "${GREEN}[+] Basic system information displayed.${RESET}"
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 useful_tools() {
+    echo "---------------------------------------------------------------"
+    echo -e "${GREEN}[➜] Installing flatpak..${RESET}"
+    sudo apt install flatpak
+    sudo apt install gnome-software-plugin-flatpak
+    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-echo -e "${GREEN}[➜] Installing flatpak..${RESET}"
-sudo apt install flatpak
-sudo apt install gnome-software-plugin-flatpak
-flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+    read -p "Download office packages: (y/n): " download_office
+    if [[ "$download_office" == "y" ]]; then
+        echo -e "${GREEN}[➜] Downloading office packages...${RESET}"
+        sudo apt install libreoffice
+        sudo apt install okular
+        sudo apt install onlyoffice-desktopeditors
+        sudo apt install firefox
+        echo -e "${GREEN}[+] Office packages installed successfully.${RESET}"
+    fi
 
-read -p "Download office packages: (y/n): " download_office
-if [[ "$download_office" == "y" ]]; then
-    echo -e "${GREEN}[➜] Downloading office packages...${RESET}"
-    sudo apt install libreoffice
-    sudo apt install okular
-    sudo apt install onlyoffice-desktopeditors
-    sudo apt install firefox
-    echo -e "${GREEN}[+] Office packages installed successfully.${RESET}"
-fi
+    read -p "Download media players: (y/n): " download_media
+    if [[ "$download_media" == "y" ]]; then
+        echo -e "${GREEN}[➜] Downloading media players...${RESET}"
+        sudo apt install vlc
+        sudo apt install mpv
+        echo -e "${GREEN}[+] Media players installed successfully.${RESET}"
+    fi
 
-read -p "Download media players: (y/n): " download_media
-if [[ "$download_media" == "y" ]]; then
-    echo -e "${GREEN}[➜] Downloading media players...${RESET}"
-    sudo apt install vlc
-    sudo apt install mpv
-    echo -e "${GREEN}[+] Media players installed successfully.${RESET}"
-fi
+    read -p "Download image viewers/editors: (y/n): " download_images
+    if [[ "$download_images" == "y" ]]; then
+        echo -e "${GREEN}[➜] Downloading image viewers/editors...${RESET}"
+        sudo apt install gimp
+        sudo apt install krita
+        echo -e "${GREEN}[+] Image viewers/editors installed successfully.${RESET}"
+    fi
 
-read -p "Download image viewers/editors: (y/n): " download_images
-if [[ "$download_images" == "y" ]]; then
-    echo -e "${GREEN}[➜] Downloading image viewers/editors...${RESET}"
-    sudo apt install gimp
-    sudo apt install krita
-    echo -e "${GREEN}[+] Image viewers/editors installed successfully.${RESET}"
-fi
+    read -p "Download privacy/security tools: (y/n): " download_privacy_security
+    if [[ "$download_privacy_security" == "y" ]]; then
+        echo -e "${GREEN}[➜] Downloading privacy/security tools...${RESET}"
+        echo "Some require SNAP"
+        sudo apt install torbrowser-launcher
+        sudo apt install tor
+        sudo apt install torsocks
+        sudo apt install exiftool
+        sudo apt install bleachbit
+        sudo apt install chkrootkit
+        sudo apt install lynis
+        sudo apt install srm
+        sudo apt install obfuscate
+        sudo apt install veracrypt
+        sudo apt install clamav
+        sudo apt install usbguard
+        sudo flatpak install flathub com.github.arshubham.cipher
+        sudo flatpak install flathub com.github.tchx84.Flatseal
+        sudo flatpak install flathub com.belmoussaoui.Authenticator
+        sudo snap install keepassxc
+        sudo snap install ufw                                   
+        echo -e "${GREEN}[+] Privacy/security tools installed successfully.${RESET}"
+    fi
 
-read -p "Download privacy/security tools: (y/n): " download_privacy_security
-if [[ "$download_privacy_security" == "y" ]]; then
-    echo -e "${GREEN}[➜] Downloading privacy/security tools...${RESET}"
-    echo "Some require SNAP"
-    sudo apt install torbrowser-launcher
-    sudo apt install tor
-    sudo apt install torsocks
-    sudo apt install exiftool
-    sudo apt install bleachbit
-    sudo apt install chkrootkit
-    sudo apt install lynis
-    sudo apt install srm
-    sudo apt install obfuscate
-    sudo apt install veracrypt
-    sudo apt install clamav
-    sudo apt install usbguard
-    sudo flatpak install flathub com.github.arshubham.cipher
-    sudo flatpak install flathub com.github.tchx84.Flatseal
-    sudo flatpak install flathub com.belmoussaoui.Authenticator
-    sudo snap install keepassxc
-    sudo snap install ufw                                   
-    echo -e "${GREEN}[+] Privacy/security tools installed successfully.${RESET}"
-fi
-
-read -p "Other useful tools: (y/n): " download_other
-if [[ "$download_other" == "y" ]]; then
-    echo -e "${GREEN}[➜] Downloading other useful tools...${RESET}"
-    echo "Some require SNAP"
-    sudo apt install fastfetch
-    sudo snap install spotify
-    sudo snap install signal-desktop
-    sudo snap install code
-    sudo snap install element-desktop
-    echo -e "${GREEN}[+] Other useful tools installed successfully.${RESET}"
-fi
+    read -p "Other useful tools: (y/n): " download_other
+    if [[ "$download_other" == "y" ]]; then
+        echo -e "${GREEN}[➜] Downloading other useful tools...${RESET}"
+        echo "Some require SNAP"
+        sudo apt install fastfetch
+        sudo snap install spotify
+        sudo snap install signal-desktop
+        sudo snap install code
+        sudo snap install element-desktop
+        echo -e "${GREEN}[+] Other useful tools installed successfully.${RESET}"
+    fi
+    echo "---------------------------------------------------------------"
 }
 setup_clamav() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Installing ClamAV...${RESET}"
     sleep 0.5
 
@@ -1207,9 +1210,10 @@ setup_clamav() {
     echo
     echo -e "${GREEN}[+] ClamAV setup completed successfully.${RESET}"
     echo -e "${YELLOW}[!] Quick scan example: clamscan -r ~/Downloads${RESET}"
+    echo "---------------------------------------------------------------"
 }
 setup_usbguard() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Installing USBGuard...${RESET}"
     sleep 0.5
 
@@ -1237,9 +1241,10 @@ setup_usbguard() {
     echo
     echo -e "${GREEN}[+] USBGuard is now active.${RESET}"
     echo -e "${YELLOW}[!] New USB devices will be BLOCKED by default.${RESET}"
+    echo "---------------------------------------------------------------"
 }
 setup_ufw() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Installing UFW...${RESET}"
     sleep 0.5
 
@@ -1274,8 +1279,11 @@ setup_ufw() {
     echo
     echo -e "${GREEN}[+] UFW setup completed.${RESET}"
     echo -e "${YELLOW}[!] Incoming connections are BLOCKED by default.${RESET}"
+    echo "---------------------------------------------------------------"
 }
+#############################################################################################################################
 # Security
+#############################################################################################################################
 confirm_paranoia() {
     echo
     echo -e "\a"
@@ -1297,7 +1305,7 @@ confirm_paranoia() {
 
 paranoia_mode() {
     clear
-    echo
+    echo "---------------------------------------------------------------"
     local status=0
 
     echo -e "${GREEN}[➜] Enabling Paranoia mode...${RESET}"
@@ -1332,12 +1340,12 @@ paranoia_mode() {
     fi
 
     return $status
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 secure_empty_trash() {
     clear
-    echo
+    echo "---------------------------------------------------------------"
     TRASH_FILES="$HOME/.local/share/Trash/files"
     TRASH_INFO="$HOME/.local/share/Trash/info"
 
@@ -1362,12 +1370,12 @@ secure_empty_trash() {
     srm -v -r "${TRASH_INFO}/"* 2>/dev/null
 
     echo -e "${GREEN}[+] Deletion completed.${RESET}"
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 secure_overwrite_free_space() {
     clear
-    echo
+    echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Securely overwriting free space...${RESET}"
     root_partition=$(df / | tail -1 | awk '{print $1}')
 
@@ -1382,13 +1390,14 @@ secure_overwrite_free_space() {
     srm -v -z -r --free "$root_partition"
 
     echo -e "${GREEN}[+] Free space securely overwritten.${RESET}"
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 system_audit() {
     clear
-    echo
+    echo "---------------------------------------------------------------"
     echo "Lynis by CISOfy https://cisofy.com/lynis/"
+    echo "Lynis is an external tool, not made by us. It performs a comprehensive security audit of the system, checking for vulnerabilities, misconfigurations, and compliance issues. It provides detailed reports and recommendations for improving system security. This command runs Lynis in audit mode to analyze the system's security posture."
     sleep 0.5
 
     echo
@@ -1417,11 +1426,11 @@ system_audit() {
         echo -e "${YELLOW}[i] Install with: sudo apt install lynis${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 bleachbit() {
-    echo
+    echo "---------------------------------------------------------------"
     echo "BleachBit by BleachBit Team https://www.bleachbit.org/"
     echo -e "${GREEN}[➜] Running BleachBit...${RESET}"
     sleep 0.5
@@ -1445,12 +1454,12 @@ bleachbit() {
         echo -e "${YELLOW}[i] Install with: sudo apt install bleachbit${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 rootkit_hunt() {
     clear
-    echo
+    echo "---------------------------------------------------------------"
     echo "chkrootkit by chkrootkit Team https://chkrootkit.org/"
     echo -e "${GREEN}[➜] Checking for rootkits with chkrootkit...${RESET}"
     sleep 0.5
@@ -1480,11 +1489,11 @@ rootkit_hunt() {
         echo -e "${YELLOW}[i] Install with: sudo apt install chkrootkit${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 remove_temp_files() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Removing temporary files...${RESET}"
     sleep 0.5
 
@@ -1495,11 +1504,11 @@ remove_temp_files() {
         echo -e "${RED}[!] Failed to remove some temporary files (permissions or in-use files).${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 generate_password() {
-    echo
+    echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Generating secure password...${RESET}"
     sleep 0.5
@@ -1523,11 +1532,11 @@ generate_password() {
         echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 delete_file() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -n "Enter file: "
     read -r file
 
@@ -1541,10 +1550,11 @@ delete_file() {
         shred -u -v -n 5 "$file"
         echo -e "${GREEN}[+] File securely deleted.${RESET}"
     fi
+echo "---------------------------------------------------------------"
 }
 
 clean_metadata() {
-    echo
+    echo "---------------------------------------------------------------"
     echo "ExifTool by Phil Harvey https://exiftool.org/"
     echo -e "${GREEN}[➜] Removing metadata from image...${RESET}"
     echo
@@ -1566,7 +1576,6 @@ clean_metadata() {
 
     read -rp "Output file (e.g. clean.jpg): " outfile
 
-    # remove all metadata
     exiftool -all= -overwrite_original -o "$outfile" "$file" >/dev/null 2>&1
     status=$?
 
@@ -1577,12 +1586,14 @@ clean_metadata() {
         echo -e "${RED}[!] Failed to remove metadata.${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 
+#############################################################################################################################
 # Encoding
+#############################################################################################################################
 generate_aes256_key () {
-    echo
+    echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Generating AES-256 key...${RESET}"
     sleep 0.5
@@ -1606,10 +1617,10 @@ generate_aes256_key () {
         echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 generate_aes128_key () {
-    echo
+    echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Generating AES-128 key...${RESET}"
     sleep 0.5
@@ -1633,10 +1644,10 @@ generate_aes128_key () {
         echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 encrypt_file_aes256() {
-    echo
+    echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting file (AES-256-CBC)...${RESET}"
     echo
@@ -1678,11 +1689,11 @@ encrypt_file_aes256() {
         echo -e "${RED}[!] Encryption failed.${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 encrypt_file_aes128() {
-    echo
+    echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting file (AES-128-CBC)...${RESET}"
     echo
@@ -1725,11 +1736,11 @@ encrypt_file_aes128() {
         echo -e "${RED}[!] Encryption failed.${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 decrypt_file_aes256() {
-    echo
+    echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting file (AES-256-CBC)...${RESET}"
     echo
@@ -1760,11 +1771,11 @@ decrypt_file_aes256() {
         echo -e "${RED}[!] Decryption failed (wrong password or corrupted file).${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 decrypt_file_aes128() {
-    echo
+    echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting file (AES-128-CBC)...${RESET}"
     echo
@@ -1795,11 +1806,11 @@ decrypt_file_aes128() {
         echo -e "${RED}[!] Decryption failed (wrong password or corrupted file).${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 encrypt_text_ceasar() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Caesar Cipher${RESET}"
     echo
 
@@ -1826,11 +1837,11 @@ encrypt_text_ceasar() {
 
     echo -e "${RESET}"
     echo -e "${GREEN}[+] Result: $result ${RESET}"
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 encrypt_text_vigenere() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Vigenère Cipher${RESET}"
     echo
 
@@ -1864,11 +1875,11 @@ encrypt_text_vigenere() {
 
     echo -e "${RESET}"
     echo -e "${GREEN}[+] Result: $result${RESET}"
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 encrypt_text_aes256() {
-    echo
+    echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting text (AES-256-CBC)...${RESET}"
 
@@ -1892,11 +1903,11 @@ encrypt_text_aes256() {
         echo -e "${RED}[!] Encryption failed.${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 encrypt_text_base64() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Base64 Encode${RESET}"
 
     echo -e "${CYAN}"
@@ -1906,11 +1917,11 @@ encrypt_text_base64() {
 
     echo
     echo -e "${GREEN}[+] Result:${RESET} $result"
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 encrypt_text_aes128() {
-    echo
+    echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting text (AES-128-CBC)...${RESET}"
 
@@ -1933,11 +1944,11 @@ encrypt_text_aes128() {
         echo -e "${RED}[!] Encryption failed.${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 rot13_cipher() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] ROT13 Cipher${RESET}"
 
     echo -e "${CYAN}"
@@ -1946,11 +1957,11 @@ rot13_cipher() {
     echo -e "${RESET}"
 
     echo -e "${GREEN}[+] Result:${RESET} $result"
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 decrypt_text_base64() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Base64 Decode${RESET}"
 
     echo -e "${CYAN}"
@@ -1965,11 +1976,11 @@ decrypt_text_base64() {
     fi
 
     echo -e "${GREEN}[+] Result:${RESET} $result"
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 decrypt_text_aes256() {
-    echo
+    echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting text (AES-256-CBC)...${RESET}"
     echo
@@ -1993,11 +2004,11 @@ decrypt_text_aes256() {
         echo -e "${RED}[!] Decryption failed.${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 decrypt_text_aes128() {
-    echo
+    echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting text (AES-128-CBC)...${RESET}"
     echo
@@ -2021,17 +2032,16 @@ decrypt_text_aes128() {
         echo -e "${RED}[!] Decryption failed.${RESET}"
         return 1
     fi
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 decrypt_text_ceasar() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Caesar Decipher${RESET}"
 
     read -rp "Enter text: " text
     read -rp "Enter shift (e.g. 3): " shift
 
-    # reverse shift
     shift=$(( -shift ))
 
     echo -e "${CYAN}"
@@ -2055,11 +2065,11 @@ decrypt_text_ceasar() {
 
     echo -e "${RESET}"
     echo -e "${GREEN}[+] Result: $result${RESET}"
-    echo
+    echo "---------------------------------------------------------------"
 }
 
 decrypt_text_vigenere() {
-    echo
+    echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Vigenère Decipher${RESET}"
     echo
 
@@ -2096,10 +2106,11 @@ decrypt_text_vigenere() {
 
     echo -e "${RESET}"
     echo -e "${GREEN}[+] Result: $result${RESET}"
-    echo
+    echo "---------------------------------------------------------------"
 }
-
+#############################################################################################################################
 # Misc
+#############################################################################################################################
 matrix() {
     clear
     if command -v cmatrix >/dev/null 2>&1; then
@@ -2130,7 +2141,7 @@ hacking() {
     # The following code simulates a hacking scenario where the user "connects" to a target server, "scans" for vulnerabilities, "exploits" a known vulnerability, and "gains root access". It then simulates connecting to a high-profile target (the DoD server) and "extracting sensitive data". This is purely fictional and should not be taken seriously.
     # No real commands are executed in this code, and it is only meant for entertainment purposes only. Always use your skills and knowledge ethically and responsibly.
     clear
-    echo -e "${GREEN}"
+    echo "${GREEN}-------------------------------------------------------------------"
     echo "Starting exploit"
     sleep 0.5
     echo "Connecting to target..." | pv -qL 5
@@ -2219,13 +2230,13 @@ EOF
     echo "ssh exit" | pv -qL 10
     sleep 0.5
     echo "Connection closed." | pv -qL 5
-    echo -e "${RESET}"
+    echo -e "${RESET}----------------------------------------------------"
     clear
 }
 read_nerd_news () {
+    echo "-------------------------------------------------------------------"
     WIRED_RSS="https://www.wired.com/feed/rss"
     ARS_RSS="https://feeds.arstechnica.com/arstechnica/index"
-    404_RSS="https://www.404media.co/rss"
 
     echo ""
     echo "########################################"
@@ -2235,7 +2246,6 @@ read_nerd_news () {
 
     fetch_feed "WIRED" "$WIRED_RSS" 5
     fetch_feed "ARS TECHNICA" "$ARS_RSS" 5
-    fetch_feed "404 MEDIA" "$404_RSS" 5
 
     echo "========================================"
     echo " Done."
@@ -2267,9 +2277,12 @@ fetch_feed() {
         }
     '
 }
+#############################################################################################################################
 # OTHER
+#############################################################################################################################
 license() {
     clear
+    echo "-------------------------------------------------------------------"
     cat <<'EOF'
 MIT License
 
@@ -2293,10 +2306,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 EOF
+    echo "---------------------------------------------------------------"
 }
 
 clone_source() {
-    echo
+    echo "-------------------------------------------------------------------"
     echo -e "${GREEN}[➜] Cloning source code from GitHub...${RESET}"
     sleep 0.5
 
@@ -2316,10 +2330,11 @@ clone_source() {
 }
 
 version() {
-    echo
+    echo "-------------------------------------------------------------------"
     echo -e "${WHITE}JAS ${MAIN_VERSION}${SUB_VERSION}${RESET}" | pv -qL 10
-    echo "Release: $TESTED_RELEASE $TESTED_ON" | pv -qL 10
+    echo "Release: $TESTED_RELEASE tested on: $TESTED_ON" | pv -qL 10
     echo -e "${RESET}"
+    echo "---------------------------------------------------------------"
 }
 
 # -------------------
@@ -2329,12 +2344,14 @@ network_tools() {
     clear
     echo -e "${BOLD}${PURPLE}"
     cat <<'EOF'
+
                    ____________________________________
-[::]  [::]  [::]   ▗▖  ▗▖▗▄▄▄▖▗▄▄▄▖▗▖ ▗▖ ▗▄▖ ▗▄▄▖ ▗▖ ▗▖ 
- ||    ||    ||    ▐▛▚▖▐▌▐▌     █  ▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▌▗▞▘ 
- ||    ||    ||    ▐▌ ▝▜▌▐▛▀▀▘  █  ▐▌ ▐▌▐▌ ▐▌▐▛▀▚▖▐▛▚▖
- ||____||____||    ▐▌  ▐▌▐▙▄▄▖  █  ▐▙█▟▌▝▚▄▞▘▐▌ ▐▌▐▌ ▐▌     
- [_____________]   ____________________________________             
+[::]  [::]  [::]   ▗▖  ▗▖▗▄▄▄▖▗▄▄▄▖▗▖ ▗▖ ▗▄▖ ▗▄▄▖ ▗▖ ▗▖  [::]  [::]  [::]
+ ||    ||    ||    ▐▛▚▖▐▌▐▌     █  ▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▌▗▞▘   ||    ||    || 
+ ||    ||    ||    ▐▌ ▝▜▌▐▛▀▀▘  █  ▐▌ ▐▌▐▌ ▐▌▐▛▀▚▖▐▛▚▖    ||    ||    || 
+ ||____||____||    ▐▌  ▐▌▐▙▄▄▖  █  ▐▙█▟▌▝▚▄▞▘▐▌ ▐▌▐▌ ▐▌   ||____||____||    
+ [_____________]   ____________________________________   [_____________]      
+
 EOF
     echo -e "${RESET}"
     local __old_ps3=$PS3
@@ -2388,12 +2405,15 @@ system_tools() {
     clear
     echo -e "${BOLD}${ORANGE}"
     cat <<'EOF'
-            _______________________________
-|1|0|1|0|1| ▗▄▄▖▗▖  ▗▖▗▄▄▖▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖
-|0|1|0|1|0|▐▌    ▝▚▞▘▐▌     █  ▐▌   ▐▛▚▞▜▌
-|1|0|S Y S| ▝▀▚▖  ▐▌  ▝▀▚▖  █  ▐▛▀▀▘▐▌  ▐▌
-|0|1|0|1|0| ▄▄▞▘  ▐▌ ▗▄▄▞▘  █  ▐▙▄▄▖▐▌  ▐▌
-|1|0|1|0|1| _______________________________
+|1|0|1|0|1||1|0|1|0|1||1|0|1|0|1||1|0|1|0|1||1|0|1|0|1||1|0|1|0|1||1|0|1|0|1|
+|1|0|1|0|1||1|0|1|0|1| _______________________________  |1|0|1|0|1||1|0|1|0|1|
+|1|0|1|0|1||1|0|1|0|1|  ▗▄▄▖▗▖  ▗▖▗▄▄▖▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖  |1|0|1|0|1||1|0|1|0|1|
+|0|1|0|1|0||0|1|0|1|0| ▐▌    ▝▚▞▘▐▌     █  ▐▌   ▐▛▚▞▜▌  |0|1|0|1|0||0|1|0|1|0|
+|1|0|S Y S||1|0|S Y S|  ▝▀▚▖  ▐▌  ▝▀▚▖  █  ▐▛▀▀▘▐▌  ▐▌  |1|0|S Y S||1|0|S Y S|
+|0|1|0|1|0||0|1|0|1|0|  ▄▄▞▘  ▐▌ ▗▄▄▞▘  █  ▐▙▄▄▖▐▌  ▐▌  |0|1|0|1|0||0|1|0|1|0|
+|1|0|1|0|1||1|0|1|0|1|  _______________________________ |1|0|1|0|1||1|0|1|0|1|
+|1|0|1|0|1||1|0|1|0|1|                                  |1|0|1|0|1||1|0|1|0|1|
+|1|0|1|0|1||1|0|1|0|1||1|0|1|0|1||1|0|1|0|1||1|0|1|0|1||1|0|1|0|1||1|0|1|0|1|
 EOF
     echo -e "${RESET}"
     local __old_ps3=$PS3
@@ -2436,18 +2456,22 @@ EOF
 # -------------------
 privacy_tools() {
     clear
-    echo -e "${BOLD}${CYAN}"
+    echo -e "${BOLD}${BLUE}"
     cat <<'EOF'
+[privacy • anonymity • security • opsec • stealth • confidentiality • hardening]
 ________________________________________________________________________________
 ▗▄▄▖ ▗▄▄▖ ▗▄▄▄▖▗▖  ▗▖ ▗▄▖  ▗▄▄▖▗▖  ▗▖   ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▖ ▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖
 ▐▌ ▐▌▐▌ ▐▌  █  ▐▌  ▐▌▐▌ ▐▌▐▌    ▝▚▞▘   ▐▌   ▐▌   ▐▌   ▐▌ ▐▌▐▌ ▐▌  █    █   ▝▚▞▘
 ▐▛▀▘ ▐▛▀▚▖  █  ▐▌  ▐▌▐▛▀▜▌▐▌     ▐▌     ▝▀▚▖▐▛▀▀▘▐▌   ▐▌ ▐▌▐▛▀▚▖  █    █    ▐▌
 ▐▌   ▐▌ ▐▌▗▄█▄▖ ▝▚▞▘ ▐▌ ▐▌▝▚▄▄▖  ▐▌    ▗▄▄▞▘▐▙▄▄▖▝▚▄▄▖▝▚▄▞▘▐▌ ▐▌▗▄█▄▖  █    ▐▌
 ________________________________________________________________________________
+
+[secure-by-default • hardened • encrypted • private • anonymous • shielded]
 EOF
     echo -e "${RESET}"
     echo -e "\a"
     echo -e "${YELLOW}[!] Note: Some of these tools can be dangerous if used improperly. Make sure you understand what each tool does before using it. Always use these tools responsibly and ethically.${RESET}"
+    echo
     local __old_ps3=$PS3
     PS3="Privacy/Security Menu: "
     options=("Securely wipe trash" "Securely overwrite free space" "Peform system audit" "Peform system cleanup" "Check for rootkits" "Remove temporary files" "Generate secure password" "Delete file" "Clean metadata" "Exit")
@@ -2642,19 +2666,19 @@ encryptions_tools() {
     clear
     echo -e "${BOLD}${GREEN}"
     cat <<'EOF'                               
-             %%%%%%%%              
-           %%       %%%            
-          %%          %            
-          %%          %%           ___________________________________________________
-          %%          %%           ▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖▗▄▄▖▗▖  ▗▖▗▄▄▖▗▄▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
-         %%%%%%%%%%%%%%%%          ▐▌   ▐▛▚▖▐▌▐▌   ▐▌ ▐▌▝▚▞▘ ▐▌ ▐▌ █    █  ▐▌ ▐▌▐▛▚▖▐▌
-        %%%%%%%%%%%%%%%%%          ▐▛▀▀▘▐▌ ▝▜▌▐▌   ▐▛▀▚▖ ▐▌  ▐▛▀▘  █    █  ▐▌ ▐▌▐▌ ▝▜▌
-        %%%%%%%    %%%%%%          ▐▙▄▄▖▐▌  ▐▌▝▚▄▄▖▐▌ ▐▌ ▐▌  ▐▌    █  ▗▄█▄▖▝▚▄▞▘▐▌  ▐▌
-        %%%%%%%    %%%%%%          ___________________________________________________
-        %%%%%%%%  %%%%%%%          
-        %%%%%%%%%.%%%%%%%          
-        %%%%%%%%%%%%%%%%%          
-          %%%%%%%%%%%%%%           
+    %%%%%%%%       101001010101010100110010101010101010010101010101001       
+   %%       %%%    010101010010101001010101010101010101010101001010101        
+  %%          %    101010010101010100101010010100101010010101010101010        
+ %%          %%    ___________________________________________________
+ %%          %%    ▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖▗▄▄▖▗▖  ▗▖▗▄▄▖▗▄▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
+%%%%%%%%%%%%%%%%   ▐▌   ▐▛▚▖▐▌▐▌   ▐▌ ▐▌▝▚▞▘ ▐▌ ▐▌ █    █  ▐▌ ▐▌▐▛▚▖▐▌
+%%%%%%%%%%%%%%%%%  ▐▛▀▀▘▐▌ ▝▜▌▐▌   ▐▛▀▚▖ ▐▌  ▐▛▀▘  █    █  ▐▌ ▐▌▐▌ ▝▜▌
+%%%%%%%    %%%%%%  ▐▙▄▄▖▐▌  ▐▌▝▚▄▄▖▐▌ ▐▌ ▐▌  ▐▌    █  ▗▄█▄▖▝▚▄▞▘▐▌  ▐▌
+%%%%%%%    %%%%%%  ___________________________________________________
+%%%%%%%%  %%%%%%%         
+%%%%%%%%%.%%%%%%%  010100101010010010101010010101010100101010101001010       
+%%%%%%%%%%%%%%%%%  010100101010100101010101010100101010001010101010101        
+  %%%%%%%%%%%%%%   101001010100100010101001010010101010101001010101001       
 EOF
     echo -e "${RESET}"
     local __old_ps3=$PS3
@@ -2693,6 +2717,7 @@ EOF
 
     PS3="$__old_ps3"
     return 0
+    echo -e "${RESET}"
 }
 
 # -------------------
@@ -2700,14 +2725,12 @@ EOF
 # -------------------
 misc_tools() {
 clear
-cat <<'EOF' | rainbow
-___________________________________________________________________
-▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖ ▗▄▄▖▗▄▄▄▖▗▖   ▗▖    ▗▄▖ ▗▖  ▗▖▗▄▄▄▖ ▗▄▖ ▗▖ ▗▖ ▗▄▄▖
-▐▛▚▞▜▌  █  ▐▌   ▐▌   ▐▌   ▐▌   ▐▌   ▐▌ ▐▌▐▛▚▖▐▌▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌
-▐▌  ▐▌  █   ▝▀▚▖▐▌   ▐▛▀▀▘▐▌   ▐▌   ▐▛▀▜▌▐▌ ▝▜▌▐▛▀▀▘▐▌ ▐▌▐▌ ▐▌ ▝▀▚▖
-▐▌  ▐▌▗▄█▄▖▗▄▄▞▘▝▚▄▄▖▐▙▄▄▖▐▙▄▄▖▐▙▄▄▖▐▌ ▐▌▐▌  ▐▌▐▙▄▄▖▝▚▄▞▘▝▚▄▞▘▗▄▄▞▘
-___________________________________________________________________
-EOF
+echo -e "${RED}    ___________________________________________________________________"
+echo -e "${ORANGE} ▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖ ▗▄▄▖▗▄▄▄▖▗▖   ▗▖    ▗▄▖ ▗▖  ▗▖▗▄▄▄▖ ▗▄▖ ▗▖ ▗▖ ▗▄▄▖"
+echo -e "${YELLOW} ▐▛▚▞▜▌  █  ▐▌   ▐▌   ▐▌   ▐▌   ▐▌   ▐▌ ▐▌▐▛▚▖▐▌▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌   "
+echo -e "${GREEN}  ▐▌  ▐▌  █   ▝▀▚▖▐▌   ▐▛▀▀▘▐▌   ▐▌   ▐▛▀▜▌▐▌ ▝▜▌▐▛▀▀▘▐▌ ▐▌▐▌ ▐▌ ▝▀▚▖"
+echo -e "${BLUE}   ▐▌  ▐▌▗▄█▄▖▗▄▄▞▘▝▚▄▄▖▐▙▄▄▖▐▙▄▄▖▐▙▄▄▖▐▌ ▐▌▐▌  ▐▌▐▙▄▄▖▝▚▄▞▘▝▚▄▞▘▗▄▄▞▘"
+echo -e "${PURPLE} ___________________________________________________________________"
     echo -e "${RESET}"
     local __old_ps3=$PS3
     PS3="Misc Tools Menu: "
@@ -2846,6 +2869,7 @@ Description:
   help | -h | --help        → Show this menu
   info <command>            → Show detailed info on command
   version | -v              → Show version information
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 [ NOTES ]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -2929,7 +2953,6 @@ if [[ -n "$1" ]]; then
         clone_source|clone) clone_source ;;
         help|-h|--help) show_help ;;
         version|-v) version ;;
-
         # MENUS
         misc_tools) misc_tools ;;
         system_tools) system_tools ;;
@@ -2980,25 +3003,25 @@ while true; do
     select opt in "${main_options[@]}"; do
         [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && exit 0
         case "$REPLY" in
-            1)
+            1|net|NET|Network|network|NETWORK)
                 network_tools
                 ;;
-            2)
+            2|sys|SYS|System|system|SYSTEM)
                 system_tools
                 ;;
-            3)
+            3|priv|PRIV|Privacy|privacy|PRIVACY)
                 privacy_tools
                 ;;
-            4)
+            4|enc|ENC|ENCRYPT|Encrypt|encrypt)
                 encryptions_tools
                 ;;
-            5)
+            5|misc|MISC)
                 misc_tools
                 ;;
-            6)
+            6|license|License|LICENSE)
                 license
                 ;;
-            7)
+            7|clone|Clone|CLONE)
                 clone_source
                 ;;
             8|q|Q)
