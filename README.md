@@ -11,7 +11,7 @@ ___             __       ___           _______.
 /__/      \______/  /__/     \__\ |_______/     ______ 
                                                |______|
 ```
-![Version](https://img.shields.io/badge/Version-1.6.4-00008b?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-1.6.6-00008b?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-00008b?style=for-the-badge)
 ![Shell](https://img.shields.io/badge/Shell-Bash-black?style=for-the-badge&logo=gnubash&logoColor=black)
 ![Platform](https://img.shields.io/badge/Platform-Linux-black?style=for-the-badge&logo=linux&logoColor=black)
@@ -58,6 +58,7 @@ Built for speed, simplicity, privacy-first and control.
 - **Metadata cleaner** — strip EXIF data from images with `exiftool`
 
 ### ꗃ Encryption Tools
+- **Generate keys** - for AES-128 and AES-256
 - **AES-256 / AES-128** — encrypt and decrypt files and text
 - **Vigenère cipher** — classic polyalphabetic encryption
 - **Caesar cipher** — shift cipher with custom offset
@@ -95,7 +96,9 @@ The following packages are required for full functionality. Missing tools will b
 | `tor` + `torsocks` | Tor routing |
 | `traceroute` | Network path tracing |
 | `git` | Source code cloning |
-| `maigret` *(optional)* | Username OSINT (install via `pipx install maigret`) |
+| `maigret`| Username OSINT (install via `pipx install maigret`) |
+| `htop` | Watch active processes
+| `etherape` | Monitor network
 
 ---
 
