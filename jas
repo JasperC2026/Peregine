@@ -37,6 +37,7 @@ run_with_tor() {
     fi
 }
 whois_lookup() {
+    clear
     echo "---------------------------------------------------------------"
     echo -e "${BOLD}"
     echo -n "Enter domain (ex: example.com): "
@@ -84,7 +85,9 @@ whois_lookup() {
 
     echo -e "${GREEN}[+] Whois lookup completed successfully.${RESET}"
     echo "---------------------------------------------------------------"
-}ping() {
+}
+ping() {
+    clear
     echo "---------------------------------------------------------------"
     echo -n "Enter item to ping (domain or IP): "
     read -r itemping
@@ -138,6 +141,7 @@ whois_lookup() {
     echo "---------------------------------------------------------------"
 }
 traceroute() {
+    clear
     echo "---------------------------------------------------------------"
     echo -n "Enter domain or IP to trace: "
     read -r domaintrace
@@ -194,6 +198,7 @@ traceroute() {
     echo "---------------------------------------------------------------"
 }
 dns_info() {
+    clear
     echo "---------------------------------------------------------------"
     echo -n "Enter domain or IP to get DNS info: "
     read -r domaindns
@@ -258,6 +263,7 @@ dns_info() {
     echo "---------------------------------------------------------------"
 }
 get_ip() {
+    clear
     echo -e "${PURPLE}----------------------------------------------------------------"
     read -p "Route through Tor? (y/n): " USE_TOR
     echo -e "${RESET}"
@@ -280,6 +286,7 @@ get_ip() {
     echo "---------------------------------------------------------------"
 }
 ip_osint() {
+    clear
     echo "---------------------------------------------------------------"
     echo "IPinfo https://ipinfo.io/"
     read -p "Enter IP or domain: " target
@@ -350,6 +357,7 @@ ip_osint() {
     echo "---------------------------------------------------------------"
 }
 maigret_search() {
+    clear
     echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Maigret Username OSINT${RESET}"
     echo
@@ -422,62 +430,62 @@ update_apps() {
     clear
     echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Starting update process...${RESET}"
-    sleep 0.5
+    echo "---------------------------------------------------------------"
 
-    overall_status=0
+    local overall_status=0
+    local start_time=$SECONDS
 
-    echo "Updating all APT packages..."
-    echo
-
-    if sudo apt update && sudo apt upgrade -y; then
+    _update_section() {
+        local label="$1"; shift
+        local section_start=$SECONDS
         echo
-        echo -e "${GREEN}[+] APT packages updated${RESET}"
-    else
-        echo
-        echo -e "\a"
-        echo -e "${RED}[!] APT update failed${RESET}"
-        overall_status=1
-    fi
-    echo
-    echo "Updating all flatpak packages..."
-    echo
+        echo -e "${CYAN}── $label ─────────────────────────────────────────────${RESET}"
+        "$@"
+        local status=$?
+        local elapsed=$(( SECONDS - section_start ))
+        if [[ $status -eq 0 ]]; then
+            echo -e "${GREEN}[+] $label completed (${elapsed}s).${RESET}"
+        else
+            echo -e "\a"
+            echo -e "${RED}[!] $label failed (${elapsed}s).${RESET}"
+            overall_status=1
+        fi
+        return $status
+    }
 
+    # APT
+    _update_section "APT" bash -c 'sudo apt update && sudo apt upgrade -y'
+
+    # Flatpak
     if command -v flatpak >/dev/null 2>&1; then
-        if flatpak update -y; then
-            echo
-            echo -e "${GREEN}[+] Flatpak updated${RESET}"
-        else
-            echo
-            echo -e "\a"
-            echo -e "${RED}[!] Flatpak update failed${RESET}"
-            overall_status=1
-        fi
+        _update_section "Flatpak" flatpak update -y
     else
-        echo -e "${YELLOW}[!] Flatpak not installed, skipping.${RESET}"
+        echo -e "${YELLOW}[i] Flatpak not installed — skipping.${RESET}"
     fi
-    echo
-    echo "Updating all snap packages..."
-    echo
 
+    # Snap
     if command -v snap >/dev/null 2>&1; then
-        if sudo snap refresh; then
-            echo
-            echo -e "${GREEN}[+] Snap packages updated${RESET}"
-        else
-            echo
-            echo -e "\a"
-            echo -e "${RED}[!] Snap update failed${RESET}"
-            overall_status=1
-        fi
+        _update_section "Snap" sudo snap refresh
     else
-        echo -e "${YELLOW}[!] Snap not installed, skipping.${RESET}"
+        echo -e "${YELLOW}[i] Snap not installed — skipping.${RESET}"
     fi
+
+    # pip (user packages)
+    if command -v pip3 >/dev/null 2>&1; then
+        _update_section "pip3 (user)" bash -c \
+            'pip3 list --outdated --format=freeze 2>/dev/null \
+             | cut -d= -f1 \
+             | xargs -r pip3 install --upgrade --quiet'
+    fi
+
+    local total_elapsed=$(( SECONDS - start_time ))
     echo
+    echo "---------------------------------------------------------------"
     if [[ $overall_status -eq 0 ]]; then
-        echo -e "${GREEN}[+] All updates completed successfully.${RESET}"
+        echo -e "${GREEN}[+] All updates completed successfully (${total_elapsed}s total).${RESET}"
     else
         echo -e "\a"
-        echo -e "${RED}[!] Some updates failed. Check output above.${RESET}"
+        echo -e "${RED}[!] Some updates failed — check output above (${total_elapsed}s total).${RESET}"
     fi
     echo "---------------------------------------------------------------"
 }
@@ -514,6 +522,7 @@ systeminfo() {
     echo "---------------------------------------------------------------"
 }
 setup_clamav() {
+    clear
     echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Installing ClamAV...${RESET}"
     sleep 0.5
@@ -553,6 +562,7 @@ setup_clamav() {
     echo "---------------------------------------------------------------"
 }
 setup_usbguard() {
+    clear
     echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Installing USBGuard...${RESET}"
     sleep 0.5
@@ -584,6 +594,7 @@ setup_usbguard() {
     echo "---------------------------------------------------------------"
 }
 setup_ufw() {
+    clear
     echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Installing UFW...${RESET}"
     sleep 0.5
@@ -624,30 +635,53 @@ setup_ufw() {
 secure_empty_trash() {
     clear
     echo "---------------------------------------------------------------"
-    TRASH_FILES="$HOME/.local/share/Trash/files"
-    TRASH_INFO="$HOME/.local/share/Trash/info"
 
-    if [[ -z "$(ls -A "$TRASH_FILES" 2>/dev/null)" && -z "$(ls -A "$TRASH_INFO" 2>/dev/null)" ]]; then
-        echo "Trash is empty."
+    local TRASH_FILES="$HOME/.local/share/Trash/files"
+    local TRASH_INFO="$HOME/.local/share/Trash/info"
+
+    if ! command -v srm &>/dev/null; then
+        echo -e "\a"
+        echo -e "${RED}[!] srm is not installed.${RESET}"
+        echo -e "${YELLOW}[i] Install with: sudo apt install secure-delete${RESET}"
         return 1
     fi
 
-    read -rp "Confirm deletion (y/n): " confirm
+    # Count items using find to avoid glob expansion issues on empty dirs
+    local file_count
+    file_count=$(find "$TRASH_FILES" -mindepth 1 2>/dev/null | wc -l)
+
+    if [[ $file_count -eq 0 ]]; then
+        echo -e "${GREEN}[i] Trash is already empty.${RESET}"
+        echo "---------------------------------------------------------------"
+        return 0
+    fi
+
+    echo -e "${CYAN}[i] Found $file_count item(s) in Trash.${RESET}"
+    echo
+    read -rp "Securely delete all trash? (y/n): " confirm
     if [[ "$confirm" != "y" ]]; then
-        echo -e "${RED}[!] Deletion aborted.${RESET}"
+        echo -e "${YELLOW}[!] Deletion aborted.${RESET}"
+        return 0
+    fi
+
+    echo
+    echo -e "${GREEN}[➜] Securely deleting trash files...${RESET}"
+    find "$TRASH_FILES" -mindepth 1 -exec srm -v -r {} + 2>/dev/null
+
+    echo -e "${GREEN}[➜] Removing trash metadata...${RESET}"
+    find "$TRASH_INFO" -mindepth 1 -name "*.trashinfo" -exec srm -v {} + 2>/dev/null
+
+    # Verify
+    local remaining
+    remaining=$(find "$TRASH_FILES" -mindepth 1 2>/dev/null | wc -l)
+    if [[ $remaining -eq 0 ]]; then
+        echo -e "${GREEN}[+] Trash securely emptied.${RESET}"
+    else
+        echo -e "\a"
+        echo -e "${RED}[!] $remaining item(s) may not have been deleted — check manually.${RESET}"
         return 1
     fi
 
-    echo -e "${GREEN}[➜] Securely deleting trash...${RESET}"
-    sleep 0.5
-    echo "Deleting files..."
-    srm -v -r "${TRASH_FILES}/"* 2>/dev/null
-
-    echo -e "${GREEN}[➜] Securely deleting trash info...${RESET}"
-    sleep 0.5
-    srm -v -r "${TRASH_INFO}/"* 2>/dev/null
-
-    echo -e "${GREEN}[+] Deletion completed.${RESET}"
     echo "---------------------------------------------------------------"
 }
 secure_overwrite_free_space() {
@@ -812,6 +846,7 @@ rootkit_hunt() {
     echo "---------------------------------------------------------------"
 }
 remove_temp_files() {
+    clear
     echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Removing temporary files...${RESET}"
     sleep 0.5
@@ -828,51 +863,113 @@ remove_temp_files() {
 generate_password() {
     echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Generating secure password...${RESET}"
-    sleep 0.5
+    echo -e "${GREEN}[➜] Secure password generator${RESET}"
     echo
 
-    if command -v openssl >/dev/null 2>&1; then
-        password=$(openssl rand -base64 12 2>/dev/null)
-        status=$?
-
-        if [[ $status -eq 0 && -n "$password" ]]; then
-            echo -e "${CYAN}$password${RESET}"
-            echo -e "${GREEN}[+] Password generation completed.${RESET}"
-        else
-            echo -e "\a"
-            echo -e "${RED}[!] Failed to generate password.${RESET}"
-            return 1
-        fi
-    else
+    if ! command -v openssl >/dev/null 2>&1; then
         echo -e "\a"
         echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
         echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
         return 1
     fi
+
+    read -rp "Password length (default: 16, max: 128): " length
+
+    # Default to 16 if blank
+    length=${length:-16}
+
+    # Validate: must be a number between 8 and 128
+    if ! [[ "$length" =~ ^[0-9]+$ ]] || (( length < 8 || length > 128 )); then
+        echo -e "\a"
+        echo -e "${RED}[!] Invalid length '$length' — must be a number between 8 and 128.${RESET}"
+        return 1
+    fi
+
+    echo
+    echo -e "${CYAN}── Passwords ────────────────────────────────────────────────${RESET}"
+
+    # Alphanumeric (URL-safe, easy to type)
+    local pass_alnum
+    pass_alnum=$(openssl rand -base64 96 | tr -dc 'A-Za-z0-9' | head -c "$length")
+    echo -e "  Alphanumeric : ${CYAN}${pass_alnum}${RESET}"
+
+    # Full ASCII symbols (maximum entropy)
+    local pass_full
+    pass_full=$(openssl rand -base64 96 | tr -dc 'A-Za-z0-9!@#$%^&*()-_=+[]{}|;:,.<>?' | head -c "$length")
+    echo -e "  With symbols : ${CYAN}${pass_full}${RESET}"
+
+    # Hex (useful for keys/tokens)
+    local pass_hex
+    pass_hex=$(openssl rand -hex 64 | head -c "$length")
+    echo -e "  Hex          : ${CYAN}${pass_hex}${RESET}"
+
+    echo
+    # Rough entropy estimate: log2(charset^length)
+    local entropy_alnum entropy_full
+    entropy_alnum=$(awk "BEGIN { printf \"%d\", $length * 5.954 }")  # log2(62)
+    entropy_full=$(awk  "BEGIN { printf \"%d\", $length * 6.554 }")  # log2(95)
+    echo -e "${CYAN}[i] Estimated entropy — alphanumeric: ~${entropy_alnum} bits  |  with symbols: ~${entropy_full} bits${RESET}"
     echo "---------------------------------------------------------------"
 }
-delete_file() {
+secure_delete() {
     echo "---------------------------------------------------------------"
-    echo -n "Enter file: "
-    read -r file
+    echo -n "Enter file or directory to securely delete: "
+    read -r target
 
-    if [[ -z "$file" ]]; then
-        echo -e "${YELLOW}[!] No file entered.${RESET}"
-    elif [[ ! -f "$file" ]]; then
-        echo -e "\a"
-        echo -e "${RED}[!] File does not exist.${RESET}"
-    else
-        echo -e "${GREEN}[+] Running shred for: $file${RESET}"
-        shred -u -v -n 5 "$file"
-        echo -e "${GREEN}[+] File securely deleted.${RESET}"
+    if [[ -z "$target" ]]; then
+        echo -e "${YELLOW}[!] No target entered.${RESET}"
+        return 1
     fi
-echo "---------------------------------------------------------------"
+
+    if [[ ! -e "$target" ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!] Target does not exist: '$target'${RESET}"
+        return 1
+    fi
+
+    if [[ -d "$target" ]]; then
+        echo -e "${YELLOW}[!] '$target' is a directory.${RESET}"
+        read -rp "Securely delete entire directory and contents? (y/n): " confirm
+        [[ "$confirm" != "y" ]] && return 0
+
+        echo -e "${GREEN}[➜] Shredding all files in '$target'...${RESET}"
+        find "$target" -type f -exec shred -u -v -n 5 {} \;
+        rm -rf "$target"
+
+        if [[ ! -e "$target" ]]; then
+            echo -e "${GREEN}[+] Directory securely deleted.${RESET}"
+        else
+            echo -e "\a"
+            echo -e "${RED}[!] Directory may not have been fully removed.${RESET}"
+            return 1
+        fi
+
+    elif [[ -f "$target" ]]; then
+        read -rp "Securely delete '$target'? (y/n): " confirm
+        [[ "$confirm" != "y" ]] && return 0
+
+        echo -e "${GREEN}[➜] Shredding '$target'...${RESET}"
+        shred -u -v -n 5 "$target"
+
+        if [[ ! -e "$target" ]]; then
+            echo -e "${GREEN}[+] File securely deleted.${RESET}"
+        else
+            echo -e "\a"
+            echo -e "${RED}[!] File may still exist — check manually.${RESET}"
+            return 1
+        fi
+    else
+        echo -e "\a"
+        echo -e "${RED}[!] Target is not a regular file or directory (symlink, device, etc.).${RESET}"
+        return 1
+    fi
+
+    echo "---------------------------------------------------------------"
 }
 clean_metadata() {
     echo "---------------------------------------------------------------"
     echo "ExifTool by Phil Harvey https://exiftool.org/"
-    echo -e "${GREEN}[➜] Removing metadata from image...${RESET}"
+    echo -e "${GREEN}[➜] Remove metadata from a file${RESET}"
     echo
 
     if ! command -v exiftool >/dev/null 2>&1; then
@@ -882,29 +979,63 @@ clean_metadata() {
         return 1
     fi
 
-    read -rp "Enter image file: " file
+    read -rp "Enter input file: " file
 
     if [[ ! -f "$file" ]]; then
         echo -e "\a"
-        echo -e "${RED}[!] File not found.${RESET}"
+        echo -e "${RED}[!] File not found: '$file'${RESET}"
         return 1
     fi
 
-    read -rp "Output file (e.g. clean.jpg): " outfile
+    # Check it's a supported format
+    local mimetype
+    mimetype=$(file --mime-type -b "$file")
+    case "$mimetype" in
+        image/*|video/*|audio/*|application/pdf)
+            ;;
+        *)
+            echo -e "\a"
+            echo -e "${RED}[!] Unsupported file type: $mimetype${RESET}"
+            echo -e "${YELLOW}[i] exiftool supports images, video, audio, and PDF.${RESET}"
+            return 1
+            ;;
+    esac
 
-    exiftool -all= -overwrite_original -o "$outfile" "$file" >/dev/null 2>&1
-    status=$?
+    # Show existing metadata count before stripping
+    local meta_count
+    meta_count=$(exiftool "$file" 2>/dev/null | grep -v "^File\|^Directory\|^MIME\|^ExifTool" | wc -l)
+    echo -e "${CYAN}[i] Found $meta_count metadata fields in '$file'.${RESET}"
+    echo
 
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] Metadata removed → $outfile${RESET}"
+    read -rp "Output file (leave blank to overwrite original): " outfile
+
+    if [[ -z "$outfile" ]]; then
+        echo -e "${YELLOW}[!] This will overwrite the original file.${RESET}"
+        read -rp "Confirm? (y/n): " confirm
+        [[ "$confirm" != "y" ]] && return 0
+
+        exiftool -all= -overwrite_original "$file" >/dev/null 2>&1
+        status=$?
+        outfile="$file"
     else
+        exiftool -all= -overwrite_original -o "$outfile" "$file" >/dev/null 2>&1
+        status=$?
+    fi
+
+    if [[ $status -ne 0 ]]; then
         echo -e "\a"
         echo -e "${RED}[!] Failed to remove metadata.${RESET}"
         return 1
     fi
+
+    local remaining
+    remaining=$(exiftool "$outfile" 2>/dev/null | grep -v "^File\|^Directory\|^MIME\|^ExifTool" | wc -l)
+    echo -e "${GREEN}[+] Metadata removed → $outfile${RESET}"
+    echo -e "${CYAN}[i] Remaining metadata fields: $remaining (filesystem/format fields only).${RESET}"
     echo "---------------------------------------------------------------"
 }
 get_aes256_key () {
+    clear
     echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Generating AES-256 key...${RESET}"
@@ -932,6 +1063,7 @@ get_aes256_key () {
     echo "---------------------------------------------------------------"
 }
 get_aes128_key () {
+    clear
     echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Generating AES-128 key...${RESET}"
@@ -959,6 +1091,7 @@ get_aes128_key () {
     echo "---------------------------------------------------------------"
 }
 encrypt_file_aes256() {
+    clear
     echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting file (AES-256-CBC)...${RESET}"
@@ -1003,8 +1136,8 @@ encrypt_file_aes256() {
     fi
     echo "---------------------------------------------------------------"
 }
-
 encrypt_file_aes128() {
+    clear
     echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting file (AES-128-CBC)...${RESET}"
@@ -1050,8 +1183,8 @@ encrypt_file_aes128() {
     fi
     echo "---------------------------------------------------------------"
 }
-
 decrypt_file_aes256() {
+    clear
     echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting file (AES-256-CBC)...${RESET}"
@@ -1085,8 +1218,8 @@ decrypt_file_aes256() {
     fi
     echo "---------------------------------------------------------------"
 }
-
 decrypt_file_aes128() {
+    clear
     echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting file (AES-128-CBC)...${RESET}"
@@ -1120,8 +1253,8 @@ decrypt_file_aes128() {
     fi
     echo "---------------------------------------------------------------"
 }
-
 encrypt_text_ceasar() {
+    clear
     echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Caesar Cipher${RESET}"
     echo
@@ -1151,8 +1284,8 @@ encrypt_text_ceasar() {
     echo -e "${GREEN}[+] Result: $result ${RESET}"
     echo "---------------------------------------------------------------"
 }
-
 encrypt_text_vigenere() {
+    clear
     echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Vigenère Cipher${RESET}"
     echo
@@ -1189,8 +1322,8 @@ encrypt_text_vigenere() {
     echo -e "${GREEN}[+] Result: $result${RESET}"
     echo "---------------------------------------------------------------"
 }
-
 encrypt_text_aes256() {
+    clear
     echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting text (AES-256-CBC)...${RESET}"
@@ -1217,8 +1350,8 @@ encrypt_text_aes256() {
     fi
     echo "---------------------------------------------------------------"
 }
-
 encrypt_text_base64() {
+    clear
     echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Base64 Encode${RESET}"
 
@@ -1231,8 +1364,8 @@ encrypt_text_base64() {
     echo -e "${GREEN}[+] Result:${RESET} $result"
     echo "---------------------------------------------------------------"
 }
-
 encrypt_text_aes128() {
+    clear
     echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting text (AES-128-CBC)...${RESET}"
@@ -1258,8 +1391,8 @@ encrypt_text_aes128() {
     fi
     echo "---------------------------------------------------------------"
 }
-
 rot13_cipher() {
+    clear
     echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] ROT13 Cipher${RESET}"
 
@@ -1271,8 +1404,8 @@ rot13_cipher() {
     echo -e "${GREEN}[+] Result:${RESET} $result"
     echo "---------------------------------------------------------------"
 }
-
 decrypt_text_base64() {
+    clear
     echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Base64 Decode${RESET}"
 
@@ -1290,8 +1423,8 @@ decrypt_text_base64() {
     echo -e "${GREEN}[+] Result:${RESET} $result"
     echo "---------------------------------------------------------------"
 }
-
 decrypt_text_aes256() {
+    clear
     echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting text (AES-256-CBC)...${RESET}"
@@ -1318,8 +1451,8 @@ decrypt_text_aes256() {
     fi
     echo "---------------------------------------------------------------"
 }
-
 decrypt_text_aes128() {
+    clear
     echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting text (AES-128-CBC)...${RESET}"
@@ -1346,8 +1479,8 @@ decrypt_text_aes128() {
     fi
     echo "---------------------------------------------------------------"
 }
-
 decrypt_text_ceasar() {
+    clear
     echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Caesar Decipher${RESET}"
 
@@ -1379,8 +1512,8 @@ decrypt_text_ceasar() {
     echo -e "${GREEN}[+] Result: $result${RESET}"
     echo "---------------------------------------------------------------"
 }
-
 decrypt_text_vigenere() {
+    clear
     echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Vigenère Decipher${RESET}"
     echo
@@ -1494,6 +1627,7 @@ test_colors() {
     echo -e "${RESET}This is DEFAULT"
     echo "---------------------------------------------------------------"
 }
+
 # ─── Command dispatcher ───────────────────────────────────────────────────────
 
 _JAS_COMMANDS=(
@@ -1502,7 +1636,7 @@ _JAS_COMMANDS=(
     update_apps systeminfo remove_temp_files
     setup_clamav setup_usbguard setup_ufw
     secure_empty_trash secure_overwrite_free_space system_audit rootkit_hunt
-    generate_password delete_file clean_metadata
+    generate_password secure_delete clean_metadata
     get_aes256_key get_aes128_key
     encrypt_file_aes256 encrypt_file_aes128
     decrypt_file_aes256 decrypt_file_aes128
@@ -1544,7 +1678,7 @@ _jas_list_commands() {
     echo
     echo -e "${YELLOW}Privacy / Files${RESET}"
     printf "  %-36s %s\n" "generate_password"           "Generate a secure password"
-    printf "  %-36s %s\n" "delete_file"                 "Securely delete a file (shred)"
+    printf "  %-36s %s\n" "secure_delete"               "Securely delete a file or directory(shred)"
     printf "  %-36s %s\n" "clean_metadata"              "Strip image metadata (exiftool)"
     printf "  %-36s %s\n" "get_aes256_key"              "Generate AES-256 key"
     printf "  %-36s %s\n" "get_aes128_key"              "Generate AES-128 key"
