@@ -12,11 +12,6 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-echo "[+] Installing dependencies..."
-
-apt update
-apt install -y whois tor exiftool cmatrix hollywood traceroute curl dnsutils fastfetch secure-delete chkrootkit openssl jq lynis bleachbit
-
 echo "[+] Downloading tool..."
 
 curl -L https://raw.githubusercontent.com/DarkShadowUser/Jas-toolbox/main/jas -o $INSTALL_DIR/$SCRIPT_NAME
@@ -25,3 +20,5 @@ chmod +x $INSTALL_DIR/$SCRIPT_NAME
 
 echo "[✓] Jas Toolbox installed!"
 echo "Run with: jas"
+
+
