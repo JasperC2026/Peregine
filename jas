@@ -37,9 +37,9 @@ rainbow() {
 # Other variables
 #############################################################################################################################
 MAIN_VERSION="1.6"
-SUB_VERSION=".7"
+SUB_VERSION=".8"
 TESTED="Yes"
-TESTED_ON="4-4-2026"
+TESTED_ON="2-5-2026"
 TESTED_RELEASE="Stable"
 LICENSE="MIT License"
 
@@ -992,7 +992,7 @@ clean_metadata() {
 #############################################################################################################################
 # Encoding
 #############################################################################################################################
-generate_aes256_key () {
+get_aes256_key () {
     echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Generating AES-256 key...${RESET}"
@@ -1019,7 +1019,7 @@ generate_aes256_key () {
     fi
     echo "---------------------------------------------------------------"
 }
-generate_aes128_key () {
+get_aes128_key () {
     echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Generating AES-128 key...${RESET}"
