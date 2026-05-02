@@ -38,11 +38,23 @@ run_with_tor() {
 }
 whois_lookup() {
     echo "---------------------------------------------------------------"
+    echo -e "${BOLD}"
     echo -n "Enter domain (ex: example.com): "
+    echo -e "${RESET}"
     read -r domain
 
     if [[ -z "$domain" ]]; then
         echo -e "${YELLOW}[!] Error: Domain cannot be empty.${RESET}"
+        return 1
+    fi
+
+    # Strip protocol/path if user pastes a full URL (e.g. https://example.com/page)
+    domain=$(echo "$domain" | sed -E 's|^https?://||; s|/.*||')
+
+    # Validate domain format: labels of 1-63 chars, TLD of 2-63 chars
+    if ! echo "$domain" | grep -qE '^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$'; then
+        echo -e "${RED}[!] Invalid domain format: '$domain'${RESET}"
+        echo -e "${YELLOW}    Expected format: example.com or sub.example.co.uk${RESET}"
         return 1
     fi
 
@@ -72,15 +84,37 @@ whois_lookup() {
 
     echo -e "${GREEN}[+] Whois lookup completed successfully.${RESET}"
     echo "---------------------------------------------------------------"
-}
-ping() {
+}ping() {
     echo "---------------------------------------------------------------"
-    echo -n "Enter item to ping: "
+    echo -n "Enter item to ping (domain or IP): "
     read -r itemping
 
     if [[ -z "$itemping" ]]; then
         echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
         return 1
+    fi
+
+    # Strip protocol/path if user pastes a URL
+    itemping=$(echo "$itemping" | sed -E 's|^https?://||; s|/.*||')
+
+    # Validate: IPv4, IPv6, or domain
+    local ipv4='^([0-9]{1,3}\.){3}[0-9]{1,3}$'
+    local ipv6='^([0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}$'
+    local domain='^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$'
+
+    if ! echo "$itemping" | grep -qE "${ipv4}|${ipv6}|${domain}"; then
+        echo -e "${RED}[!] Invalid target: '$itemping'${RESET}"
+        echo -e "${YELLOW}    Expected: a domain (example.com), IPv4 (1.2.3.4), or IPv6 (::1)${RESET}"
+        return 1
+    fi
+
+    # Extra check: each IPv4 octet must be 0-255
+    if echo "$itemping" | grep -qE "$ipv4"; then
+        IFS='.' read -r o1 o2 o3 o4 <<< "$itemping"
+        if (( o1 > 255 || o2 > 255 || o3 > 255 || o4 > 255 )); then
+            echo -e "${RED}[!] Invalid IPv4 address: '$itemping' (octet out of range).${RESET}"
+            return 1
+        fi
     fi
 
     output=$(command ping -c 6 "$itemping" 2>&1)
@@ -105,12 +139,35 @@ ping() {
 }
 traceroute() {
     echo "---------------------------------------------------------------"
-    echo -n "Enter domain to trace: "
+    echo -n "Enter domain or IP to trace: "
     read -r domaintrace
 
     if [[ -z "$domaintrace" ]]; then
         echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
         return 1
+    fi
+
+    # Strip protocol/path if user pastes a URL
+    domaintrace=$(echo "$domaintrace" | sed -E 's|^https?://||; s|/.*||')
+
+    # Validate: IPv4, IPv6, or domain
+    local ipv4='^([0-9]{1,3}\.){3}[0-9]{1,3}$'
+    local ipv6='^([0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}$'
+    local domain='^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$'
+
+    if ! echo "$domaintrace" | grep -qE "${ipv4}|${ipv6}|${domain}"; then
+        echo -e "${RED}[!] Invalid target: '$domaintrace'${RESET}"
+        echo -e "${YELLOW}    Expected: a domain (example.com), IPv4 (1.2.3.4), or IPv6 (::1)${RESET}"
+        return 1
+    fi
+
+    # Extra check: each IPv4 octet must be 0-255
+    if echo "$domaintrace" | grep -qE "$ipv4"; then
+        IFS='.' read -r o1 o2 o3 o4 <<< "$domaintrace"
+        if (( o1 > 255 || o2 > 255 || o3 > 255 || o4 > 255 )); then
+            echo -e "${RED}[!] Invalid IPv4 address: '$domaintrace' (octet out of range).${RESET}"
+            return 1
+        fi
     fi
 
     echo -e "${YELLOW}[!] Traceroute is unreliable over Tor. Running normally.${RESET}"
@@ -138,12 +195,35 @@ traceroute() {
 }
 dns_info() {
     echo "---------------------------------------------------------------"
-    echo -n "Enter domain to get DNS info: "
+    echo -n "Enter domain or IP to get DNS info: "
     read -r domaindns
 
     if [[ -z "$domaindns" ]]; then
-        echo -e "${YELLOW}[!] Error: Domain cannot be empty.${RESET}"
+        echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
         return 1
+    fi
+
+    # Strip protocol/path if user pastes a URL
+    domaindns=$(echo "$domaindns" | sed -E 's|^https?://||; s|/.*||')
+
+    # Validate: IPv4, IPv6, or domain
+    local ipv4='^([0-9]{1,3}\.){3}[0-9]{1,3}$'
+    local ipv6='^([0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}$'
+    local domain='^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$'
+
+    if ! echo "$domaindns" | grep -qE "${ipv4}|${ipv6}|${domain}"; then
+        echo -e "${RED}[!] Invalid target: '$domaindns'${RESET}"
+        echo -e "${YELLOW}    Expected: a domain (example.com), IPv4 (1.2.3.4), or IPv6 (::1)${RESET}"
+        return 1
+    fi
+
+    # Extra check: each IPv4 octet must be 0-255
+    if echo "$domaindns" | grep -qE "$ipv4"; then
+        IFS='.' read -r o1 o2 o3 o4 <<< "$domaindns"
+        if (( o1 > 255 || o2 > 255 || o3 > 255 || o4 > 255 )); then
+            echo -e "${RED}[!] Invalid IPv4 address: '$domaindns' (octet out of range).${RESET}"
+            return 1
+        fi
     fi
 
     echo -e "${PURPLE}"
@@ -209,6 +289,29 @@ ip_osint() {
         return 1
     fi
 
+    # Strip protocol/path if user pastes a URL
+    target=$(echo "$target" | sed -E 's|^https?://||; s|/.*||')
+
+    # Validate: IPv4, IPv6, or domain
+    local ipv4='^([0-9]{1,3}\.){3}[0-9]{1,3}$'
+    local ipv6='^([0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}$'
+    local domain='^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$'
+
+    if ! echo "$target" | grep -qE "${ipv4}|${ipv6}|${domain}"; then
+        echo -e "${RED}[!] Invalid target: '$target'${RESET}"
+        echo -e "${YELLOW}    Expected: a domain (example.com), IPv4 (1.2.3.4), or IPv6 (::1)${RESET}"
+        return 1
+    fi
+
+    # Extra check: each IPv4 octet must be 0-255
+    if echo "$target" | grep -qE "$ipv4"; then
+        IFS='.' read -r o1 o2 o3 o4 <<< "$target"
+        if (( o1 > 255 || o2 > 255 || o3 > 255 || o4 > 255 )); then
+            echo -e "${RED}[!] Invalid IPv4 address: '$target' (octet out of range).${RESET}"
+            return 1
+        fi
+    fi
+
     echo -e "${PURPLE}"
     read -p "Route through Tor? (y/n): " USE_TOR
     echo -e "${RESET}"
@@ -244,7 +347,6 @@ ip_osint() {
     echo "Timezone: $(echo "$data" | jq -r '.timezone // "N/A"')"
 
     echo -e "${GREEN}[+] IP OSINT lookup completed successfully.${RESET}"
-    return 0
     echo "---------------------------------------------------------------"
 }
 maigret_search() {
@@ -280,32 +382,7 @@ maigret_search() {
 }
 tor_connect() {
     clear
-    echo -e "${PURPLE}----------------------------------------------------------------${RESET}"
-    cat << "EOF"
-                                            =                       
-                                      == ==                     
-..........................         ======                       
-..........................        ======                        
-..........................       =====                          
-..........................    @@@===                            
-..........................     @.:%@@                           
- .     ............            @=.-=@                   ........
-        ...........           @@....%@               ...........
-        ...........         @@:...:=..+@@           ............
-        ...........      @@-....-.=.::...#@        .............
-        ...........    @@....:+....=.+.....%@     ..............
-        ...........   @#...*........+.+.....=@    ...........   
-        ...........   @...-....:..=..:@......@@   .........     
-        ...........  %%..-...*.....-.=@.......@   .........     
-        ...........  @#.:..::....::.:=@.......@   .........     
-        ...........   @..-.*...::.*.%+@......@@   .........     
-        ...........   @%..:%...+..-.#+@.....=@    .........     
-        ...........    @@..-%..+..=.=#.....%@     .........     
-        ...........      @@-++-.+.%#@=..:@@       .........     
-        ..........          @@@@@@@@#@@@          .........     
-
-EOF
-    echo -e "${RESET}"
+    echo "----------------------------------------------------------------"
     echo -e "${PURPLE}[➜] Initializing Tor connection...${RESET}"
     
     if ! command -v tor &>/dev/null; then
@@ -596,69 +673,142 @@ system_audit() {
     clear
     echo "---------------------------------------------------------------"
     echo "Lynis by CISOfy https://cisofy.com/lynis/"
-    echo "Lynis is an external tool, not made by us. It performs a comprehensive security audit of the system, checking for vulnerabilities, misconfigurations, and compliance issues. It provides detailed reports and recommendations for improving system security. This command runs Lynis in audit mode to analyze the system's security posture."
+    echo -e "${YELLOW}[i] Lynis is an external tool not affiliated with Jas-toolbox.${RESET}"
+    echo -e "${YELLOW}    It audits for vulnerabilities, misconfigurations, and compliance issues.${RESET}"
+    echo "---------------------------------------------------------------"
     sleep 0.5
 
-    echo
-    echo -e "${GREEN}[➜] Performing system audit with Lynis...${RESET}"
-    sleep 0.5
-    echo
-
-    if command -v lynis >/dev/null 2>&1; then
-        output=$(sudo lynis audit system 2>&1)
-        status=$?
-
-        echo "$output"
-
-        if [[ $status -eq 0 ]]; then
-            echo
-            echo -e "${GREEN}[+] System audit completed successfully.${RESET}"
-        else
-            echo
-            echo -e "\a"
-            echo -e "${RED}[!] Lynis audit finished with errors (check output above).${RESET}"
-            return 1
-        fi
-    else
+    if ! command -v lynis >/dev/null 2>&1; then
         echo -e "\a"
         echo -e "${RED}[!] Lynis is not installed.${RESET}"
         echo -e "${YELLOW}[i] Install with: sudo apt install lynis${RESET}"
         return 1
     fi
+
+    # Warn if not running as root (Lynis gives incomplete results without sudo)
+    if [[ $EUID -ne 0 ]]; then
+        echo -e "${YELLOW}[!] Not running as root. Some checks may be skipped.${RESET}"
+        echo -e "${YELLOW}    For a full audit, run: sudo jas system_audit${RESET}"
+        echo
+        read -rp "Continue anyway? (y/n): " cont
+        [[ "$cont" != "y" ]] && return 0
+    fi
+
+    echo
+    echo -e "${GREEN}[➜] Starting Lynis system audit — this may take a few minutes...${RESET}"
+    echo "---------------------------------------------------------------"
+    echo
+
+    # Stream output live instead of buffering
+    sudo lynis audit system
+    status=$?
+
+    echo
+    echo "---------------------------------------------------------------"
+
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!] Lynis finished with errors (exit code $status).${RESET}"
+        return 1
+    fi
+
+    # Parse the report file for a summary
+    local report="/var/log/lynis-report.dat"
+    if [[ -f "$report" ]]; then
+        echo -e "${CYAN}── Audit Summary ────────────────────────────────────────────${RESET}"
+
+        local index warnings suggestions
+        index=$(sudo grep   'hardening_index='  "$report" | cut -d= -f2)
+        warnings=$(sudo grep -c '^warning\[\]=' "$report" 2>/dev/null || echo 0)
+        suggestions=$(sudo grep -c '^suggestion\[\]=' "$report" 2>/dev/null || echo 0)
+
+        # Colour the hardening index: <60 red, 60-79 yellow, 80+ green
+        if [[ -n "$index" ]]; then
+            if   (( index >= 80 )); then echo -e "  Hardening index : ${GREEN}${index}/100${RESET}"
+            elif (( index >= 60 )); then echo -e "  Hardening index : ${YELLOW}${index}/100${RESET}"
+            else                         echo -e "  Hardening index : ${RED}${index}/100${RESET}"
+            fi
+        fi
+
+        echo -e "  Warnings        : ${RED}${warnings}${RESET}"
+        echo -e "  Suggestions     : ${YELLOW}${suggestions}${RESET}"
+        echo
+        echo -e "  Full report     : ${CYAN}/var/log/lynis-report.dat${RESET}"
+        echo -e "  Log             : ${CYAN}/var/log/lynis.log${RESET}"
+        echo "---------------------------------------------------------------"
+    fi
+
+    echo -e "${GREEN}[+] System audit completed successfully.${RESET}"
     echo "---------------------------------------------------------------"
 }
 rootkit_hunt() {
     clear
     echo "---------------------------------------------------------------"
     echo "chkrootkit by chkrootkit Team https://chkrootkit.org/"
-    echo -e "${GREEN}[➜] Checking for rootkits with chkrootkit...${RESET}"
+    echo -e "${YELLOW}[i] chkrootkit is an external tool not affiliated with Jas-toolbox.${RESET}"
+    echo "---------------------------------------------------------------"
     sleep 0.5
 
-    if command -v chkrootkit >/dev/null 2>&1; then
-        output=$(sudo chkrootkit 2>&1)
-        status=$?
-
-        echo "$output"
-
-        if echo "$output" | grep -qiE "INFECTED|WARNING|suspicious"; then
-            echo -e "\a"
-            echo -e "${RED}[!] Potential threats detected! Review output above.${RESET}"
-            return 1
-        fi
-
-        if [[ $status -eq 0 ]]; then
-            echo -e "${GREEN}[+] Rootkit check completed (no obvious threats).${RESET}"
-        else
-            echo -e "\a"
-            echo -e "${RED}[!] chkrootkit finished with errors.${RESET}"
-            return 1
-        fi
-    else
+    if ! command -v chkrootkit >/dev/null 2>&1; then
         echo -e "\a"
         echo -e "${RED}[!] chkrootkit is not installed.${RESET}"
         echo -e "${YELLOW}[i] Install with: sudo apt install chkrootkit${RESET}"
         return 1
     fi
+
+    # chkrootkit needs root for meaningful results
+    if [[ $EUID -ne 0 ]]; then
+        echo -e "${YELLOW}[!] Not running as root. Many checks will be skipped or unreliable.${RESET}"
+        echo -e "${YELLOW}    For a full scan, run: sudo jas rootkit_hunt${RESET}"
+        echo
+        read -rp "Continue anyway? (y/n): " cont
+        [[ "$cont" != "y" ]] && return 0
+    fi
+
+    echo
+    echo -e "${GREEN}[➜] Scanning for rootkits — this may take a moment...${RESET}"
+    echo "---------------------------------------------------------------"
+    echo
+
+    # Capture and stream simultaneously so output is visible live
+    # and we can still parse it for the summary
+    local tmpfile
+    tmpfile=$(mktemp)
+
+    sudo chkrootkit 2>&1 | tee "$tmpfile"
+    status=${PIPESTATUS[0]}
+
+    echo
+    echo "---------------------------------------------------------------"
+
+    # Parse results from the captured output
+    local infected warnings suspicious
+    infected=$(grep -ciE "^INFECTED"  "$tmpfile" 2>/dev/null || echo 0)
+    warnings=$(grep -ciE "^WARNING"   "$tmpfile" 2>/dev/null || echo 0)
+    suspicious=$(grep -ciE "suspicious" "$tmpfile" 2>/dev/null || echo 0)
+
+    rm -f "$tmpfile"
+
+    echo -e "${CYAN}── Scan Summary ─────────────────────────────────────────────${RESET}"
+    echo -e "  INFECTED  : $(  [[ $infected   -gt 0 ]] && echo -e "${RED}${infected}${RESET}"   || echo -e "${GREEN}${infected}${RESET}")"
+    echo -e "  Warnings  : $(  [[ $warnings   -gt 0 ]] && echo -e "${RED}${warnings}${RESET}"   || echo -e "${GREEN}${warnings}${RESET}")"
+    echo -e "  Suspicious: $([[ $suspicious -gt 0 ]] && echo -e "${YELLOW}${suspicious}${RESET}" || echo -e "${GREEN}${suspicious}${RESET}")"
+    echo "---------------------------------------------------------------"
+
+    if [[ $infected -gt 0 || $warnings -gt 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!] Potential threats detected — review the output above carefully.${RESET}"
+        echo -e "${YELLOW}[i] Note: chkrootkit can produce false positives. Verify findings manually.${RESET}"
+        return 1
+    fi
+
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!] chkrootkit finished with errors (exit code $status).${RESET}"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+] Rootkit scan completed — no obvious threats found.${RESET}"
     echo "---------------------------------------------------------------"
 }
 remove_temp_files() {
@@ -1324,6 +1474,26 @@ version() {
     echo -e "${RESET}"
     echo "---------------------------------------------------------------"
 }
+test_colors() {
+    clear
+    echo "-------------------------------------------------------------------"
+    echo -e "${RED}This is RED${RESET}"
+    echo -e "${GREEN}This is GREEN${RESET}"
+    echo -e "${YELLOW}This is YELLOW${RESET}"
+    echo -e "${BLUE}This is BLUE${RESET}"
+    echo -e "${CYAN}This is CYAN${RESET}"
+    echo -e "${WHITE}This is WHITE${RESET}"
+    echo -e "${BLACK}This is BLACK${RESET}"
+    echo -e "${BOLD}This is BOLD${RESET}"
+    echo -e "${BOLD}${RED}This is BOLD RED${RESET}"
+    echo -e "${BOLD}${GREEN}This is BOLD GREEN${RESET}"
+    echo -e "${BOLD}${YELLOW}This is BOLD YELLOW${RESET}"
+    echo -e "${BOLD}${BLUE}This is BOLD BLUE${RESET}"
+    echo -e "${BOLD}${CYAN}This is BOLD CYAN${RESET}"
+    echo -e "${BOLD}${WHITE}This is BOLD WHITE${RESET}"
+    echo -e "${RESET}This is DEFAULT"
+    echo "---------------------------------------------------------------"
+}
 # ─── Command dispatcher ───────────────────────────────────────────────────────
 
 _JAS_COMMANDS=(
@@ -1342,7 +1512,7 @@ _JAS_COMMANDS=(
     encrypt_text_vigenere decrypt_text_vigenere
     encrypt_text_base64 decrypt_text_base64
     rot13_cipher
-    license clone_source version
+    license clone_source version test_colors
 )
 
 _jas_list_commands() {
