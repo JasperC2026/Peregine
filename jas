@@ -1,10 +1,10 @@
 #!/bin/bash
 
-MAIN_VERSION="2.0"
-SUB_VERSION=""
-TESTED="No"
-TESTED_ON=""
-TESTED_RELEASE="Beta"
+MAIN_VERSION="2"
+SUB_VERSION=".1"
+TESTED="Yes"
+TESTED_ON="2-5-2026"
+TESTED_RELEASE="Stable"
 LICENSE="MIT License"
 
 # Colors for ASCII art and use in output messages
@@ -38,7 +38,7 @@ run_with_tor() {
 }
 whois_lookup() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${BOLD}"
     echo -n "Enter domain (ex: example.com): "
     echo -e "${RESET}"
@@ -84,11 +84,11 @@ whois_lookup() {
     fi
 
     echo -e "${GREEN}[+] Whois lookup completed successfully.${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 ping() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -n "Enter item to ping (domain or IP): "
     read -r itemping
 
@@ -138,11 +138,11 @@ ping() {
     fi
 
     echo -e "${GREEN}[+] Ping completed successfully.${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 traceroute() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -n "Enter domain or IP to trace: "
     read -r domaintrace
 
@@ -195,11 +195,11 @@ traceroute() {
     fi
 
     echo -e "${GREEN}[+] Traceroute completed successfully.${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 dns_info() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -n "Enter domain or IP to get DNS info: "
     read -r domaindns
 
@@ -260,11 +260,11 @@ dns_info() {
     fi
 
     echo -e "${GREEN}[+] DNS info retrieved successfully.${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 get_ip() {
     clear
-    echo -e "${PURPLE}----------------------------------------------------------------"
+    echo -e "${PURPLE}───────────────────────────────────────────────────────────────"
     read -p "Route through Tor? (y/n): " USE_TOR
     echo -e "${RESET}"
 
@@ -283,11 +283,11 @@ get_ip() {
     fi
 
     echo -e "${GREEN}[+] Public IP fetched successfully.${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 ip_osint() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo "IPinfo https://ipinfo.io/"
     read -p "Enter IP or domain: " target
 
@@ -354,11 +354,11 @@ ip_osint() {
     echo "Timezone: $(echo "$data" | jq -r '.timezone // "N/A"')"
 
     echo -e "${GREEN}[+] IP OSINT lookup completed successfully.${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 maigret_search() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Maigret Username OSINT${RESET}"
     echo
 
@@ -386,11 +386,11 @@ maigret_search() {
     echo
     echo -e "${GREEN}[+] Scan completed.${RESET}"
     echo -e "${GREEN}[➜] Results saved to: ${output_file}${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 tor_connect() {
     clear
-    echo "----------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${PURPLE}[➜] Initializing Tor connection...${RESET}"
     
     if ! command -v tor &>/dev/null; then
@@ -424,13 +424,13 @@ tor_connect() {
         sudo apt install torbrowser-launcher
         echo -e "${PURPLE}[+] Tor Browser installed successfully.${RESET}"
     fi
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 update_apps() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Starting update process...${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 
     local overall_status=0
     local start_time=$SECONDS
@@ -480,18 +480,18 @@ update_apps() {
 
     local total_elapsed=$(( SECONDS - start_time ))
     echo
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     if [[ $overall_status -eq 0 ]]; then
         echo -e "${GREEN}[+] All updates completed successfully (${total_elapsed}s total).${RESET}"
     else
         echo -e "\a"
         echo -e "${RED}[!] Some updates failed — check output above (${total_elapsed}s total).${RESET}"
     fi
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 systeminfo() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo "Fastfetch https://github.com/fastfetch-cli/fastfetch"
     echo -e "${GREEN}[➜] Gathering system information...${RESET}"
     sleep 0.5
@@ -519,11 +519,11 @@ systeminfo() {
         echo
         echo -e "${GREEN}[+] Basic system information displayed.${RESET}"
     fi
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 setup_clamav() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Installing ClamAV...${RESET}"
     sleep 0.5
 
@@ -559,11 +559,11 @@ setup_clamav() {
     echo
     echo -e "${GREEN}[+] ClamAV setup completed successfully.${RESET}"
     echo -e "${YELLOW}[!] Quick scan example: clamscan -r ~/Downloads${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 setup_usbguard() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Installing USBGuard...${RESET}"
     sleep 0.5
 
@@ -591,11 +591,11 @@ setup_usbguard() {
     echo
     echo -e "${GREEN}[+] USBGuard is now active.${RESET}"
     echo -e "${YELLOW}[!] New USB devices will be BLOCKED by default.${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 setup_ufw() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Installing UFW...${RESET}"
     sleep 0.5
 
@@ -630,11 +630,11 @@ setup_ufw() {
     echo
     echo -e "${GREEN}[+] UFW setup completed.${RESET}"
     echo -e "${YELLOW}[!] Incoming connections are BLOCKED by default.${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 secure_empty_trash() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 
     local TRASH_FILES="$HOME/.local/share/Trash/files"
     local TRASH_INFO="$HOME/.local/share/Trash/info"
@@ -682,11 +682,11 @@ secure_empty_trash() {
         return 1
     fi
 
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 secure_overwrite_free_space() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Securely overwriting free space...${RESET}"
     root_partition=$(df / | tail -1 | awk '{print $1}')
 
@@ -701,15 +701,15 @@ secure_overwrite_free_space() {
     srm -v -z -r --free "$root_partition"
 
     echo -e "${GREEN}[+] Free space securely overwritten.${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 system_audit() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo "Lynis by CISOfy https://cisofy.com/lynis/"
     echo -e "${YELLOW}[i] Lynis is an external tool not affiliated with Jas-toolbox.${RESET}"
     echo -e "${YELLOW}    It audits for vulnerabilities, misconfigurations, and compliance issues.${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     sleep 0.5
 
     if ! command -v lynis >/dev/null 2>&1; then
@@ -730,7 +730,7 @@ system_audit() {
 
     echo
     echo -e "${GREEN}[➜] Starting Lynis system audit — this may take a few minutes...${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo
 
     # Stream output live instead of buffering
@@ -738,7 +738,7 @@ system_audit() {
     status=$?
 
     echo
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 
     if [[ $status -ne 0 ]]; then
         echo -e "\a"
@@ -769,18 +769,18 @@ system_audit() {
         echo
         echo -e "  Full report     : ${CYAN}/var/log/lynis-report.dat${RESET}"
         echo -e "  Log             : ${CYAN}/var/log/lynis.log${RESET}"
-        echo "---------------------------------------------------------------"
+        echo "───────────────────────────────────────────────────────────────"
     fi
 
     echo -e "${GREEN}[+] System audit completed successfully.${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 rootkit_hunt() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo "chkrootkit by chkrootkit Team https://chkrootkit.org/"
     echo -e "${YELLOW}[i] chkrootkit is an external tool not affiliated with Jas-toolbox.${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     sleep 0.5
 
     if ! command -v chkrootkit >/dev/null 2>&1; then
@@ -801,7 +801,7 @@ rootkit_hunt() {
 
     echo
     echo -e "${GREEN}[➜] Scanning for rootkits — this may take a moment...${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo
 
     # Capture and stream simultaneously so output is visible live
@@ -813,7 +813,7 @@ rootkit_hunt() {
     status=${PIPESTATUS[0]}
 
     echo
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 
     # Parse results from the captured output
     local infected warnings suspicious
@@ -847,7 +847,7 @@ rootkit_hunt() {
 }
 remove_temp_files() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Removing temporary files...${RESET}"
     sleep 0.5
 
@@ -858,11 +858,11 @@ remove_temp_files() {
         echo -e "${RED}[!] Failed to remove some temporary files (permissions or in-use files).${RESET}"
         return 1
     fi
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 generate_password() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Secure password generator${RESET}"
     echo
@@ -910,11 +910,11 @@ generate_password() {
     entropy_alnum=$(awk "BEGIN { printf \"%d\", $length * 5.954 }")  # log2(62)
     entropy_full=$(awk  "BEGIN { printf \"%d\", $length * 6.554 }")  # log2(95)
     echo -e "${CYAN}[i] Estimated entropy — alphanumeric: ~${entropy_alnum} bits  |  with symbols: ~${entropy_full} bits${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 secure_delete() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -n "Enter file or directory to securely delete: "
     read -r target
 
@@ -966,11 +966,11 @@ secure_delete() {
         return 1
     fi
 
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 clean_metadata() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo "ExifTool by Phil Harvey https://exiftool.org/"
     echo -e "${GREEN}[➜] Remove metadata from a file${RESET}"
     echo
@@ -1035,11 +1035,11 @@ clean_metadata() {
     remaining=$(exiftool "$outfile" 2>/dev/null | grep -v "^File\|^Directory\|^MIME\|^ExifTool" | wc -l)
     echo -e "${GREEN}[+] Metadata removed → $outfile${RESET}"
     echo -e "${CYAN}[i] Remaining metadata fields: $remaining (filesystem/format fields only).${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 get_aes256_key () {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Generating AES-256 key...${RESET}"
     sleep 0.5
@@ -1063,11 +1063,11 @@ get_aes256_key () {
         echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
         return 1
     fi
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 get_aes128_key () {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Generating AES-128 key...${RESET}"
     sleep 0.5
@@ -1091,11 +1091,11 @@ get_aes128_key () {
         echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
         return 1
     fi
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_file_aes256() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting file (AES-256-CBC)...${RESET}"
     echo
@@ -1137,11 +1137,11 @@ encrypt_file_aes256() {
         echo -e "${RED}[!] Encryption failed.${RESET}"
         return 1
     fi
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_file_aes128() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting file (AES-128-CBC)...${RESET}"
     echo
@@ -1184,11 +1184,11 @@ encrypt_file_aes128() {
         echo -e "${RED}[!] Encryption failed.${RESET}"
         return 1
     fi
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_file_aes256() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting file (AES-256-CBC)...${RESET}"
     echo
@@ -1219,11 +1219,11 @@ decrypt_file_aes256() {
         echo -e "${RED}[!] Decryption failed (wrong password or corrupted file).${RESET}"
         return 1
     fi
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_file_aes128() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting file (AES-128-CBC)...${RESET}"
     echo
@@ -1254,11 +1254,11 @@ decrypt_file_aes128() {
         echo -e "${RED}[!] Decryption failed (wrong password or corrupted file).${RESET}"
         return 1
     fi
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_text_ceasar() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Caesar Cipher${RESET}"
     echo
 
@@ -1285,11 +1285,11 @@ encrypt_text_ceasar() {
 
     echo -e "${RESET}"
     echo -e "${GREEN}[+] Result: $result ${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_text_vigenere() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Vigenère Cipher${RESET}"
     echo
 
@@ -1323,11 +1323,11 @@ encrypt_text_vigenere() {
 
     echo -e "${RESET}"
     echo -e "${GREEN}[+] Result: $result${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_text_aes256() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting text (AES-256-CBC)...${RESET}"
 
@@ -1351,11 +1351,11 @@ encrypt_text_aes256() {
         echo -e "${RED}[!] Encryption failed.${RESET}"
         return 1
     fi
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_text_base64() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Base64 Encode${RESET}"
 
     echo -e "${CYAN}"
@@ -1365,11 +1365,11 @@ encrypt_text_base64() {
 
     echo
     echo -e "${GREEN}[+] Result:${RESET} $result"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_text_aes128() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting text (AES-128-CBC)...${RESET}"
 
@@ -1392,11 +1392,11 @@ encrypt_text_aes128() {
         echo -e "${RED}[!] Encryption failed.${RESET}"
         return 1
     fi
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 rot13_cipher() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] ROT13 Cipher${RESET}"
 
     echo -e "${CYAN}"
@@ -1405,11 +1405,11 @@ rot13_cipher() {
     echo -e "${RESET}"
 
     echo -e "${GREEN}[+] Result:${RESET} $result"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_text_base64() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Base64 Decode${RESET}"
 
     echo -e "${CYAN}"
@@ -1424,11 +1424,11 @@ decrypt_text_base64() {
     fi
 
     echo -e "${GREEN}[+] Result:${RESET} $result"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_text_aes256() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting text (AES-256-CBC)...${RESET}"
     echo
@@ -1452,11 +1452,11 @@ decrypt_text_aes256() {
         echo -e "${RED}[!] Decryption failed.${RESET}"
         return 1
     fi
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_text_aes128() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting text (AES-128-CBC)...${RESET}"
     echo
@@ -1480,11 +1480,11 @@ decrypt_text_aes128() {
         echo -e "${RED}[!] Decryption failed.${RESET}"
         return 1
     fi
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_text_ceasar() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Caesar Decipher${RESET}"
 
     read -rp "Enter text: " text
@@ -1513,11 +1513,11 @@ decrypt_text_ceasar() {
 
     echo -e "${RESET}"
     echo -e "${GREEN}[+] Result: $result${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_text_vigenere() {
     clear
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Vigenère Decipher${RESET}"
     echo
 
@@ -1554,11 +1554,11 @@ decrypt_text_vigenere() {
 
     echo -e "${RESET}"
     echo -e "${GREEN}[+] Result: $result${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 license() {
     clear
-    echo "-------------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     cat <<'EOF'
 MIT License
 
@@ -1582,10 +1582,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 EOF
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 clone_source() {
-    echo "-------------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Cloning source code from GitHub...${RESET}"
     sleep 0.5
 
@@ -1603,12 +1603,12 @@ clone_source() {
         return 1
     fi
 }
-version() {
-    echo "-------------------------------------------------------------------"
+version() { 
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${WHITE}JAS ${MAIN_VERSION}${SUB_VERSION}${RESET}" | pv -qL 10
     echo "Release: $TESTED_RELEASE tested on: $TESTED_ON" | pv -qL 10
     echo -e "${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "───────────────────────────────────────────────────────────────"
 }
 test_colors() {
     clear
