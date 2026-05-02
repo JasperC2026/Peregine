@@ -861,6 +861,7 @@ remove_temp_files() {
     echo "---------------------------------------------------------------"
 }
 generate_password() {
+    clear
     echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Secure password generator${RESET}"
@@ -912,6 +913,7 @@ generate_password() {
     echo "---------------------------------------------------------------"
 }
 secure_delete() {
+    clear
     echo "---------------------------------------------------------------"
     echo -n "Enter file or directory to securely delete: "
     read -r target
@@ -967,6 +969,7 @@ secure_delete() {
     echo "---------------------------------------------------------------"
 }
 clean_metadata() {
+    clear
     echo "---------------------------------------------------------------"
     echo "ExifTool by Phil Harvey https://exiftool.org/"
     echo -e "${GREEN}[➜] Remove metadata from a file${RESET}"
