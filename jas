@@ -1,10 +1,13 @@
 #!/bin/bash
 
-# Jas - A simple command line toolbox for networking, system managing and privacy/security. Version 1.6
+MAIN_VERSION="2.0"
+SUB_VERSION=""
+TESTED="No"
+TESTED_ON=""
+TESTED_RELEASE="Beta"
+LICENSE="MIT License"
 
-# -------------------
 # Colors for ASCII art and use in output messages
-# -------------------
 BLACK="\e[0;30m"
 WHITE="\e[1;37m"
 RED="\e[31m"
@@ -16,6 +19,7 @@ PURPLE="\e[35m"
 ORANGE="\e[38;5;208m"
 BOLD="\e[1m"
 RESET="\e[0m"
+
 COLORS=(
 "0;0;180" 
 "0;0;255" 
@@ -24,45 +28,13 @@ COLORS=(
 "0;204;255" 
 )
 i=0
-rainbow() {
-  local colors=("\e[31m" "\e[33m" "\e[32m" "\e[36m" "\e[34m" "\e[35m")
-  local i=0
 
-  while IFS= read -r line; do
-    printf "%b%s\e[0m\n" "${colors[$((i % 6))]}" "$line"
-    ((i++))
-  done
-}
-#############################################################################################################################
-# Other variables
-#############################################################################################################################
-MAIN_VERSION="1.6"
-SUB_VERSION=".8"
-TESTED="Yes"
-TESTED_ON="2-5-2026"
-TESTED_RELEASE="Stable"
-LICENSE="MIT License"
-
-#############################################################################################################################
-# Commands
-#############################################################################################################################
-
-#############################################################################################################################
-# Networking
-#############################################################################################################################
 run_with_tor() {
     if [[ "$USE_TOR" == "y" ]]; then
         torsocks "$@"
     else
         "$@"
     fi
-}
-monitor_network() {
-    echo "---------------------------------------------------------------"
-    echo -e "${GREEN} [+] Starting ${RESET}"
-    sudo etherape
-    echo -e "${GREEN} [+] Done ${RESET}"
-    echo "---------------------------------------------------------------"
 }
 whois_lookup() {
     echo "---------------------------------------------------------------"
@@ -275,33 +247,6 @@ ip_osint() {
     return 0
     echo "---------------------------------------------------------------"
 }
-inspect_cert() {
-    echo "---------------------------------------------------------------"
-    echo -e "${GREEN}[➜] Inspecting SSL certificate...${RESET}"
-    echo
-
-    read -rp "Enter domain: " domain
-
-    echo -e "${PURPLE}"
-    read -p "Route through Tor? (y/n): " USE_TOR
-    echo -e "${RESET}"
-
-    output=$(echo | run_with_tor openssl s_client -connect "$domain:443" -servername "$domain" 2>/dev/null \
-        | openssl x509 -noout -text)
-
-    status=$?
-
-    echo -e "${CYAN}$output${RESET}"
-
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] Certificate retrieved.${RESET}"
-    else
-        echo -e "\a"
-        echo -e "${RED}[!] Failed to retrieve certificate.${RESET}"
-        return 1
-    fi
-    echo "---------------------------------------------------------------"
-}
 maigret_search() {
     echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Maigret Username OSINT${RESET}"
@@ -396,18 +341,6 @@ EOF
     fi
     echo "---------------------------------------------------------------"
 }
-#############################################################################################################################
-# System
-#############################################################################################################################
-process_monitor() {
-    clear
-    echo "---------------------------------------------------------------"
-    echo -e "${GREEN}[➜] Starting monitor....${RESET}"
-    sleep 0.5
-
-    htop
-    echo "---------------------------------------------------------------"
-}
 update_apps() {
     clear
     echo "---------------------------------------------------------------"
@@ -500,76 +433,6 @@ systeminfo() {
 
         echo
         echo -e "${GREEN}[+] Basic system information displayed.${RESET}"
-    fi
-    echo "---------------------------------------------------------------"
-}
-useful_tools() {
-    echo "---------------------------------------------------------------"
-    echo -e "${GREEN}[➜] Installing flatpak..${RESET}"
-    sudo apt install flatpak
-    sudo apt install gnome-software-plugin-flatpak
-    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-
-    read -p "Download office packages: (y/n): " download_office
-    if [[ "$download_office" == "y" ]]; then
-        echo -e "${GREEN}[➜] Downloading office packages...${RESET}"
-        sudo apt install libreoffice
-        sudo apt install okular
-        sudo apt install onlyoffice-desktopeditors
-        sudo apt install firefox
-        echo -e "${GREEN}[+] Office packages installed successfully.${RESET}"
-    fi
-
-    read -p "Download media players: (y/n): " download_media
-    if [[ "$download_media" == "y" ]]; then
-        echo -e "${GREEN}[➜] Downloading media players...${RESET}"
-        sudo apt install vlc
-        sudo apt install mpv
-        echo -e "${GREEN}[+] Media players installed successfully.${RESET}"
-    fi
-
-    read -p "Download image viewers/editors: (y/n): " download_images
-    if [[ "$download_images" == "y" ]]; then
-        echo -e "${GREEN}[➜] Downloading image viewers/editors...${RESET}"
-        sudo apt install gimp
-        sudo apt install krita
-        echo -e "${GREEN}[+] Image viewers/editors installed successfully.${RESET}"
-    fi
-
-    read -p "Download privacy/security tools: (y/n): " download_privacy_security
-    if [[ "$download_privacy_security" == "y" ]]; then
-        echo -e "${GREEN}[➜] Downloading privacy/security tools...${RESET}"
-        echo "Some require SNAP"
-        sudo apt install torbrowser-launcher
-        sudo apt install tor
-        sudo apt install torsocks
-        sudo apt install exiftool
-        sudo apt install bleachbit
-        sudo apt install chkrootkit
-        sudo apt install lynis
-        sudo apt install srm
-        sudo apt install obfuscate
-        sudo apt install veracrypt
-        sudo apt install clamav
-        sudo apt install usbguard
-        sudo flatpak install flathub com.github.arshubham.cipher
-        sudo flatpak install flathub com.github.tchx84.Flatseal
-        sudo flatpak install flathub com.belmoussaoui.Authenticator
-        sudo snap install keepassxc
-        sudo snap install ufw                                   
-        echo -e "${GREEN}[+] Privacy/security tools installed successfully.${RESET}"
-    fi
-
-    read -p "Other useful tools: (y/n): " download_other
-    if [[ "$download_other" == "y" ]]; then
-        echo -e "${GREEN}[➜] Downloading other useful tools...${RESET}"
-        echo "Some require SNAP"
-        sudo apt install fastfetch
-        sudo snap install spotify
-        sudo snap install signal-desktop
-        sudo snap install code
-        sudo snap install element-desktop
-        echo -e "${GREEN}[+] Other useful tools installed successfully.${RESET}"
     fi
     echo "---------------------------------------------------------------"
 }
@@ -681,68 +544,6 @@ setup_ufw() {
     echo -e "${YELLOW}[!] Incoming connections are BLOCKED by default.${RESET}"
     echo "---------------------------------------------------------------"
 }
-#############################################################################################################################
-# Security
-#############################################################################################################################
-confirm_paranoia() {
-    echo
-    echo -e "\a"
-    echo -e "${RED}[!] WARNING: Paranoia mode is extremely invasive and may break networking, audio, and system functionality.${RESET}"
-    echo -e "\a"
-    echo -e "${RED}[!] Use only in controlled environments (VM recommended).${RESET}"
-    echo
-    echo "Type EXACTLY: ENABLE PARANOIA MODE"
-    read -r input
-
-    if [[ "$input" != "ENABLE PARANOIA MODE" ]]; then
-        echo -e "${RED}[!] Confirmation failed. Aborting.${RESET}"
-        return 1
-    fi
-
-    return 0
-    echo
-}
-
-paranoia_mode() {
-    clear
-    echo "---------------------------------------------------------------"
-    local status=0
-
-    echo -e "${GREEN}[➜] Enabling Paranoia mode...${RESET}"
-    sleep 0.5
-
-    if sudo iptables -P OUTPUT DROP; then
-        sudo iptables -A OUTPUT -d 127.0.0.1 -j ACCEPT
-    else
-        echo -e "\a"
-        echo -e "${RED}[!] iptables failed${RESET}"
-        status=1
-    fi
-
-    if ! nmcli networking off; then
-        echo -e "${RED}[!] NetworkManager disable failed${RESET}"
-        status=1
-    fi
-
-    shred -u ~/.bash_history 2>/dev/null || true
-    history -c 2>/dev/null || true
-
-    find /tmp -type f -user "$USER" -exec shred -u {} \; 2>/dev/null
-
-    sudo modprobe -r uvcvideo 2>/dev/null || true
-    sudo modprobe -r snd_hda_intel 2>/dev/null || true
-
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] Paranoia mode enabled successfully.${RESET}"
-    else
-        echo -e "\a"
-        echo -e "${RED}[!] Paranoia mode partially failed (check output above).${RESET}"
-    fi
-
-    return $status
-    echo "---------------------------------------------------------------"
-}
-
 secure_empty_trash() {
     clear
     echo "---------------------------------------------------------------"
@@ -772,7 +573,6 @@ secure_empty_trash() {
     echo -e "${GREEN}[+] Deletion completed.${RESET}"
     echo "---------------------------------------------------------------"
 }
-
 secure_overwrite_free_space() {
     clear
     echo "---------------------------------------------------------------"
@@ -792,7 +592,6 @@ secure_overwrite_free_space() {
     echo -e "${GREEN}[+] Free space securely overwritten.${RESET}"
     echo "---------------------------------------------------------------"
 }
-
 system_audit() {
     clear
     echo "---------------------------------------------------------------"
@@ -828,35 +627,6 @@ system_audit() {
     fi
     echo "---------------------------------------------------------------"
 }
-
-bleachbit() {
-    echo "---------------------------------------------------------------"
-    echo "BleachBit by BleachBit Team https://www.bleachbit.org/"
-    echo -e "${GREEN}[➜] Running BleachBit...${RESET}"
-    sleep 0.5
-
-    if command -v bleachbit >/dev/null 2>&1; then
-        output=$(sudo bleachbit 2>&1)
-        status=$?
-
-        echo "$output"
-
-        if [[ $status -eq 0 ]]; then
-            echo -e "${GREEN}[+] BleachBit cleanup completed successfully.${RESET}"
-        else
-            echo -e "\a"
-            echo -e "${RED}[!] BleachBit finished with errors.${RESET}"
-            return 1
-        fi
-    else
-        echo -e "\a"
-        echo -e "${RED}[!] BleachBit is not installed.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install bleachbit${RESET}"
-        return 1
-    fi
-    echo "---------------------------------------------------------------"
-}
-
 rootkit_hunt() {
     clear
     echo "---------------------------------------------------------------"
@@ -891,7 +661,6 @@ rootkit_hunt() {
     fi
     echo "---------------------------------------------------------------"
 }
-
 remove_temp_files() {
     echo "---------------------------------------------------------------"
     echo -e "${GREEN}[➜] Removing temporary files...${RESET}"
@@ -906,7 +675,6 @@ remove_temp_files() {
     fi
     echo "---------------------------------------------------------------"
 }
-
 generate_password() {
     echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
@@ -934,7 +702,6 @@ generate_password() {
     fi
     echo "---------------------------------------------------------------"
 }
-
 delete_file() {
     echo "---------------------------------------------------------------"
     echo -n "Enter file: "
@@ -952,7 +719,6 @@ delete_file() {
     fi
 echo "---------------------------------------------------------------"
 }
-
 clean_metadata() {
     echo "---------------------------------------------------------------"
     echo "ExifTool by Phil Harvey https://exiftool.org/"
@@ -988,10 +754,6 @@ clean_metadata() {
     fi
     echo "---------------------------------------------------------------"
 }
-
-#############################################################################################################################
-# Encoding
-#############################################################################################################################
 get_aes256_key () {
     echo "---------------------------------------------------------------"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
@@ -1508,178 +1270,6 @@ decrypt_text_vigenere() {
     echo -e "${GREEN}[+] Result: $result${RESET}"
     echo "---------------------------------------------------------------"
 }
-#############################################################################################################################
-# Misc
-#############################################################################################################################
-matrix() {
-    clear
-    if command -v cmatrix >/dev/null 2>&1; then
-        cmatrix -s -C green
-    else
-        echo -e "\a"
-        echo -e "${RED}[!] cmatrix is not installed.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install cmatrix${RESET}"
-        return 1
-    fi
-}
-
-hacked() {
-    clear
-    if command -v hollywood >/dev/null 2>&1; then
-        hollywood
-    else
-        echo -e "\a"
-        echo -e "${RED}[!] hollywood is not installed.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install hollywood${RESET}"
-        return 1
-    fi
-}
-
-hacking() {
-    # IMPORTSNT NOTE:
-    # This is just for fun and does not actually perform any hacking activities. It is meant to simulate a "hacker code" effect for entertainment purposes only. Do not use this code for any malicious or illegal activities. Always use your skills and knowledge ethically and responsibly.
-    # The following code simulates a hacking scenario where the user "connects" to a target server, "scans" for vulnerabilities, "exploits" a known vulnerability, and "gains root access". It then simulates connecting to a high-profile target (the DoD server) and "extracting sensitive data". This is purely fictional and should not be taken seriously.
-    # No real commands are executed in this code, and it is only meant for entertainment purposes only. Always use your skills and knowledge ethically and responsibly.
-    clear
-    echo "${GREEN}-------------------------------------------------------------------"
-    echo "Starting exploit"
-    sleep 0.5
-    echo "Connecting to target..." | pv -qL 5
-    echo "ssh 158.238.44.210" | pv -qL 5
-    sleep 0.5
-    echo "Made connection with 158.238.44.210" | pv -qL 5
-    sleep 0.5
-    echo "Scanning server for vulnerabilities..." | pv -qL 5
-    sleep 3
-    echo "Bypassing firewall..." | pv -qL 5
-    echo "[*] Initializing neural bypass engine..." | pv -qL 5
-    sleep 1
-    echo "Made connection with 158.238.44.210" | pv -qL 5
-    sleep 0.5
-    echo "Scanning server for vulnerabilities..." | pv -qL 5
-    sleep 3
-    echo "Bypassing firewall..." | pv -qL 5
-    echo "[*] Initializing neural bypass engine..." | pv -qL 5
-    sleep 1
-    echo "[*] Generating polymorphic packets..." | pv -qL 5
-    sleep 1
-    echo "[*] Obfuscating traffic signatures..." | pv -qL 5
-    sleep 1
-    echo "[*] Injecting spoofed credentials..." | pv -qL 5
-    sleep 1
-    echo "[*] Bypassing IDS/IPS systems..." | pv -qL 5
-    sleep 1
-    echo "[*] Establishing covert channel..." | pv -qL 5
-    echo
-    sleep 1
-    echo "Firewall bypassed." | pv -qL 5
-    echo
-    sleep 0.3
-    echo "Exploiting vulnerability CVE-2021-44228..." | pv -qL 5
-    sleep 0.5
-    echo "Executing arbitrary code remotely on target system..." | pv -qL 5
-    echo
-    sleep 1
-    echo "Escalating privileges..." | pv -qL 5
-    sleep 0.5
-    echo "Gaining root access..." | pv -qL 5
-    echo "[PAYLOAD] Uploading encrypted payload..." | pv -qL 5
-    sleep 1
-    echo "[PAYLOAD] Executing remote shell..." | pv -qL 5
-    sleep 1
-    echo "Root access granted." | pv -qL 5
-    echo
-    echo "________________________________________________"
-    echo
-    cat <<'EOF'
- ____                        _                        _            __       _       __
-|  _ \  ___ _ __   __ _ _ __| |_ _ __ ___   ___ _ __ | |_    ___  / _|   __| | ___ / _| ___ _ __  ___  ___
-| | | |/ _ \ '_ \ / _` | '__| __| '_ ` _ \ / _ \ '_ \| __|  / _ \| |_   / _` |/ _ \ |_ / _ \ '_ \/ __|/ _ \
-| |_| |  __/ |_) | (_| | |  | |_| | | | | |  __/ | | | |_  | (_) |  _| | (_| |  __/  _|  __/ | | \__ \  __/
-|____/ \___| .__/ \__,_|_|   \__|_| |_| |_|\___|_| |_|\__|  \___/|_|    \__,_|\___|_|  \___|_| |_|___/\___|
-           |_|
-EOF
-    echo "Connected with United States Department of Defense DoD server" | pv -qL 10
-    sleep 0.5
-    echo "Running malicious code on DoD server..." | pv -qL 5
-    echo "Execute ~/DoD/malicous.sh" | pv -qL 10
-    sleep 1.2
-    echo "Extracting sensitive data from DoD server..." | pv -qL 5
-    echo "Scanning file system" | pv -qL 5
-    echo "Delete" | pv -qL 10
-    sleep 2
-    echo "Send to dark web" | pv -qL 5
-    echo "Ping https+tor://marketplace.tor" | pv -qL 10
-    sleep 2
-    echo "[+] send!"
-    echo
-    echo "Removing traces of attack..." | pv -qL 5
-    echo
-    sleep 0.5
-    echo "Clearing logs..." | pv -qL 5
-    sleep 0.5
-    echo "sudo rm -rf /var/log/" | pv -qL 10
-    echo "Logs cleared." | pv -qL 5
-    sleep 0.5
-    echo "Deleting exploit files..." | pv -qL 5
-    echo "sudo rm ./exploit" | pv -qL 10
-    sleep 0.5
-    echo "Exploit files deleted." | pv -qL 5
-    echo
-    echo "Exiting DoD server..." | pv -qL 5
-    echo "ssh exit" | pv -qL 10
-    sleep 0.5
-    echo "Connection closed." | pv -qL 5
-    echo -e "${RESET}----------------------------------------------------"
-    clear
-}
-read_nerd_news () {
-    echo "-------------------------------------------------------------------"
-    WIRED_RSS="https://www.wired.com/feed/rss"
-    ARS_RSS="https://feeds.arstechnica.com/arstechnica/index"
-
-    echo ""
-    echo "########################################"
-    echo "#        RSS FEED READER               #"
-    echo "########################################"
-    echo " Fetching latest headlines..."
-
-    fetch_feed "WIRED" "$WIRED_RSS" 5
-    fetch_feed "ARS TECHNICA" "$ARS_RSS" 5
-
-    echo "========================================"
-    echo " Done."
-    echo "========================================"
-}
-fetch_feed() {
-    local source="$1"
-    local url="$2"
-    local limit="${3:-5}"
-
-    echo ""
-    echo "========================================"
-    echo " $source"
-    echo "========================================"
-
-    curl -s "$url" | xmllint --xpath "//item" - 2>/dev/null | \
-    grep -oP '(?<=<title>).*?(?=</title>)|(?<=<link>).*?(?=</link>)|(?<=<pubDate>).*?(?=</pubDate>)' | \
-    awk -v limit="$limit" '
-        NR % 3 == 1 { title=$0 }
-        NR % 3 == 2 { link=$0 }
-        NR % 3 == 0 {
-            count++
-            if (count <= limit) {
-                print count". " title
-                print "   " $0
-                print "   " link
-                print ""
-            }
-        }
-    '
-}
-#############################################################################################################################
-# OTHER
-#############################################################################################################################
 license() {
     clear
     echo "-------------------------------------------------------------------"
@@ -1708,7 +1298,6 @@ SOFTWARE.
 EOF
     echo "---------------------------------------------------------------"
 }
-
 clone_source() {
     echo "-------------------------------------------------------------------"
     echo -e "${GREEN}[➜] Cloning source code from GitHub...${RESET}"
@@ -1728,7 +1317,6 @@ clone_source() {
         return 1
     fi
 }
-
 version() {
     echo "-------------------------------------------------------------------"
     echo -e "${WHITE}JAS ${MAIN_VERSION}${SUB_VERSION}${RESET}" | pv -qL 10
@@ -1736,701 +1324,93 @@ version() {
     echo -e "${RESET}"
     echo "---------------------------------------------------------------"
 }
+# ─── Command dispatcher ───────────────────────────────────────────────────────
 
-# -------------------
-# Network Tools Submenu
-# -------------------
-network_tools() {
-    clear
-    echo -e "${BOLD}${PURPLE}"
-    cat <<'EOF'
+_JAS_COMMANDS=(
+    whois_lookup ping traceroute dns_info get_ip ip_osint maigret_search
+    tor_connect
+    update_apps systeminfo remove_temp_files
+    setup_clamav setup_usbguard setup_ufw
+    secure_empty_trash secure_overwrite_free_space system_audit rootkit_hunt
+    generate_password delete_file clean_metadata
+    get_aes256_key get_aes128_key
+    encrypt_file_aes256 encrypt_file_aes128
+    decrypt_file_aes256 decrypt_file_aes128
+    encrypt_text_aes256 encrypt_text_aes128
+    decrypt_text_aes256 decrypt_text_aes128
+    encrypt_text_ceasar decrypt_text_ceasar
+    encrypt_text_vigenere decrypt_text_vigenere
+    encrypt_text_base64 decrypt_text_base64
+    rot13_cipher
+    license clone_source version
+)
 
-                   ____________________________________
-[::]  [::]  [::]   ▗▖  ▗▖▗▄▄▄▖▗▄▄▄▖▗▖ ▗▖ ▗▄▖ ▗▄▄▖ ▗▖ ▗▖  [::]  [::]  [::]
- ||    ||    ||    ▐▛▚▖▐▌▐▌     █  ▐▌ ▐▌▐▌ ▐▌▐▌ ▐▌▐▌▗▞▘   ||    ||    || 
- ||    ||    ||    ▐▌ ▝▜▌▐▛▀▀▘  █  ▐▌ ▐▌▐▌ ▐▌▐▛▀▚▖▐▛▚▖    ||    ||    || 
- ||____||____||    ▐▌  ▐▌▐▙▄▄▖  █  ▐▙█▟▌▝▚▄▞▘▐▌ ▐▌▐▌ ▐▌   ||____||____||    
- [_____________]   ____________________________________   [_____________]      
-
-EOF
-    echo -e "${RESET}"
-    local __old_ps3=$PS3
-    PS3="Network Tools Menu: "
-    options=("Whois" "Ping" "Trace" "DNS info" "get IP" "IP osint" "Inspect SSL Certificate" "Connect through Tor" "Monitor network" "Back")
-    select opt in "${options[@]}"; do
-        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
-        case "$REPLY" in
-            1)
-                whois_lookup
-                ;;
-            2)
-                ping
-                ;;
-            3)
-                traceroute
-                ;;
-            4)
-                dns_info
-                ;;
-            5)
-                get_ip
-                ;;
-            6)
-                ip_osint
-                ;;
-            7)
-                inspect_cert
-                ;;
-            8)
-                tor_connect
-                ;;
-            9)
-                monitor_network
-                ;;
-            10|q|Q)
-                break
-                ;;
-            *)
-                echo -e "\a"
-                echo -e "${RED} [✖] Invalid option${RESET}"
-                ;;
-        esac
-    done
-
-    PS3="$__old_ps3"
-    return 0
-}
-
-# -------------------
-# System Tools Submenu
-# -------------------
-system_tools() {
-    clear
-    echo -e "${BOLD}${ORANGE}"
-    cat <<'EOF'
-|1|0|1|0|1||1|0|1|0|1||1|0|1|0|1||1|0|1|0|1||1|0|1|0|1||1|0|1|0|1||1|0|1|0|1|
-|1|0|1|0|1||1|0|1|0|1| _______________________________  |1|0|1|0|1||1|0|1|0|1|
-|1|0|1|0|1||1|0|1|0|1|  ▗▄▄▖▗▖  ▗▖▗▄▄▖▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖  |1|0|1|0|1||1|0|1|0|1|
-|0|1|0|1|0||0|1|0|1|0| ▐▌    ▝▚▞▘▐▌     █  ▐▌   ▐▛▚▞▜▌  |0|1|0|1|0||0|1|0|1|0|
-|1|0|S Y S||1|0|S Y S|  ▝▀▚▖  ▐▌  ▝▀▚▖  █  ▐▛▀▀▘▐▌  ▐▌  |1|0|S Y S||1|0|S Y S|
-|0|1|0|1|0||0|1|0|1|0|  ▄▄▞▘  ▐▌ ▗▄▄▞▘  █  ▐▙▄▄▖▐▌  ▐▌  |0|1|0|1|0||0|1|0|1|0|
-|1|0|1|0|1||1|0|1|0|1|  _______________________________ |1|0|1|0|1||1|0|1|0|1|
-|1|0|1|0|1||1|0|1|0|1|                                  |1|0|1|0|1||1|0|1|0|1|
-|1|0|1|0|1||1|0|1|0|1||1|0|1|0|1||1|0|1|0|1||1|0|1|0|1||1|0|1|0|1||1|0|1|0|1|
-EOF
-    echo -e "${RESET}"
-    local __old_ps3=$PS3
-    PS3="System Tools Menu: "
-    options=("Updating all apps" "See system information" "Paranoia mode" "Install usefull tools" "Watch processes" "Exit")
-
-    select opt in "${options[@]}"; do
-        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
-        case "$REPLY" in
-            1)
-                update_apps
-                ;;
-            2)
-                systeminfo
-                ;;
-            3)
-                if confirm_paranoia; then
-                    paranoia_mode
-                fi
-                ;;
-            4)
-                useful_tools
-                ;;
-            5)
-               process_monitor 
-               ;;
-            6|q|Q)
-                break
-                ;;
-            *)
-                echo -e "\a"
-                echo -e "${RED}[✖] Invalid option${RESET}"
-                ;;
-        esac
-    done
-
-    PS3="$__old_ps3"
-    return 0
-}
-
-# -------------------
-# Privacy/Security Tools Submenu
-# -------------------
-privacy_tools() {
-    clear
-    echo -e "${BOLD}${BLUE}"
-    cat <<'EOF'
-[privacy • anonymity • security • opsec • stealth • confidentiality • hardening]
-________________________________________________________________________________
-▗▄▄▖ ▗▄▄▖ ▗▄▄▄▖▗▖  ▗▖ ▗▄▖  ▗▄▄▖▗▖  ▗▖   ▗▄▄▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▖ ▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖
-▐▌ ▐▌▐▌ ▐▌  █  ▐▌  ▐▌▐▌ ▐▌▐▌    ▝▚▞▘   ▐▌   ▐▌   ▐▌   ▐▌ ▐▌▐▌ ▐▌  █    █   ▝▚▞▘
-▐▛▀▘ ▐▛▀▚▖  █  ▐▌  ▐▌▐▛▀▜▌▐▌     ▐▌     ▝▀▚▖▐▛▀▀▘▐▌   ▐▌ ▐▌▐▛▀▚▖  █    █    ▐▌
-▐▌   ▐▌ ▐▌▗▄█▄▖ ▝▚▞▘ ▐▌ ▐▌▝▚▄▄▖  ▐▌    ▗▄▄▞▘▐▙▄▄▖▝▚▄▄▖▝▚▄▞▘▐▌ ▐▌▗▄█▄▖  █    ▐▌
-________________________________________________________________________________
-
-[secure-by-default • hardened • encrypted • private • anonymous • shielded]
-EOF
-    echo -e "${RESET}"
-    echo -e "\a"
-    echo -e "${YELLOW}[!] Note: Some of these tools can be dangerous if used improperly. Make sure you understand what each tool does before using it. Always use these tools responsibly and ethically.${RESET}"
+_jas_list_commands() {
+    echo -e "${CYAN}Usage:${RESET}  jas <command>"
     echo
-    local __old_ps3=$PS3
-    PS3="Privacy/Security Menu: "
-    options=("Securely wipe trash" "Securely overwrite free space" "Peform system audit" "Peform system cleanup" "Check for rootkits" "Remove temporary files" "Generate secure password" "Delete file" "Clean metadata" "Exit")
-    select opt in "${options[@]}"; do
-        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
-        case "$REPLY" in
-            1)
-                secure_empty_trash
-                ;;
-            2)
-                secure_overwrite_free_space
-                ;;
-            3)
-                system_audit
-                ;;
-            4)
-                bleachbit
-                ;;
-            5)
-                rootkit_hunt
-                ;;
-            6)
-                remove_temp_files
-                ;;
-            7)
-                generate_password
-                ;;
-            8)
-                delete_file
-                ;;
-            9)
-                clean_metadata
-                ;;
-            10|q|Q)
-                break
-                ;;
-            *)
-                echo -e "\a"
-                echo -e "${RED}[✖] Invalid option.${RESET}"
-                ;;
-        esac
-    done
-
-    PS3="$__old_ps3"
-    return 0
-}
-
-# -------------------
-# Encrypt files sub-sub menu
-# -------------------
-encrypt_files() {
+    echo -e "${YELLOW}Networking / OSINT${RESET}"
+    printf "  %-36s %s\n" "whois_lookup"               "WHOIS lookup for a domain"
+    printf "  %-36s %s\n" "ping"                        "Ping a host (6 packets)"
+    printf "  %-36s %s\n" "traceroute"                  "Traceroute to a host"
+    printf "  %-36s %s\n" "dns_info"                    "DNS records via dig"
+    printf "  %-36s %s\n" "get_ip"                      "Show your public IP"
+    printf "  %-36s %s\n" "ip_osint"                    "IP/domain OSINT (ipinfo.io)"
+    printf "  %-36s %s\n" "maigret_search"              "Username OSINT (Maigret)"
+    printf "  %-36s %s\n" "tor_connect"                 "Start Tor service"
     echo
-    local __old_ps3=$PS3
-    PS3="Encryption Menu: "
-    options=("AES-256" "AES-128")
-    select opt in "${options[@]}"; do
-        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
-        case "$REPLY" in
-            1)
-                encrypt_file_aes256
-                ;;
-            2)
-                encrypt_file_aes128
-                ;;
-            *)
-                echo -e "\a"
-                echo -e "${RED}[✖] Invalid option.${RESET}"
-                ;;
-        esac
-    done
-
-    PS3="$__old_ps3"
-    return 0
-}
-
-# -------------------
-# Decrypt files sub-sub menu
-# -------------------
-decrypt_files() {
+    echo -e "${YELLOW}System${RESET}"
+    printf "  %-36s %s\n" "update_apps"                 "Update APT / Flatpak / Snap"
+    printf "  %-36s %s\n" "systeminfo"                  "Show system info (fastfetch)"
+    printf "  %-36s %s\n" "remove_temp_files"           "Delete /tmp/*"
     echo
-    local __old_ps3=$PS3
-    PS3="Decryption Menu: "
-    options=("AES-256" "AES-128")
-    select opt in "${options[@]}"; do
-        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
-        case "$REPLY" in
-            1)
-                decrypt_file_aes256
-                ;;
-            2)
-                decrypt_file_aes128
-                ;;
-            *)
-                echo -e "\a"
-                echo -e "${RED}[✖] Invalid option.${RESET}"
-                ;;
-        esac
-    done
-
-    PS3="$__old_ps3"
-    return 0
-}
-
-# -------------------
-# Encrypt texts sub-sub menu
-# -------------------
-encrypt_texts() {
+    echo -e "${YELLOW}Security & Hardening${RESET}"
+    printf "  %-36s %s\n" "setup_clamav"                "Install & configure ClamAV"
+    printf "  %-36s %s\n" "setup_usbguard"              "Install & configure USBGuard"
+    printf "  %-36s %s\n" "setup_ufw"                   "Install & configure UFW"
+    printf "  %-36s %s\n" "system_audit"                "Run Lynis security audit"
+    printf "  %-36s %s\n" "rootkit_hunt"                "Scan for rootkits (chkrootkit)"
+    printf "  %-36s %s\n" "secure_empty_trash"          "Securely wipe Trash (srm)"
+    printf "  %-36s %s\n" "secure_overwrite_free_space" "Wipe free disk space (srm)"
     echo
-    echo -e "${YELLOW}[!] For real security use AES, for education or fun Caesar or Vigenere and for encoding Base64 or ROT13${RESET}"
+    echo -e "${YELLOW}Privacy / Files${RESET}"
+    printf "  %-36s %s\n" "generate_password"           "Generate a secure password"
+    printf "  %-36s %s\n" "delete_file"                 "Securely delete a file (shred)"
+    printf "  %-36s %s\n" "clean_metadata"              "Strip image metadata (exiftool)"
+    printf "  %-36s %s\n" "get_aes256_key"              "Generate AES-256 key"
+    printf "  %-36s %s\n" "get_aes128_key"              "Generate AES-128 key"
     echo
-    local __old_ps3=$PS3
-    PS3="Encryption Menu: "
-    options=("AES-256" "AES-128" "vigenere" "ceasar" "base64" "ROT13")
-    select opt in "${options[@]}"; do
-        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
-        case "$REPLY" in
-            1)
-                encrypt_text_aes256
-                ;;
-            2)
-                encrypt_text_aes128
-                ;;
-            3)
-                encrypt_text_vigenere
-                ;;
-            4)
-                encrypt_text_ceasar
-                ;;
-            5)
-                encrypt_text_base64
-                ;;
-            6)
-                rot13_cipher
-                ;;
-            *)
-                echo -e "\a"
-                echo -e "${RED}[✖] Invalid option.${RESET}"
-                ;;
-        esac
-    done
-
-    PS3="$__old_ps3"
-    return 0
-}
-
-# -------------------
-# Decrypt texts sub-sub menu
-# -------------------
-decrypt_texts() {
+    echo -e "${YELLOW}Encrypt / Decrypt Files${RESET}"
+    printf "  %-36s %s\n" "encrypt_file_aes256"         "Encrypt file (AES-256-CBC)"
+    printf "  %-36s %s\n" "encrypt_file_aes128"         "Encrypt file (AES-128-CBC)"
+    printf "  %-36s %s\n" "decrypt_file_aes256"         "Decrypt file (AES-256-CBC)"
+    printf "  %-36s %s\n" "decrypt_file_aes128"         "Decrypt file (AES-128-CBC)"
     echo
-    echo -e "${YELLOW}[!] For real security use AES, for education or fun Caesar or Vigenere and for encoding Base64 or ROT13${RESET}"
+    echo -e "${YELLOW}Encrypt / Decrypt Text${RESET}"
+    printf "  %-36s %s\n" "encrypt_text_aes256"         "Encrypt text (AES-256-CBC)"
+    printf "  %-36s %s\n" "encrypt_text_aes128"         "Encrypt text (AES-128-CBC)"
+    printf "  %-36s %s\n" "decrypt_text_aes256"         "Decrypt text (AES-256-CBC)"
+    printf "  %-36s %s\n" "decrypt_text_aes128"         "Decrypt text (AES-128-CBC)"
+    printf "  %-36s %s\n" "encrypt_text_ceasar"         "Caesar cipher"
+    printf "  %-36s %s\n" "decrypt_text_ceasar"         "Caesar decipher"
+    printf "  %-36s %s\n" "encrypt_text_vigenere"       "Vigenère cipher"
+    printf "  %-36s %s\n" "decrypt_text_vigenere"       "Vigenère decipher"
+    printf "  %-36s %s\n" "encrypt_text_base64"         "Base64 encode"
+    printf "  %-36s %s\n" "decrypt_text_base64"         "Base64 decode"
+    printf "  %-36s %s\n" "rot13_cipher"                "ROT13"
     echo
-    local __old_ps3=$PS3
-    PS3="Encryption Menu: "
-    options=("AES-256" "AES-128" "vigenere" "ceasar" "base64" "ROT13")
-    select opt in "${options[@]}"; do
-        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
-        case "$REPLY" in
-            1)
-                decrypt_text_aes256
-                ;;
-            2)
-                decrypt_text_aes128
-                ;;
-            3)
-                decrypt_text_vigenere
-                ;;
-            4)
-                decrypt_text_ceasar
-                ;;
-            5)
-                decrypt_text_base64
-                ;;
-            6)
-                rot13_cipher
-                ;;
-            *)
-                echo -e "\a"
-                echo -e "${RED}[✖] Invalid option.${RESET}"
-                ;;
-        esac
-    done
-
-    PS3="$__old_ps3"
-    return 0
+    echo -e "${YELLOW}Misc${RESET}"
+    printf "  %-36s %s\n" "license"                     "Show license"
+    printf "  %-36s %s\n" "clone_source"                "Clone source from GitHub"
+    printf "  %-36s %s\n" "version"                     "Show version"
+    echo
 }
 
-# -------------------
-# Encryptions Tools Submenu
-# -------------------
-encryptions_tools() {
-    clear
-    echo -e "${BOLD}${GREEN}"
-    cat <<'EOF'                               
-    %%%%%%%%       101001010101010100110010101010101010010101010101001       
-   %%       %%%    010101010010101001010101010101010101010101001010101        
-  %%          %    101010010101010100101010010100101010010101010101010        
- %%          %%    ___________________________________________________
- %%          %%    ▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖▗▄▄▖▗▖  ▗▖▗▄▄▖▗▄▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
-%%%%%%%%%%%%%%%%   ▐▌   ▐▛▚▖▐▌▐▌   ▐▌ ▐▌▝▚▞▘ ▐▌ ▐▌ █    █  ▐▌ ▐▌▐▛▚▖▐▌
-%%%%%%%%%%%%%%%%%  ▐▛▀▀▘▐▌ ▝▜▌▐▌   ▐▛▀▚▖ ▐▌  ▐▛▀▘  █    █  ▐▌ ▐▌▐▌ ▝▜▌
-%%%%%%%    %%%%%%  ▐▙▄▄▖▐▌  ▐▌▝▚▄▄▖▐▌ ▐▌ ▐▌  ▐▌    █  ▗▄█▄▖▝▚▄▞▘▐▌  ▐▌
-%%%%%%%    %%%%%%  ___________________________________________________
-%%%%%%%%  %%%%%%%         
-%%%%%%%%%.%%%%%%%  010100101010010010101010010101010100101010101001010       
-%%%%%%%%%%%%%%%%%  010100101010100101010101010100101010001010101010101        
-  %%%%%%%%%%%%%%   101001010100100010101001010010101010101001010101001       
-EOF
-    echo -e "${RESET}"
-    local __old_ps3=$PS3
-    PS3="Encryption Tools Menu: "
-    options=("Encrypt files" "Decrypt files" "Encrypt texts" "Decrypt texts" "Get AES-256 Key" "Get AES-128 Key" "Exit")
-    select opt in "${options[@]}"; do
-        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
-        case "$REPLY" in
-            1)
-                encrypt_files
-                ;;
-            2)
-                decrypt_files
-                ;;
-            3)
-                encrypt_texts
-                ;;
-            4)
-                decrypt_texts
-                ;;
-            5)
-                get_aes256_key
-                ;;
-            6)
-                get_aes128_key
-                ;;
-            7|q|Q)
-                break
-                ;;
-            *)
-                echo -e "\a"
-                echo -e "${RED}[✖] Invalid option.${RESET}"
-                ;;
-        esac
-    done
-
-    PS3="$__old_ps3"
-    return 0
-    echo -e "${RESET}"
-}
-
-# -------------------
-# Misc Tools Submenu
-# -------------------
-misc_tools() {
-clear
-echo -e "${RED}    ___________________________________________________________________"
-echo -e "${ORANGE} ▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖ ▗▄▄▖▗▄▄▄▖▗▖   ▗▖    ▗▄▖ ▗▖  ▗▖▗▄▄▄▖ ▗▄▖ ▗▖ ▗▖ ▗▄▄▖"
-echo -e "${YELLOW} ▐▛▚▞▜▌  █  ▐▌   ▐▌   ▐▌   ▐▌   ▐▌   ▐▌ ▐▌▐▛▚▖▐▌▐▌   ▐▌ ▐▌▐▌ ▐▌▐▌   "
-echo -e "${GREEN}  ▐▌  ▐▌  █   ▝▀▚▖▐▌   ▐▛▀▀▘▐▌   ▐▌   ▐▛▀▜▌▐▌ ▝▜▌▐▛▀▀▘▐▌ ▐▌▐▌ ▐▌ ▝▀▚▖"
-echo -e "${BLUE}   ▐▌  ▐▌▗▄█▄▖▗▄▄▞▘▝▚▄▄▖▐▙▄▄▖▐▙▄▄▖▐▙▄▄▖▐▌ ▐▌▐▌  ▐▌▐▙▄▄▖▝▚▄▞▘▝▚▄▞▘▗▄▄▞▘"
-echo -e "${PURPLE} ___________________________________________________________________"
-    echo -e "${RESET}"
-    local __old_ps3=$PS3
-    PS3="Misc Tools Menu: "
-    options=("Matrix" "Look hacked" "Hacker code (fake)" "Read Nerd News" "Exit")
-    select opt in "${options[@]}"; do
-        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && break
-        case "$REPLY" in
-            1)
-                matrix
-                ;;
-            2)
-                hacked
-                ;;
-            3)
-                hacking
-                ;;
-            4)
-                read_nerd_news
-                ;;
-            5|q|Q)
-                break
-                ;;
-            *)
-                echo -e "\a"
-                echo -e "${RED}[!] Invalid option.${RESET}"
-                ;;
-        esac
-    done
-
-    PS3="$__old_ps3"
-    return 0
-}
-
-# -------------------
-# Help Menu
-# -------------------
-show_help() {
-clear
-cat << "EOF"
-┌───────────────────────────────────────────────┐
-│              JAS Toolbox v1.6                 │
-│  Networking • System • Privacy • Encryption   │
-└───────────────────────────────────────────────┘
-
-Usage:
-  jas <command> [options]
-
-Description:
-  Multi-purpose CLI toolbox focused on networking,
-  system management, privacy, and security operations.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[ NETWORK ]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  whois_lookup | whois        → WHOIS lookup on domain
-  ping                       → Send ICMP requests
-  traceroute  | trace        → Trace network route
-  dns_info    | dns          → Retrieve DNS records
-  get_ip      | ip           → Show public IP address
-  ip_osint    | osint        → Gather IP intelligence
-  inspect_cert               → Inspect SSL/TLS certificate
-  tor_connect                → Connect via Tor
-  maigret_search             → Username OSINT search
-  monitor_network            → GUI to watch network
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[ SYSTEM ]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  update_apps                → Update APT/Flatpak/Snap
-  systeminfo  | sys-info     → System information
-  paranoia_mode              → Extreme lockdown (⚠)
-  useful_tools               → Install useful tools
-  setup_clamav               → Install & configure ClamAV
-  setup_usbguard             → Install & configure USBGuard
-  setup_ufw                  → Install & configure UFW
-  process_monitor            → List active processes
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[ PRIVACY & SECURITY ]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  secure_empty_trash | set   → Securely empty trash
-  secure_overwrite_free_space | sofc
-                             → Overwrite free disk space
-  system_audit | audit       → Run Lynis audit
-  bleachbit                  → Clean system junk
-  rootkit_hunt               → Scan for rootkits
-  remove_temp_files | rm-temp→ Clear /tmp directory
-  generate_password | psswd  → Generate password
-  delete_file | del          → Secure file deletion
-  clean_metadata             → Remove file metadata
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[ ENCRYPTING ]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  generate_aes256_key        → Generate AES-256 key
-  generate_aes128_key        → Generate AES-128 key
-
-  encrypt_file_aes256        → AES-256 file encryption
-  decrypt_file_aes256        → AES-256 file decryption
-  encrypt_text_aes256        → AES-256 text encryption
-  decrypt_text_aes256        → AES-256 text decryption
-
-  encrypt_file_aes128        → AES-128 file encryption
-  decrypt_file_aes128        → AES-128 file decryption
-  encrypt_text_aes128        → AES-128 text encryption
-  decrypt_text_aes128        → AES-128 text decryption
-
-  encrypt_text_vigenere      → Vigenère cipher
-  decrypt_text_vigenere      → Vigenère decipher
-  encrypt_text_ceasar        → Caesar cipher
-  decrypt_text_ceasar        → Caesar decipher
-  encrypt_text_base64        → Base64 encode
-  decrypt_text_base64        → Base64 decode
-  rot13_cipher               → ROT13 cipher
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[ MISC ]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  matrix | -m               → Matrix effect
-  hacked                    → Hollywood terminal
-  hacking                   → Fake hacking sim
-  read_nerd_news            → Fetch latest tech news
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[ SUB-MENUS ]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  network_tools             → Network menu
-  system_tools              → System menu
-  privacy_tools             → Privacy/Security menu
-  encryptions_tools         → Encryption menu
-  misc_tools                → Misc menu
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[ OTHER ]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  license | -l              → Show license
-  clone_source | -c         → Clone repository
-  help | -h | --help        → Show this menu
-  info <command>            → Show detailed info on command
-  version | -v              → Show version information
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[ NOTES ]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  • Some commands require sudo privileges
-  • External tools may be required (whois, dig, lynis, etc.)
-  • Destructive actions are irreversible (wipe, shred, overwrite)
-  • paranoia_mode may disrupt networking/system behavior
-
-EOF
-}
-
-##-------------------
-# Command Dispatcher
-# -------------------
-if [[ -n "$1" ]]; then
-    case "$1" in
-
-        # NETWORK
-        monitor_network) monitor_network ;;
-        whois_lookup|whois) whois_lookup ;;
-        ping) ping ;;
-        traceroute|trace) traceroute ;;
-        dns_info|dns) dns_info ;;
-        get_ip|ip) get_ip ;;
-        ip_osint|osint) ip_osint ;;
-        inspect_cert) inspect_cert ;;
-        tor_connect) tor_connect ;;
-        maigret_search) maigret_search ;;
-
-        # SYSTEM
-        process_monitor) process_monitor ;;
-        update_apps) update_apps ;;
-        systeminfo|sys-info) systeminfo ;;
-        paranoia_mode)
-            if confirm_paranoia; then
-                paranoia_mode
-            else
-                exit 1
-            fi
-            ;;
-        useful_tools) useful_tools ;;
-        setup_clamav) setup_clamav ;;
-        setup_usbguard) setup_usbguard ;;
-        setup_ufw) setup_ufw ;;
-
-        # PRIVACY & SECURITY
-        secure_empty_trash|SET) secure_empty_trash ;;
-        secure_overwrite_free_space|SOFC) secure_overwrite_free_space ;;
-        system_audit|audit) system_audit ;;
-        bleachbit) bleachbit ;;
-        rootkit_hunt|rootkit) rootkit_hunt ;;
-        remove_temp_files|rm-temp) remove_temp_files ;;
-        generate_password|psswd) generate_password ;;
-        delete_file|del) delete_file ;;
-        clean_metadata) clean_metadata ;;
-
-        # ENCRYPTING
-        generate_aes256_key) generate_aes256_key ;;
-        generate_aes128_key) generate_aes128_key ;;
-        encrypt_file_aes256) encrypt_file_aes256 ;;
-        decrypt_file_aes256) decrypt_file_aes256 ;;
-        encrypt_text_aes256) encrypt_text_aes256 ;;
-        decrypt_text_aes256) decrypt_text_aes256 ;;
-        encrypt_file_aes128) encrypt_file_aes128 ;;
-        decrypt_file_aes128) decrypt_file_aes128 ;;
-        encrypt_text_aes128) encrypt_text_aes128 ;;
-        decrypt_text_aes128) decrypt_text_aes128 ;;
-        encrypt_text_vigenere) encrypt_text_vigenere ;;
-        decrypt_text_vigenere) decrypt_text_vigenere ;;
-        encrypt_text_ceasar) encrypt_text_ceasar ;;
-        decrypt_text_ceasar) decrypt_text_ceasar ;;
-        encrypt_text_base64) encrypt_text_base64 ;;
-        decrypt_text_base64) decrypt_text_base64 ;;
-        rot13_cipher) rot13_cipher ;;
-
-        # MISC
-        matrix|-m) matrix ;;
-        hacked) hacked ;;
-        hacking) hacking ;;
-        read_nerd_news) read_nerd_news ;;
-        # OTHER
-        license|-l) license ;;
-        clone_source|clone) clone_source ;;
-        help|-h|--help) show_help ;;
-        version|-v) version ;;
-        # MENUS
-        misc_tools) misc_tools ;;
-        system_tools) system_tools ;;
-        privacy_tools) privacy_tools ;;
-        network_tools) network_tools ;;
-        encryptions_tools) encryptions_tools ;;
-
-        *)
-            echo -e "\a"
-            echo -e "${RED}[!] Unknown command: $1${RESET}"
-            echo "Use 'jas help' to see available commands."
-            exit 1
-            ;;
-    esac
-
-    exit 0
+if [[ $# -eq 0 ]]; then
+    _jas_list_commands
+elif [[ " ${_JAS_COMMANDS[*]} " == *" $1 "* ]]; then
+    "$1"
+else
+    echo -e "${RED}[!] Unknown command: $1${RESET}"
+    echo -e "    Run ${CYAN}jas${RESET} without arguments to list all commands."
+    exit 1
 fi
-
-# -------------------
-# Interactive Menu
-# -------------------
-clear
-echo -e "${BOLD}${WHITE}"
-cat <<'EOF'
-___             __       ___           _______.        
-\  \           |  |     /   \         /       |        
- \  \          |  |    /  ^  \       |   (----`        
-  >  >   .--.  |  |   /  /_\  \       \   \            
- /  /    |  `--'  |  /  _____  \  .----)   |           
-/__/      \______/  /__/     \__\ |_______/     ______ 
-                                               |______|
-EOF
-
-echo -e "${BOLD}${WHITE}  Version: ${MAIN_VERSION}${SUB_VERSION} - Creator: DarkShadowUser - ${LICENSE}${RESET}"
-echo
-while true; do
-    PS3="Main Menu: "
-    main_options=("Network Tools" "System Tools" "Privacy/Security Tools" "Encrypting tools" "Miscellaneous Tools" "License" "Clone source code" "Exit")
-    select opt in "${main_options[@]}"; do
-        [[ "$REPLY" == "q" || "$REPLY" == "Q" ]] && exit 0
-        case "$REPLY" in
-            1|net|NET|Network|network|NETWORK)
-                network_tools
-                ;;
-            2|sys|SYS|System|system|SYSTEM)
-                system_tools
-                ;;
-            3|priv|PRIV|Privacy|privacy|PRIVACY)
-                privacy_tools
-                ;;
-            4|enc|ENC|ENCRYPT|Encrypt|encrypt)
-                encryptions_tools
-                ;;
-            5|misc|MISC)
-                misc_tools
-                ;;
-            6|license|License|LICENSE)
-                license
-                ;;
-            7|clone|Clone|CLONE)
-                clone_source
-                ;;
-            8|q|Q)
-                exit 0
-                ;;
-            *)
-                echo -e "\a"
-                echo -e "${RED}[!] Invalid option.${RESET}"
-                ;;
-        esac
-    done
-done
