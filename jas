@@ -632,6 +632,27 @@ setup_ufw() {
     echo -e "${YELLOW}[!] Incoming connections are BLOCKED by default.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
 }
+install_tor_browser() {
+    clear
+    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${GREEN}[➜] Installing Tor Browser...${RESET}"
+
+    if ! command -v torbrowser-launcher &>/dev/null; then
+        sudo apt update
+        sudo apt install -y torbrowser-launcher
+        echo -e "${GREEN}[+] Tor Browser installed successfully.${RESET}"
+    else
+        echo -e "${YELLOW}[i] Tor Browser is already installed.${RESET}"
+    fi
+
+    echo
+    echo -e "${GREEN}[➜] Launching Tor Browser...${RESET}"
+    torbrowser-launcher
+
+    echo
+    echo -e "${GREEN}[+] Tor Browser setup completed.${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
+}
 secure_empty_trash() {
     clear
     echo "───────────────────────────────────────────────────────────────"
@@ -1649,7 +1670,7 @@ _JAS_COMMANDS=(
     encrypt_text_vigenere decrypt_text_vigenere
     encrypt_text_base64 decrypt_text_base64
     rot13_cipher
-    license clone_source version test_colors
+    license clone_source version test_colors install_tor_browser
 )
 
 _jas_list_commands() {
@@ -1674,6 +1695,7 @@ _jas_list_commands() {
     printf "  %-36s %s\n" "setup_clamav"                "Install & configure ClamAV"
     printf "  %-36s %s\n" "setup_usbguard"              "Install & configure USBGuard"
     printf "  %-36s %s\n" "setup_ufw"                   "Install & configure UFW"
+    printf "  %-36s %s\n" "setup_tor_browser"           "Install Tor Browser Launcher"
     printf "  %-36s %s\n" "system_audit"                "Run Lynis security audit"
     printf "  %-36s %s\n" "rootkit_hunt"                "Scan for rootkits (chkrootkit)"
     printf "  %-36s %s\n" "secure_empty_trash"          "Securely wipe Trash (srm)"
