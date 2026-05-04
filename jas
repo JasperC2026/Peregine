@@ -1,9 +1,9 @@
 #!/bin/bash
 
 MAIN_VERSION="2"
-SUB_VERSION=".1"
+SUB_VERSION=".0"
 TESTED="Yes"
-TESTED_ON="2-5-2026"
+TESTED_ON="4-5-2026"
 TESTED_RELEASE="Stable"
 LICENSE="MIT License"
 
@@ -29,6 +29,7 @@ COLORS=(
 )
 i=0
 
+# Tor use wrapper
 run_with_tor() {
     if [[ "$USE_TOR" == "y" ]]; then
         torsocks "$@"
@@ -36,6 +37,8 @@ run_with_tor() {
         "$@"
     fi
 }
+# Commands
+# Networking
 whois_lookup() {
     clear
     echo "───────────────────────────────────────────────────────────────"
@@ -426,6 +429,7 @@ tor_connect() {
     fi
     echo "───────────────────────────────────────────────────────────────"
 }
+# System Maintenance
 update_apps() {
     clear
     echo "───────────────────────────────────────────────────────────────"
@@ -653,6 +657,7 @@ install_tor_browser() {
     echo -e "${GREEN}[+] Tor Browser setup completed.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
 }
+# Security
 secure_empty_trash() {
     clear
     echo "───────────────────────────────────────────────────────────────"
@@ -1058,6 +1063,7 @@ clean_metadata() {
     echo -e "${CYAN}[i] Remaining metadata fields: $remaining (filesystem/format fields only).${RESET}"
     echo "───────────────────────────────────────────────────────────────"
 }
+# Encryption
 get_aes256_key () {
     clear
     echo "───────────────────────────────────────────────────────────────"
@@ -1626,11 +1632,22 @@ clone_source() {
 }
 version() { 
     echo "───────────────────────────────────────────────────────────────"
-    echo -e "${WHITE}JAS ${MAIN_VERSION}${SUB_VERSION}${RESET}" | pv -qL 10
-    echo "Release: $TESTED_RELEASE tested on: $TESTED_ON" | pv -qL 10
+    cat << EOF
+'##::::'##::'#######:::::::::'#####:::
+ ##:::: ##:'##.... ##:::::::'##.. ##::
+ ##:::: ##:..::::: ##::::::'##:::: ##:
+ ##:::: ##::'#######::::::: ##:::: ##:
+. ##:: ##::'##::::::::::::: ##:::: ##:
+:. ## ##::: ##::::::::'###:. ##:: ##::
+::. ###:::: #########: ###::. #####:::
+:::...:::::.........::...::::.....::::
+EOF
+    echo -e "${WHITE}JAS ${MAIN_VERSION}${SUB_VERSION}${RESET}" 
+    echo "Release: $TESTED_RELEASE tested on: $TESTED_ON" 
     echo -e "${RESET}"
     echo "───────────────────────────────────────────────────────────────"
 }
+# Development / Testing
 test_colors() {
     clear
     echo "-------------------------------------------------------------------"
@@ -1651,7 +1668,67 @@ test_colors() {
     echo -e "${RESET}This is DEFAULT"
     echo "---------------------------------------------------------------"
 }
-
+# Alternatives
+set () {       # secure_empty_trash  
+    secure_empty_trash     
+}
+SET () {       # secure_empty_trash  
+    secure_empty_trash
+}
+v () {           # version
+    version
+}
+V () {           # version
+    version
+}
+sdel () {        # secure_delete
+    secure_delete
+}
+genpass () {     # generate_password
+    generate_password
+}
+genkey256 () {   # get_aes256_key
+    get_aes256_key
+}
+genkey128 () {   # get_aes128_key
+    get_aes128_key          
+}
+rm_tmp () {       # remove_temp_files
+    remove_temp_files
+}
+rot13 () {         # rot13_cipher
+    rot13_cipher
+}
+sofs () {          # secure_overwrite_free_space
+    secure_overwrite_free_space
+}
+update () {       # update_apps
+    update_apps
+}
+audit () {             # system_audit
+    system_audit
+}
+ip() {                # get_ip
+    get_ip
+}
+whois() {             # whois_lookup
+    whois_lookup
+}
+ping() {              # ping
+    ping
+}
+traceroute() {        # traceroute
+    traceroute
+}
+dns() {               # dns_info
+    dns_info
+}
+maigret() {           # maigret_search
+    maigret_search
+}
+tor() {               # tor_connect
+    tor_connect
+}
 # ─── Command dispatcher ───────────────────────────────────────────────────────
 
 _JAS_COMMANDS=(
@@ -1670,7 +1747,7 @@ _JAS_COMMANDS=(
     encrypt_text_vigenere decrypt_text_vigenere
     encrypt_text_base64 decrypt_text_base64
     rot13_cipher
-    license clone_source version test_colors install_tor_browser
+    license clone_source version test_colors install_tor_browser set SET v V sdel genpass genkey256 genkey128 rm_tmp rot13 sofs update audit ip whois ping traceroute dns maigret tor
 )
 
 _jas_list_commands() {
