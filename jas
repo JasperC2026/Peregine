@@ -657,6 +657,20 @@ install_tor_browser() {
     echo -e "${GREEN}[+] Tor Browser setup completed.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
 }
+install_onionshare () {
+    clear
+    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${GREEN}[➜] Installing OnionShare...${RESET}"
+
+    if ! command -v onionshare &>/dev/null; then
+        sudo apt update
+        sudo apt install -y onionshare
+        echo -e "${GREEN}[+] OnionShare installed successfully.${RESET}"
+    else
+        echo -e "${YELLOW}[i] OnionShare is already installed.${RESET}"
+    fi
+    echo "───────────────────────────────────────────────────────────────"
+}
 # Security
 secure_empty_trash() {
     clear
@@ -1583,6 +1597,7 @@ decrypt_text_vigenere() {
     echo -e "${GREEN}[+] Result: $result${RESET}"
     echo "───────────────────────────────────────────────────────────────"
 }
+# Other
 license() {
     clear
     echo "───────────────────────────────────────────────────────────────"
@@ -1668,6 +1683,7 @@ test_colors() {
     echo -e "${RESET}This is DEFAULT"
     echo "---------------------------------------------------------------"
 }
+
 # Alternatives
 set () {       # secure_empty_trash  
     secure_empty_trash     
@@ -1820,3 +1836,4 @@ else
     echo -e "    Run ${CYAN}jas${RESET} without arguments to list all commands."
     exit 1
 fi
+
