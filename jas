@@ -1078,58 +1078,54 @@ clean_metadata() {
     echo "───────────────────────────────────────────────────────────────"
 }
 # Encryption
-get_aes256_key () {
+generate_key () {
     clear
     echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Generating AES-256 key...${RESET}"
-    sleep 0.5
+    echo -e "${GREEN}[➜] Generate a cryptographic key${RESET}"
     echo
 
-    if command -v openssl >/dev/null 2>&1; then
-        key=$(openssl rand -hex 32 2>/dev/null)
-        status=$?
-
-        if [[ $status -eq 0 && -n "$key" ]]; then
-            echo -e "${CYAN}$key${RESET}"
-            echo -e "${GREEN}[+] AES-256 key generated successfully.${RESET}"
-        else
-            echo -e "\a"
-            echo -e "${RED}[!] Failed to generate key.${RESET}"
-            return 1
-        fi
-    else
+    if ! command -v openssl >/dev/null 2>&1; then
         echo -e "\a"
         echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
         echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
         return 1
     fi
-    echo "───────────────────────────────────────────────────────────────"
-}
-get_aes128_key () {
-    clear
-    echo "───────────────────────────────────────────────────────────────"
-    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Generating AES-128 key...${RESET}"
-    sleep 0.5
+
+    echo -e "${BOLD}Select key size:${RESET}"
+    echo "  1) 128-bit  (16 bytes  — AES-128)"
+    echo "  2) 192-bit  (24 bytes  — AES-192)"
+    echo "  3) 256-bit  (32 bytes  — AES-256)"
+    echo "  4) 512-bit  (64 bytes  — ChaCha20 / general use)"
     echo
+    read -rp "Choice [1-4]: " choice
 
-    if command -v openssl >/dev/null 2>&1; then
-        key=$(openssl rand -hex 16 2>/dev/null)
-        status=$?
-
-        if [[ $status -eq 0 && -n "$key" ]]; then
-            echo -e "${CYAN}$key${RESET}"
-            echo -e "${GREEN}[+] AES-128 key generated successfully.${RESET}"
-        else
+    case "$choice" in
+        1) bits=128;  bytes=16  ;;
+        2) bits=192;  bytes=24  ;;
+        3) bits=256;  bytes=32  ;;
+        4) bits=512;  bytes=64  ;;
+        *)
             echo -e "\a"
-            echo -e "${RED}[!] Failed to generate key.${RESET}"
+            echo -e "${RED}[!] Invalid choice. Enter 1, 2, 3, or 4.${RESET}"
             return 1
-        fi
+            ;;
+    esac
+
+    echo
+    echo -e "${GREEN}[➜] Generating ${bits}-bit key...${RESET}"
+    sleep 0.3
+
+    key=$(openssl rand -hex "$bytes" 2>/dev/null)
+    status=$?
+
+    if [[ $status -eq 0 && -n "$key" ]]; then
+        echo -e "${CYAN}$key${RESET}"
+        echo
+        echo -e "${GREEN}[+] ${bits}-bit key generated successfully.${RESET}"
     else
         echo -e "\a"
-        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
+        echo -e "${RED}[!] Failed to generate key.${RESET}"
         return 1
     fi
     echo "───────────────────────────────────────────────────────────────"
@@ -2566,11 +2562,8 @@ sdel () {        # secure_delete
 genpass () {     # generate_password
     generate_password
 }
-genkey256 () {   # get_aes256_key
-    get_aes256_key
-}
-genkey128 () {   # get_aes128_key
-    get_aes128_key          
+genkey () {       # generate_key
+    generate_key
 }
 rm_tmp () {       # remove_temp_files
     remove_temp_files
@@ -2593,12 +2586,6 @@ ip() {                # get_ip
 whois() {             # whois_lookup
     whois_lookup
 }
-ping() {              # ping
-    ping
-}
-traceroute() {        # traceroute
-    traceroute
-}
 dns() {               # dns_info
     dns_info
 }
@@ -2617,7 +2604,7 @@ _JAS_COMMANDS=(
     setup_clamav setup_usbguard setup_ufw
     secure_empty_trash secure_overwrite_free_space system_audit rootkit_hunt
     generate_password secure_delete clean_metadata
-    get_aes256_key get_aes128_key
+    generate_key
     encrypt_file_aes256 encrypt_file_aes128
     decrypt_file_aes256 decrypt_file_aes128
     encrypt_text_aes256 encrypt_text_aes128
@@ -2626,7 +2613,7 @@ _JAS_COMMANDS=(
     encrypt_text_vigenere decrypt_text_vigenere
     encrypt_text_base64 decrypt_text_base64
     rot13_cipher subdomain_enum secure_shred_dir file_integrity_check
-    license clone_source version test_colors install_tor_browser set SET v V sdel genpass genkey256 genkey128 rm_tmp rot13 sofs update audit ip whois ping traceroute dns maigret tor
+    license clone_source version test_colors install_tor_browser set SET v V sdel genpass genkey rm_tmp rot13 sofs update audit ip whois ping traceroute dns maigret tor
     encrypt_file_serpent decrypt_file_serpent
     encrypt_file_chacha20 decrypt_file_chacha20
     encrypt_text_chacha20 decrypt_text_chacha20
@@ -2666,8 +2653,7 @@ _jas_list_commands() {
     printf "  %-36s %s\n" "generate_password/genpass"           "Generate a secure password"
     printf "  %-36s %s\n" "secure_delete/sedl"                  "Securely delete a file or directory(shred)"
     printf "  %-36s %s\n" "clean_metadata"                      "Strip image metadata (exiftool)"
-    printf "  %-36s %s\n" "get_aes256_key/get_aes256_key"       "Generate AES-256 key"
-    printf "  %-36s %s\n" "get_aes128_key/get_aes128_key"       "Generate AES-128 key"
+    printf "  %-36s %s\n" "generate_key/genkey"                 "Generate a 128/192/256/512-bit key"
     printf "  %-36s %s\n" "subdomain_enum"                      "Enumerate subdomains (subfinder)"
     printf "  %-36s %s\n" "file_integrity_check"                "Create or verify file integrity manifest (sha256sum)"
     echo
@@ -2714,4 +2700,3 @@ else
     echo -e "    Run ${CYAN}jas${RESET} without arguments to list all commands."
     exit 1
 fi
-
