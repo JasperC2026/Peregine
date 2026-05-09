@@ -1,9 +1,9 @@
 #!/bin/bash
 
 MAIN_VERSION="2"
-SUB_VERSION=".2"
+SUB_VERSION=".2.1"
 TESTED="Yes"
-TESTED_ON="2-5-2026"
+TESTED_ON="9-5-2026"
 TESTED_RELEASE="Stable"
 LICENSE="MIT License"
 
@@ -39,13 +39,21 @@ run_with_tor() {
 }
 # Commands
 # Networking
-whois_lookup() {
-    clear
+local_server() {
     echo "───────────────────────────────────────────────────────────────"
-    echo -e "${BOLD}"
+    echo "Opens HTTP server on port 8000"
+    echo -e "${YELLOW}[!] Note: This will serve the current directory over HTTP.${RESET}"
+    echo -e "${YELLOW}[!] Tool uses Python's built-in HTTP server.${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
+    echo
+    python3 -m http.server 8000
+    echo -e "${GREEN}[+] HTTP server started.${RESET}"
+}
+whois_lookup() {
+    echo "───────────────────────────────────────────────────────────────"
     echo -n "Enter domain (ex: example.com): "
-    echo -e "${RESET}"
     read -r domain
+    echo
 
     if [[ -z "$domain" ]]; then
         echo -e "${YELLOW}[!] Error: Domain cannot be empty.${RESET}"
@@ -67,7 +75,7 @@ whois_lookup() {
     echo -e "${RESET}"
 
     echo -e "${GREEN}[➜] Performing Whois lookup for $domain...${RESET}"
-    sleep 0.5
+    echo
 
     output=$(run_with_tor whois "$domain" 2>&1)
     status=$?
@@ -86,14 +94,15 @@ whois_lookup() {
         return 1
     fi
 
+    echo
     echo -e "${GREEN}[+] Whois lookup completed successfully.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
 }
 ping() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -n "Enter item to ping (domain or IP): "
     read -r itemping
+    echo
 
     if [[ -z "$itemping" ]]; then
         echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
@@ -140,14 +149,15 @@ ping() {
         return 1
     fi
 
+    echo
     echo -e "${GREEN}[+] Ping completed successfully.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
 }
 traceroute() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -n "Enter domain or IP to trace: "
     read -r domaintrace
+    echo
 
     if [[ -z "$domaintrace" ]]; then
         echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
@@ -177,9 +187,6 @@ traceroute() {
         fi
     fi
 
-    echo -e "${YELLOW}[!] Traceroute is unreliable over Tor. Running normally.${RESET}"
-    sleep 0.5
-
     output=$(command traceroute "$domaintrace" 2>&1)
     status=$?
 
@@ -197,14 +204,15 @@ traceroute() {
         return 1
     fi
 
+    echo
     echo -e "${GREEN}[+] Traceroute completed successfully.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
 }
 dns_info() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -n "Enter domain or IP to get DNS info: "
     read -r domaindns
+    echo 
 
     if [[ -z "$domaindns" ]]; then
         echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
@@ -262,17 +270,14 @@ dns_info() {
         return 1
     fi
 
+    echo
     echo -e "${GREEN}[+] DNS info retrieved successfully.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
 }
 get_ip() {
-    clear
-    echo -e "${PURPLE}───────────────────────────────────────────────────────────────"
-    read -p "Route through Tor? (y/n): " USE_TOR
-    echo -e "${RESET}"
-
+    echo -e "$───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Fetching public IP...${RESET}"
-    sleep 0.5
+    echo
 
     output=$(run_with_tor curl -s --max-time 5 ifconfig.me 2>&1)
     status=$?
@@ -285,6 +290,7 @@ get_ip() {
         return 1
     fi
 
+    echo
     echo -e "${GREEN}[+] Public IP fetched successfully.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
 }
@@ -293,6 +299,7 @@ ip_osint() {
     echo "───────────────────────────────────────────────────────────────"
     echo "IPinfo https://ipinfo.io/"
     read -p "Enter IP or domain: " target
+    echo
 
     if [[ -z "$target" ]]; then
         echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
@@ -356,11 +363,11 @@ ip_osint() {
     echo "ISP:      $(echo "$data" | jq -r '.org // "N/A"')"
     echo "Timezone: $(echo "$data" | jq -r '.timezone // "N/A"')"
 
+    echo
     echo -e "${GREEN}[+] IP OSINT lookup completed successfully.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
 }
 maigret_search() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Maigret Username OSINT${RESET}"
     echo
@@ -392,10 +399,10 @@ maigret_search() {
     echo "───────────────────────────────────────────────────────────────"
 }
 tor_connect() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${PURPLE}[➜] Initializing Tor connection...${RESET}"
-    
+    echo
+
     if ! command -v tor &>/dev/null; then
         echo -e "\a"
         echo -e "${RED}[!] Tor is not installed.${RESET}"
@@ -431,7 +438,6 @@ tor_connect() {
 }
 # System Maintenance
 update_apps() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Starting update process...${RESET}"
     echo "───────────────────────────────────────────────────────────────"
@@ -494,11 +500,10 @@ update_apps() {
     echo "───────────────────────────────────────────────────────────────"
 }
 systeminfo() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "Fastfetch https://github.com/fastfetch-cli/fastfetch"
     echo -e "${GREEN}[➜] Gathering system information...${RESET}"
-    sleep 0.5
+    echo
 
     if command -v fastfetch >/dev/null 2>&1; then
         if fastfetch; then
@@ -526,7 +531,6 @@ systeminfo() {
     echo "───────────────────────────────────────────────────────────────"
 }
 setup_clamav() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Installing ClamAV...${RESET}"
     sleep 0.5
@@ -566,7 +570,6 @@ setup_clamav() {
     echo "───────────────────────────────────────────────────────────────"
 }
 setup_usbguard() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Installing USBGuard...${RESET}"
     sleep 0.5
@@ -598,7 +601,6 @@ setup_usbguard() {
     echo "───────────────────────────────────────────────────────────────"
 }
 setup_ufw() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Installing UFW...${RESET}"
     sleep 0.5
@@ -637,9 +639,9 @@ setup_ufw() {
     echo "───────────────────────────────────────────────────────────────"
 }
 install_tor_browser() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Installing Tor Browser...${RESET}"
+    echo
 
     if ! command -v torbrowser-launcher &>/dev/null; then
         sudo apt update
@@ -658,22 +660,23 @@ install_tor_browser() {
     echo "───────────────────────────────────────────────────────────────"
 }
 install_onionshare () {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Installing OnionShare...${RESET}"
+    echo
 
     if ! command -v onionshare &>/dev/null; then
         sudo apt update
         sudo apt install -y onionshare
+        echo
         echo -e "${GREEN}[+] OnionShare installed successfully.${RESET}"
     else
+        echo
         echo -e "${YELLOW}[i] OnionShare is already installed.${RESET}"
     fi
     echo "───────────────────────────────────────────────────────────────"
 }
 # Security
 secure_empty_trash() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
 
     local TRASH_FILES="$HOME/.local/share/Trash/files"
@@ -681,6 +684,7 @@ secure_empty_trash() {
 
     if ! command -v srm &>/dev/null; then
         echo -e "\a"
+        echo
         echo -e "${RED}[!] srm is not installed.${RESET}"
         echo -e "${YELLOW}[i] Install with: sudo apt install secure-delete${RESET}"
         return 1
@@ -691,6 +695,7 @@ secure_empty_trash() {
     file_count=$(find "$TRASH_FILES" -mindepth 1 2>/dev/null | wc -l)
 
     if [[ $file_count -eq 0 ]]; then
+        echo
         echo -e "${GREEN}[i] Trash is already empty.${RESET}"
         echo "---------------------------------------------------------------"
         return 0
@@ -708,6 +713,7 @@ secure_empty_trash() {
     echo -e "${GREEN}[➜] Securely deleting trash files...${RESET}"
     find "$TRASH_FILES" -mindepth 1 -exec srm -v -r {} + 2>/dev/null
 
+    echo
     echo -e "${GREEN}[➜] Removing trash metadata...${RESET}"
     find "$TRASH_INFO" -mindepth 1 -name "*.trashinfo" -exec srm -v {} + 2>/dev/null
 
@@ -725,13 +731,14 @@ secure_empty_trash() {
     echo "───────────────────────────────────────────────────────────────"
 }
 secure_overwrite_free_space() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Securely overwriting free space...${RESET}"
+    echo
     root_partition=$(df / | tail -1 | awk '{print $1}')
 
     if ! command -v srm &> /dev/null; then
         echo -e "\a"
+        echo
         echo -e "${RED}[!] srm command not found. Please install it to use this feature.${RESET}"
         return 1
     fi
@@ -740,20 +747,21 @@ secure_overwrite_free_space() {
     echo -e "${GREEN}[+] Overwriting free space on $root_partition...${RESET}"
     srm -v -z -r --free "$root_partition"
 
+    echo
     echo -e "${GREEN}[+] Free space securely overwritten.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
 }
 system_audit() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "Lynis by CISOfy https://cisofy.com/lynis/"
     echo -e "${YELLOW}[i] Lynis is an external tool not affiliated with Jas-toolbox.${RESET}"
     echo -e "${YELLOW}    It audits for vulnerabilities, misconfigurations, and compliance issues.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
-    sleep 0.5
+    echo
 
     if ! command -v lynis >/dev/null 2>&1; then
         echo -e "\a"
+        echo
         echo -e "${RED}[!] Lynis is not installed.${RESET}"
         echo -e "${YELLOW}[i] Install with: sudo apt install lynis${RESET}"
         return 1
@@ -761,6 +769,7 @@ system_audit() {
 
     # Warn if not running as root (Lynis gives incomplete results without sudo)
     if [[ $EUID -ne 0 ]]; then
+        echo
         echo -e "${YELLOW}[!] Not running as root. Some checks may be skipped.${RESET}"
         echo -e "${YELLOW}    For a full audit, run: sudo jas system_audit${RESET}"
         echo
@@ -814,14 +823,10 @@ system_audit() {
 
     echo -e "${GREEN}[+] System audit completed successfully.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
-}
-rootkit_hunt() {
-    clear
-    echo "───────────────────────────────────────────────────────────────"
     echo "chkrootkit by chkrootkit Team https://chkrootkit.org/"
     echo -e "${YELLOW}[i] chkrootkit is an external tool not affiliated with Jas-toolbox.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
-    sleep 0.5
+    echo
 
     if ! command -v chkrootkit >/dev/null 2>&1; then
         echo -e "\a"
@@ -886,7 +891,6 @@ rootkit_hunt() {
     echo "---------------------------------------------------------------"
 }
 remove_temp_files() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Removing temporary files...${RESET}"
     sleep 0.5
@@ -895,19 +899,20 @@ remove_temp_files() {
         echo -e "${GREEN}[+] Temporary files removed.${RESET}"
     else
         echo -e "\a"
+        echo
         echo -e "${RED}[!] Failed to remove some temporary files (permissions or in-use files).${RESET}"
         return 1
     fi
     echo "───────────────────────────────────────────────────────────────"
 }
 generate_password() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Secure password generator${RESET}"
     echo
 
     if ! command -v openssl >/dev/null 2>&1; then
+        echo
         echo -e "\a"
         echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
         echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
@@ -921,6 +926,7 @@ generate_password() {
 
     # Validate: must be a number between 8 and 128
     if ! [[ "$length" =~ ^[0-9]+$ ]] || (( length < 8 || length > 128 )); then
+        echo
         echo -e "\a"
         echo -e "${RED}[!] Invalid length '$length' — must be a number between 8 and 128.${RESET}"
         return 1
@@ -953,10 +959,10 @@ generate_password() {
     echo "───────────────────────────────────────────────────────────────"
 }
 secure_delete() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -n "Enter file or directory to securely delete: "
     read -r target
+    echo
 
     if [[ -z "$target" ]]; then
         echo -e "${YELLOW}[!] No target entered.${RESET}"
@@ -994,14 +1000,17 @@ secure_delete() {
         shred -u -v -n 5 "$target"
 
         if [[ ! -e "$target" ]]; then
+            echo
             echo -e "${GREEN}[+] File securely deleted.${RESET}"
         else
             echo -e "\a"
+            echo
             echo -e "${RED}[!] File may still exist — check manually.${RESET}"
             return 1
         fi
     else
         echo -e "\a"
+        echo
         echo -e "${RED}[!] Target is not a regular file or directory (symlink, device, etc.).${RESET}"
         return 1
     fi
@@ -1009,7 +1018,6 @@ secure_delete() {
     echo "───────────────────────────────────────────────────────────────"
 }
 clean_metadata() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "ExifTool by Phil Harvey https://exiftool.org/"
     echo -e "${GREEN}[➜] Remove metadata from a file${RESET}"
@@ -1079,7 +1087,6 @@ clean_metadata() {
 }
 # Encryption
 generate_key () {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Generate a cryptographic key${RESET}"
@@ -1131,7 +1138,6 @@ generate_key () {
     echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_file_aes256() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting file (AES-256-CBC)...${RESET}"
@@ -1177,7 +1183,6 @@ encrypt_file_aes256() {
     echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_file_aes128() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting file (AES-128-CBC)...${RESET}"
@@ -1224,7 +1229,6 @@ encrypt_file_aes128() {
     echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_file_aes256() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting file (AES-256-CBC)...${RESET}"
@@ -1259,7 +1263,6 @@ decrypt_file_aes256() {
     echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_file_aes128() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting file (AES-128-CBC)...${RESET}"
@@ -1294,7 +1297,6 @@ decrypt_file_aes128() {
     echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_text_ceasar() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Caesar Cipher${RESET}"
     echo
@@ -1325,7 +1327,6 @@ encrypt_text_ceasar() {
     echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_text_vigenere() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Vigenère Cipher${RESET}"
     echo
@@ -1363,7 +1364,6 @@ encrypt_text_vigenere() {
     echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_text_aes256() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting text (AES-256-CBC)...${RESET}"
@@ -1391,7 +1391,6 @@ encrypt_text_aes256() {
     echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_text_base64() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Base64 Encode${RESET}"
 
@@ -1405,7 +1404,6 @@ encrypt_text_base64() {
     echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_text_aes128() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting text (AES-128-CBC)...${RESET}"
@@ -1432,7 +1430,6 @@ encrypt_text_aes128() {
     echo "───────────────────────────────────────────────────────────────"
 }
 rot13_cipher() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] ROT13 Cipher${RESET}"
 
@@ -1445,7 +1442,6 @@ rot13_cipher() {
     echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_text_base64() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Base64 Decode${RESET}"
 
@@ -1464,7 +1460,6 @@ decrypt_text_base64() {
     echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_text_aes256() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting text (AES-256-CBC)...${RESET}"
@@ -1492,7 +1487,7 @@ decrypt_text_aes256() {
     echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_text_aes128() {
-    clear
+
     echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting text (AES-128-CBC)...${RESET}"
@@ -1520,7 +1515,6 @@ decrypt_text_aes128() {
     echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_text_ceasar() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Caesar Decipher${RESET}"
 
@@ -1553,7 +1547,6 @@ decrypt_text_ceasar() {
     echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_text_vigenere() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Vigenère Decipher${RESET}"
     echo
@@ -1644,13 +1637,14 @@ clone_source() {
 version() { 
     echo "───────────────────────────────────────────────────────────────"
     cat << EOF
-██     ██  ███████       ███████  
-██     ██ ██     ██     ██     ██ 
-██     ██        ██            ██ 
-██     ██  ███████       ███████  
- ██   ██  ██            ██        
-  ██ ██   ██        ███ ██        
-   ███    █████████ ███ █████████ 
+██     ██  ███████       ███████         ██   
+██     ██ ██     ██     ██     ██      ████   
+██     ██        ██            ██        ██   
+██     ██  ███████       ███████         ██   
+ ██   ██  ██            ██               ██   
+  ██ ██   ██        ███ ██        ███    ██   
+   ███    █████████ ███ █████████ ███  ██████ 
+
 
 
 EOF
@@ -1662,7 +1656,6 @@ EOF
 
 # Expirimental 
 subdomain_enum() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "Subdomain Enumeration — DNS brute-force + crt.sh + zone transfer"
     echo -e "${YELLOW}[i] Uses: dig, curl, jq — optional: subfinder${RESET}"
@@ -1863,7 +1856,6 @@ subdomain_enum() {
     echo "───────────────────────────────────────────────────────────────"
 }
 file_integrity_check() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "File Integrity Checker — sha256sum"
     echo -e "${YELLOW}[i] Create a hash manifest or verify files against one.${RESET}"
@@ -1894,7 +1886,6 @@ file_integrity_check() {
     esac
 }
 _fic_create() {
-    echo
     read -rp "Enter file or directory to hash: " target
  
     if [[ -z "$target" ]]; then
@@ -1983,7 +1974,6 @@ _fic_create() {
     echo "───────────────────────────────────────────────────────────────"
 }
 secure_shred_dir() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "Secure Directory Shredder — shred (coreutils)"
     echo -e "${YELLOW}[!] This permanently destroys all files inside a directory.${RESET}"
@@ -2136,7 +2126,6 @@ secure_shred_dir() {
     echo "───────────────────────────────────────────────────────────────"
 }
 _fic_verify() {
-    echo
     read -rp "Enter manifest file to verify against: " manifest
  
     if [[ -z "$manifest" ]]; then
@@ -2205,7 +2194,6 @@ _fic_verify() {
     echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_file_chacha20() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting file (ChaCha20)...${RESET}"
@@ -2239,7 +2227,6 @@ encrypt_file_chacha20() {
     echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_file_chacha20() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting file (ChaCha20)...${RESET}"
@@ -2272,7 +2259,6 @@ decrypt_file_chacha20() {
     echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_text_chacha20() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Encrypting text (ChaCha20)...${RESET}"
@@ -2290,7 +2276,6 @@ encrypt_text_chacha20() {
     echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_text_chacha20() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting text (ChaCha20)...${RESET}"
@@ -2319,7 +2304,6 @@ decrypt_text_chacha20() {
     echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_file_twofish() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Encrypting file (Twofish)...${RESET}"
     echo
@@ -2361,7 +2345,6 @@ encrypt_file_twofish() {
     echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_file_twofish() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Decrypting file (Twofish)...${RESET}"
     echo
@@ -2394,7 +2377,6 @@ decrypt_file_twofish() {
     echo "───────────────────────────────────────────────────────────────"
 }
 encrypt_file_serpent() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Encrypting file (Serpent)...${RESET}"
     echo
@@ -2435,7 +2417,6 @@ encrypt_file_serpent() {
     echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_file_serpent() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Decrypting file (Serpent)...${RESET}"
     echo
@@ -2498,27 +2479,28 @@ encryption () {
 }
 security () {
     echo -e "${YELLOW}Security & Hardening${RESET}"
-    printf "  %-36s %s\n" "setup_clamav"                "Install & configure ClamAV"
-    printf "  %-36s %s\n" "setup_usbguard"              "Install & configure USBGuard"
-    printf "  %-36s %s\n" "setup_ufw"                   "Install & configure UFW"
-    printf "  %-36s %s\n" "setup_tor_browser"           "Install Tor Browser Launcher"
-    printf "  %-36s %s\n" "system_audit/audit"                "Run Lynis security audit"
-    printf "  %-36s %s\n" "rootkit_hunt"                      "Scan for rootkits (chkrootkit)"
-    printf "  %-36s %s\n" "secure_empty_trash/set/SET"        "Securely wipe Trash (srm)"
-    printf "  %-36s %s\n" "secure_overwrite_free_space/sofs"  "Wipe free disk space (srm)"
-    printf "  %-36s %s\n" "secure_shred_dir"                  "Securely shred all files in a directory (shred)"
+    printf "  %-36s %s\n" "setup_clamav"                        "Install & configure ClamAV"
+    printf "  %-36s %s\n" "setup_usbguard"                      "Install & configure USBGuard"
+    printf "  %-36s %s\n" "setup_ufw"                           "Install & configure UFW"
+    printf "  %-36s %s\n" "setup_tor_browser"                   "Install Tor Browser Launcher"
+    printf "  %-36s %s\n" "system_audit/audit"                  "Run Lynis security audit"
+    printf "  %-36s %s\n" "rootkit_hunt"                        "Scan for rootkits (chkrootkit)"
+    printf "  %-36s %s\n" "secure_empty_trash/set/SET"          "Securely wipe Trash (srm)"
+    printf "  %-36s %s\n" "secure_overwrite_free_space/sofs"    "Wipe free disk space (srm)"
+    printf "  %-36s %s\n" "secure_shred_dir"                    "Securely shred all files in a directory (shred)"
     echo
 }
 networking() {
     echo -e "${YELLOW}Networking / OSINT${RESET}"
-    printf "  %-36s %s\n" "whois_lookup/whois"               "WHOIS lookup for a domain"
-    printf "  %-36s %s\n" "ping"                        "Ping a host (6 packets)"
-    printf "  %-36s %s\n" "traceroute"                  "Traceroute to a host"
-    printf "  %-36s %s\n" "dns_info/dns"                    "DNS records via dig"
-    printf "  %-36s %s\n" "get_ip/ip"                      "Show your public IP"
-    printf "  %-36s %s\n" "ip_osint"                    "IP/domain OSINT (ipinfo.io)"
-    printf "  %-36s %s\n" "maigret_search/maigret"              "Username OSINT (Maigret)"
-    printf "  %-36s %s\n" "tor_connect/tor"                 "Start Tor service"
+    printf "  %-36s %s\n" "local_server"              "Spin up a local HTTP file server (Python)"
+    printf "  %-36s %s\n" "whois_lookup/whois"        "WHOIS lookup for a domain"
+    printf "  %-36s %s\n" "ping"                      "Ping a host (6 packets)"
+    printf "  %-36s %s\n" "traceroute"                "Traceroute to a host"
+    printf "  %-36s %s\n" "dns_info/dns"              "DNS records via dig"
+    printf "  %-36s %s\n" "get_ip/ip"                 "Show your public IP"
+    printf "  %-36s %s\n" "ip_osint"                  "IP/domain OSINT (ipinfo.io)"
+    printf "  %-36s %s\n" "maigret_search/maigret"    "Username OSINT (Maigret)"
+    printf "  %-36s %s\n" "tor_connect/tor"           "Start Tor service"
     echo
 }
 # Development / Testing
@@ -2544,6 +2526,33 @@ test_colors() {
 }
 
 # Alternatives
+efs() {           # encrypt_file_serpent
+    encrypt_file_serpent
+}
+dfs() {           # decrypt_file_serpent
+    decrypt_file_serpent
+}
+eft() {           # encrypt_file_twofish
+    encrypt_file_twofish
+}
+dft() {           # decrypt_file_twofish
+    decrypt_file_twofish
+}
+efc() {           # encrypt_file_chacha20
+    encrypt_file_chacha20
+}
+dfc() {           # decrypt_file_chacha20
+    decrypt_file_chacha20
+}
+ssdir () {        # secure_shred_dir
+    secure_shred_dir
+}
+fic () {           # file_integrity_check
+    file_integrity_check
+}
+enum () {          # subdomain_enum
+    subdomain_enum
+}
 set () {       # secure_empty_trash  
     secure_empty_trash     
 }
@@ -2601,7 +2610,7 @@ _JAS_COMMANDS=(
     whois_lookup ping traceroute dns_info get_ip ip_osint maigret_search
     tor_connect
     update_apps systeminfo remove_temp_files
-    setup_clamav setup_usbguard setup_ufw
+    setup_clamav setup_usbguard setup_ufw install_tor_browser install_onionshare
     secure_empty_trash secure_overwrite_free_space system_audit rootkit_hunt
     generate_password secure_delete clean_metadata
     generate_key
@@ -2617,7 +2626,8 @@ _JAS_COMMANDS=(
     encrypt_file_serpent decrypt_file_serpent
     encrypt_file_chacha20 decrypt_file_chacha20
     encrypt_text_chacha20 decrypt_text_chacha20
-    encrypt_file_twofish decrypt_file_twofish encryption security networking
+    encrypt_file_twofish decrypt_file_twofish encryption security networking local_server
+    efs dfs eft dft efc dfc ssdir fic enum set SET v V sdel genpass genkey rm_tmp rot13 sofs update audit ip whois ping traceroute dns maigret tor
 )
 
 _jas_list_commands() {
@@ -2643,6 +2653,7 @@ _jas_list_commands() {
     printf "  %-36s %s\n" "setup_usbguard"              "Install & configure USBGuard"
     printf "  %-36s %s\n" "setup_ufw"                   "Install & configure UFW"
     printf "  %-36s %s\n" "setup_tor_browser"           "Install Tor Browser Launcher"
+    printf "  %-36s %s\n" "install_onionshare"          "Install OnionShare"
     printf "  %-36s %s\n" "system_audit/audit"                "Run Lynis security audit"
     printf "  %-36s %s\n" "rootkit_hunt"                      "Scan for rootkits (chkrootkit)"
     printf "  %-36s %s\n" "secure_empty_trash/set/SET"        "Securely wipe Trash (srm)"
