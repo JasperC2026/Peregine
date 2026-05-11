@@ -3,13 +3,8 @@
 > A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface.
 
 ```
-___             __       ___           _______.        
-\  \           |  |     /   \         /       |        
- \  \          |  |    /  ^  \       |   (----`        
-  >  >   .--.  |  |   /  /_\  \       \   \            
- /  /    |  `--'  |  /  _____  \  .----)   |           
-/__/      \______/  /__/     \__\ |_______/     ______ 
-                                               |______|
+<img width="1280" height="640" alt="Build" src="https://github.com/user-attachments/assets/c8a622e7-2539-4837-a087-23d2d0aa7d71" />
+
 ```
 ![Version](https://img.shields.io/badge/Version-2.2-00008b?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-00008b?style=for-the-badge)
