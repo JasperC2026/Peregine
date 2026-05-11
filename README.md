@@ -1,11 +1,10 @@
-# Jas-toolbox 
+# Peregine
 
 > A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface.
 
-```
+
 <img width="1280" height="640" alt="Build" src="https://github.com/user-attachments/assets/c8a622e7-2539-4837-a087-23d2d0aa7d71" />
 
-```
 ![Version](https://img.shields.io/badge/Version-2.2-00008b?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-00008b?style=for-the-badge)
 ![Shell](https://img.shields.io/badge/Shell-Bash-black?style=for-the-badge&logo=gnubash&logoColor=black)
@@ -15,7 +14,7 @@
 ---
 ## What is Jas-toolbox?
 
-Jas-toolbox is a modular, terminal-based CLI toolkit for Linux users who want fast access to a wide range of tools — without juggling a dozen different utilities. It combines networking, system management, privacy, security, and encryption into a single interactive menu-driven interface. Every tool can also be called directly as a command.
+Peregine is a modular, terminal-based CLI toolkit for Linux users who want fast access to a wide range of tools — without juggling a dozen different utilities. It combines networking, system management, privacy, security, and encryption into a single interactive menu-driven interface. Every tool can also be called directly as a command.
 
 Built for speed, simplicity, privacy-first and control.
 
