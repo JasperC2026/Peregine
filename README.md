@@ -37,3 +37,7 @@ For logo's and other assets CC0 Public Domain Dedication: https://choosealicense
 — Copyright (c) 2026 [peregine] (https://codeberg.org/peregine)
 
 See [LICENSE](./LICENSE) for the full text.
+
+<img width="74" height="74" alt="image" src="https://github.com/user-attachments/assets/66f0f905-a0ce-45c0-a7ff-44045b6c8725" />
+
+<img width="149" height="62" alt="image" src="https://github.com/user-attachments/assets/e5e540a5-2da1-4ef7-be3e-c84400109a1f" />
