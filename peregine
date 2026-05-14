@@ -23,7 +23,6 @@ PURPLE="\e[35m"
 ORANGE="\e[38;5;208m"
 BOLD="\e[1m"
 RESET="\e[0m"
-
 COLORS=(
 "0;0;180" 
 "0;0;255" 
