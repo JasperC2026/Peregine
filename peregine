@@ -14,8 +14,6 @@ TESTED_RELEASE="Beta"
 LICENSE="MIT License"
 
 # Colors for ASCII art and use in output messages
-BLACK="\e[0;30m"
-WHITE="\e[1;37m"
 RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[93m"
@@ -2385,7 +2383,7 @@ decrypt_file_serpent() {
     fi
 
     echo "───────────────────────────────────────────────────────────────"
-}
+}   
 # Other
 license() {
     clear
