@@ -2622,9 +2622,20 @@ _PEREGINE_COMMANDS=(
 )
 
 _peregrine_list_commands() {
+    echo "───────────────────────────────────────────────────────────────"
+    cat <<EOF
+PPPPPP  EEEEEEE RRRRRR  EEEEEEE   GGGG  IIIII NN   NN EEEEEEE 
+PP   PP EE      RR   RR EE       GG  GG  III  NNN  NN EE      
+PPPPPP  EEEEE   RRRRRR  EEEEE   GG       III  NN N NN EEEEE   
+PP      EE      RR  RR  EE      GG   GG  III  NN  NNN EE      
+PP      EEEEEEE RR   RR EEEEEEE  GGGGGG IIIII NN   NN EEEEEEE 
+                                                              
+EOF
+    echo "───────────────────────────────────────────────────────────────"
     echo -e "${CYAN}Usage:${RESET}  peregrine <command>"
     echo
     echo -e "${YELLOW}Networking / OSINT${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
     printf "  %-36s %s\n" "local_server"              "Spin up a local HTTP file server (Python)"
     printf "  %-36s %s\n" "whois_lookup/whois"               "WHOIS lookup for a domain"
     printf "  %-36s %s\n" "ping"                        "Ping a host (6 packets)"
@@ -2636,11 +2647,13 @@ _peregrine_list_commands() {
     printf "  %-36s %s\n" "tor_connect/tor"                 "Start Tor service"
     echo
     echo -e "${YELLOW}System${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
     printf "  %-36s %s\n" "update_apps/update"                 "Update APT / Flatpak / Snap"
     printf "  %-36s %s\n" "systeminfo"                         "Show system info (fastfetch)"
     printf "  %-36s %s\n" "remove_temp_files/rm_tmp"           "Delete /tmp/*"
     echo
     echo -e "${YELLOW}Security & Hardening${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
     printf "  %-36s %s\n" "setup_clamav"                "Install & configure ClamAV"
     printf "  %-36s %s\n" "setup_usbguard"              "Install & configure USBGuard"
     printf "  %-36s %s\n" "setup_ufw"                   "Install & configure UFW"
@@ -2653,6 +2666,7 @@ _peregrine_list_commands() {
     printf "  %-36s %s\n" "secure_shred_dir"                  "Securely shred all files in a directory (shred)"
     echo
     echo -e "${YELLOW}Privacy / Files${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
     printf "  %-36s %s\n" "generate_password/genpass"           "Generate a secure password"
     printf "  %-36s %s\n" "secure_delete/sedl"                  "Securely delete a file or directory(shred)"
     printf "  %-36s %s\n" "clean_metadata"                      "Strip image metadata (exiftool)"
@@ -2661,6 +2675,7 @@ _peregrine_list_commands() {
     printf "  %-36s %s\n" "file_integrity_check"                "Create or verify file integrity manifest (sha256sum)"
     echo
     echo -e "${YELLOW}Encrypt / Decrypt Files${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
     printf "  %-36s %s\n" "encrypt_file_aes256"         "Encrypt file (AES-256-CBC)"
     printf "  %-36s %s\n" "encrypt_file_aes128"         "Encrypt file (AES-128-CBC)"
     printf "  %-36s %s\n" "decrypt_file_aes256"         "Decrypt file (AES-256-CBC)"
@@ -2673,6 +2688,7 @@ _peregrine_list_commands() {
     printf "  %-36s %s\n" "decrypt_file_serpent"        "Decrypt file (Serpent)"
     echo
     echo -e "${YELLOW}Encrypt / Decrypt Text${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
     printf "  %-36s %s\n" "encrypt_text_aes256"         "Encrypt text (AES-256-CBC)"
     printf "  %-36s %s\n" "encrypt_text_aes128"         "Encrypt text (AES-128-CBC)"
     printf "  %-36s %s\n" "decrypt_text_aes256"         "Decrypt text (AES-256-CBC)"
@@ -2688,6 +2704,7 @@ _peregrine_list_commands() {
     printf "  %-36s %s\n" "rot13_cipher/rot13"          "ROT13"
     echo
     echo -e "${YELLOW}Misc${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
     printf "  %-36s %s\n" "license"                     "Show license"
     printf "  %-36s %s\n" "clone_source"                "Clone source from GitHub"
     printf "  %-36s %s\n" "version/v/V"                 "Show version"
