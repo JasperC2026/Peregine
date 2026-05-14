@@ -32,8 +32,6 @@ For the script: MIT License: https://choosealicense.com/licenses/mit/
 
 For logo's and other assets CC0 Public Domain Dedication: https://choosealicense.com/licenses/cc0-1.0/
 
-— Copyright (c) 2026 [DarkShadowUser](https://github.com/DarkShadowUser/)
-
 — Copyright (c) 2026 [peregine] (https://codeberg.org/peregine)
 
 See [LICENSE](./LICENSE) for the full text.
