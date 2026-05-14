@@ -224,7 +224,7 @@ subdomain_enum() {
  
     # ── Tor ──────────────────────────────────────────────────────────
     echo -e "${PURPLE}"
-    read -p "Route through Tor? (y/n): " USE_TOR
+    read -p "[TOR]Route through Tor? (y/n): " USE_TOR
     echo -e "${RESET}"
  
     # ── Output file ──────────────────────────────────────────────────
@@ -431,7 +431,7 @@ whois_lookup() {
     fi
 
     echo -e "${PURPLE}"
-    read -p "Route through Tor? (y/n): " USE_TOR
+    read -p "[TOR] Route through Tor? (y/n): " USE_TOR
     echo -e "${RESET}"
 
     echo -e "${GREEN}[➜] Performing Whois lookup for $domain...${RESET}"
@@ -603,7 +603,7 @@ dns_info() {
     fi
 
     echo -e "${PURPLE}"
-    read -p "Route through Tor? (y/n): " USE_TOR
+    read -p "[TOR] Route through Tor? (y/n): " USE_TOR
     echo -e "${RESET}"
 
     echo -e "${GREEN}[➜] Getting DNS info for $domaindns...${RESET}"
@@ -742,7 +742,7 @@ maigret_search() {
     read -p "Enter username to search: " username
 
     echo -e "${PURPLE}"
-    read -p "Route through Tor? (y/n): " USE_TOR
+    read -p "[TOR] Route through Tor? (y/n): " USE_TOR
     echo -e "${RESET}"
 
     output_file="maigret_${username}_$(date +%s).json"
