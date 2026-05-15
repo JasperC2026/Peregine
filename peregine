@@ -2518,6 +2518,19 @@ networking() {
     printf "  %-36s %s\n" "tor_connect/tor"           "Start Tor service"
     echo
 }
+aes() {
+    echo -e "${YELLOW}AES Encryption / Decryption${RESET}"
+    printf "  %-36s %s\n" "encrypt_file_aes256"         "Encrypt file (AES-256-CBC)"
+    printf "  %-36s %s\n" "encrypt_file_aes128"         "Encrypt file (AES-128-CBC)"
+    printf "  %-36s %s\n" "decrypt_file_aes256"         "Decrypt file (AES-256-CBC)"
+    printf "  %-36s %s\n" "decrypt_file_aes128"         "Decrypt file (AES-128-CBC)"
+    printf "  %-36s %s\n" "encrypt_text_aes256"         "Encrypt text (AES-256-CBC)"
+    printf "  %-36s %s\n" "encrypt_text_aes128"         "Encrypt text (AES-128-CBC)"
+    printf "  %-36s %s\n" "decrypt_text_aes256"         "Decrypt text (AES-256-CBC)"
+    printf "  %-36s %s\n" "decrypt_text_aes128"         "Decrypt text (AES-128-CBC)"
+    echo
+}
+
 # Development / Testing
 test_colors() {
     clear
@@ -2541,108 +2554,127 @@ test_colors() {
 }
 
 # Alternatives
-efs() {           # encrypt_file_serpent
-    encrypt_file_serpent
+whois () {
+    whois_lookup 
 }
-dfs() {           # decrypt_file_serpent
-    decrypt_file_serpent
-}
-eft() {           # encrypt_file_twofish
-    encrypt_file_twofish
-}
-dft() {           # decrypt_file_twofish
-    decrypt_file_twofish
-}
-efc() {           # encrypt_file_chacha20
-    encrypt_file_chacha20
-}
-dfc() {           # decrypt_file_chacha20
-    decrypt_file_chacha20
-}
-ssdir () {        # secure_shred_dir
-    secure_shred_dir
-}
-fic () {           # file_integrity_check
-    file_integrity_check
-}
-enum () {          # subdomain_enum
-    subdomain_enum
-}
-set () {       # secure_empty_trash  
-    secure_empty_trash     
-}
-SET () {       # secure_empty_trash  
-    secure_empty_trash
-}
-v () {           # version
-    version
-}
-V () {           # version
-    version
-}
-sdel () {        # secure_delete
-    secure_delete
-}
-genpass () {     # generate_password
-    generate_password
-}
-genkey () {       # generate_key
-    generate_key
-}
-rm_tmp () {       # remove_temp_files
-    remove_temp_files
-}
-rot13 () {         # rot13_cipher
-    rot13_cipher
-}
-sofs () {          # secure_overwrite_free_space
-    secure_overwrite_free_space
-}
-update () {       # update_apps
-    update_apps
-}
-audit () {             # system_audit
-    system_audit
-}
-ip() {                # get_ip
-    get_ip
-}
-whois() {             # whois_lookup
-    whois_lookup
-}
-dns() {               # dns_info
+dns () {
     dns_info
 }
-maigret() {           # maigret_search
+ip () {
+    get_ip
+}
+maigret() {
     maigret_search
 }
-tor() {               # tor_connect
+tor() {
     tor_connect
+}
+rm_tmp() {
+    remove_temp_files
+}
+update() {
+    update_apps
+}
+audit() {
+    system_audit
+}
+rootkit() {
+    rootkit_hunt
+}
+SET() {
+    secure_empty_trash
+}
+sofs() {
+    secure_overwrite_free_space
+}
+genpass() {
+    generate_password
+}
+sedl() {
+    secure_delete
+}
+ssd() {
+    secure_shred_dir
+}
+metadata() {
+    clean_metadata
+}
+genkey() {
+    generate_key
+}
+fic() {
+    file_integrity_check
+}
+rot13() {
+    rot13_cipher
+}
+c() {
+    clone_source
+}
+l() {
+    license
+}
+v() {
+    version
 }
 # ─── Command dispatcher ───────────────────────────────────────────────────────
 
 _PEREGINE_COMMANDS=(
-    whois_lookup ping traceroute dns_info get_ip ip_osint maigret_search check_tor
-    tor_connect
-    update_apps systeminfo remove_temp_files
-    setup_clamav setup_usbguard setup_ufw install_tor_browser install_onionshare
-    secure_empty_trash secure_overwrite_free_space system_audit rootkit_hunt
-    generate_password secure_delete clean_metadata
-    generate_key
-    encrypt_file_aes256 encrypt_file_aes128
-    decrypt_file_aes256 decrypt_file_aes128
-    encrypt_text_aes256 encrypt_text_aes128
-    decrypt_text_aes256 decrypt_text_aes128
-    encrypt_text_ceasar decrypt_text_ceasar
-    encrypt_text_vigenere decrypt_text_vigenere
-    encrypt_text_base64 decrypt_text_base64
-    rot13_cipher subdomain_enum secure_shred_dir file_integrity_check
-    license clone_source version test_colors install_tor_browser set SET v V sdel genpass genkey rm_tmp rot13 sofs update audit ip whois ping traceroute dns maigret tor
-    encrypt_file_serpent decrypt_file_serpent
-    encrypt_file_chacha20 decrypt_file_chacha20
-    encrypt_text_chacha20 decrypt_text_chacha20
-    encrypt_file_twofish decrypt_file_twofish encryption security networking local_server
-    efs dfs eft dft efc dfc ssdir fic enum set SET v V sdel genpass genkey rm_tmp rot13 sofs update audit ip whois ping traceroute dns maigret tor
+    suddomain_enum
+    local_server
+    whois_lookup whois
+    ping
+    traceroute
+    dns_info dns
+    get_ip ip
+    ip_osint 
+    maigret_search maigret
+    tor_connect tor
+    check_tor
+    update_apps update
+    systeminfo
+    remove_temp_files rm_tmp
+    setup_clamav
+    setup_usbguard
+    setup_ufw
+    setup_tor_browser
+    install_onionshare
+    system_audit audit
+    rootkit_hunt rootkit
+    secure_empty_trash SET
+    secure_overwrite_free_space sofs
+    secure_shred_dir ssd
+    generate_password genpass
+    secure_delete sedl
+    clean_metadata metadata
+    generate_key genkey
+    file_integrity_check fic
+    rot13_cipher rot13
+    encrypt_text_aes256
+    decrypt_text_aes256
+    encrypt_text_aes128
+    decrypt_text_aes128 
+    encrypt_text_chacha20
+    decrypt_text_chacha20
+    encrypt_text_ceasar
+    decrypt_text_ceasar
+    encrypt_text_vigenere
+    decrypt_text_vigenere
+    encrypt_text_base64
+    decrypt_text_base64
+    encrypt_file_chacha20
+    decrypt_file_chacha20
+    encrypt_file_twofish
+    decrypt_file_twofish
+    encrypt_file_serpent
+    decrypt_file_serpent
+    encryption
+    security
+    networking
+    aes
+    license l
+    clone_source c
+    version v
 )
 
 _peregrine_list_commands() {
