@@ -203,6 +203,8 @@ subdomain_enum() {
     echo "───────────────────────────────────────────────────────────────"
     echo "Subdomain Enumeration — DNS brute-force + crt.sh + zone transfer"
     echo -e "${YELLOW}[i] Uses: dig, curl, jq — optional: subfinder${RESET}"
+    echo -e "${YELLOW}[i] Only use on authorized systems, and respect privacy policies.${RESET}"
+    echo -e "${YELLOW}[i] Gathering OSINT data can be illegal in certain cases, use wisely.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
  
     # ── Input ────────────────────────────────────────────────────────
@@ -1310,16 +1312,16 @@ secure_overwrite_free_space() {
     echo
     root_partition=$(df / | tail -1 | awk '{print $1}')
 
-    if ! command -v srm &> /dev/null; then
+    if ! command -v sfill &> /dev/null; then
         echo -e "\a"
         echo
-        echo -e "${RED}[!] srm command not found. Please install it to use this feature.${RESET}"
+        echo -e "${RED}[!] sfill command not found. Please install it to use this feature.${RESET}"
         return 1
     fi
 
     echo
     echo -e "${GREEN}[+] Overwriting free space on $root_partition...${RESET}"
-    srm -v -z -r --free "$root_partition"
+    sfill -v -z "$root_partition"
 
     echo
     echo -e "${GREEN}[+] Free space securely overwritten.${RESET}"
@@ -1394,7 +1396,8 @@ system_audit() {
         echo -e "  Log             : ${CYAN}/var/log/lynis.log${RESET}"
         echo "───────────────────────────────────────────────────────────────"
     fi
-
+}
+rootkit_hunt() {
     echo -e "${GREEN}[+] System audit completed successfully.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
     echo "chkrootkit by chkrootkit Team https://chkrootkit.org/"
@@ -2447,11 +2450,11 @@ EOF
 }
 clone_source() {
     echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Cloning source code from GitHub...${RESET}"
+    echo -e "${GREEN}[➜] Cloning source code from codeberg...${RESET}"
     sleep 0.5
 
     if command -v git >/dev/null 2>&1; then
-        if git clone https://github.com/DarkShadowUser/jas.git; then
+        if git clone https://codeberg.org/peregine/Peregine.git; then
             echo -e "${GREEN}[+] Source code cloned successfully.${RESET}"
         else
             echo -e "\a"
@@ -2634,7 +2637,7 @@ stalkip() {
 # ─── Command dispatcher ───────────────────────────────────────────────────────
 
 _PEREGINE_COMMANDS=(
-    suddomain_enum
+    subdomain_enum
     local_server
     whois_lookup whois
     ping
@@ -2682,6 +2685,12 @@ _PEREGINE_COMMANDS=(
     decrypt_file_twofish
     encrypt_file_serpent
     decrypt_file_serpent
+    encrypt_file_aes256 
+    decrypt_file_aes256 
+    encrypt_file_aes128
+    decrypt_file_aes128
+    ghosttrash
+    stalkip
     encryption
     security
     networking
