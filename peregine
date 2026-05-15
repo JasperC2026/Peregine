@@ -1,16 +1,16 @@
 #!/bin/bash
 
 # Peregine - A versatile Linux system utility script
-# Version: 2.2.3
+# Version: 2.3
 # Licensed under the MIT License, you are free to use, modify and distribute this script. License and copyright notice must be included in all copies or substantial portions of the script. See LICENSE file for details.
 # No warranty expressed or implied. Liability for any damages arising from the use of this script is DISCLAIMED. See LICENSE file for details.
 
 # Variables
 MAIN_VERSION="2"
-SUB_VERSION=".2.3"
-TESTED="Tested untill 2.2.2"
-TESTED_ON="9-5-2026"
-TESTED_RELEASE="Beta"
+SUB_VERSION=".3"
+TESTED="Tested"
+TESTED_ON="15-5-2026"
+TESTED_RELEASE="Stable"
 LICENSE="MIT License"
 
 # Colors for ASCII art and use in output messages
@@ -657,6 +657,10 @@ get_ip() {
 ip_osint() {
     clear
     echo "───────────────────────────────────────────────────────────────"
+    echo -e "${YELLOW}[i] Note: This tool queries ipinfo.io for geolocation and ISP data.${RESET}"
+    echo -e "${YELLOW}[i] Only use on authorized systems, and respect privacy policies.${RESET}"
+    echo -e "${YELLOW}[i] Gathering OSINT data can be illegal in certain cases, use wisely.${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
     echo "IPinfo https://ipinfo.io/"
     read -p "Enter IP or domain: " target
     echo
@@ -728,6 +732,10 @@ ip_osint() {
     echo "───────────────────────────────────────────────────────────────"
 }
 maigret_search() {
+    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${YELLOW}[i] Note: This tool uses maigret for username OSINT search.${RESET}"
+    echo -e "${YELLOW}[i] Only use on authorized systems, and respect privacy policies.${RESET}"
+    echo -e "${YELLOW}[i] Gathering OSINT data can be illegal in certain cases, use wisely.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${GREEN}[➜] Maigret Username OSINT${RESET}"
     echo
@@ -2616,6 +2624,12 @@ l() {
 }
 v() {
     version
+}
+ghosttrash() {
+    secure_empty_trash
+}
+stalkip() {
+    ip_osint
 }
 # ─── Command dispatcher ───────────────────────────────────────────────────────
 
