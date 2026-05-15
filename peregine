@@ -830,6 +830,72 @@ check_tor() {
 
     echo "${CYAN}[i] Visible IP: ${ip:-unknown}${RESET}"
 }
+view_connections() {
+    echo "───────────────────────────────────────────────────────────────"
+    echo "ss / netstat — active network connections viewer"
+    echo -e "${YELLOW}[i] Shows listening ports and established connections.${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
+    echo
+
+    local tool
+    if command -v ss >/dev/null 2>&1; then tool="ss"
+    elif command -v netstat >/dev/null 2>&1; then tool="netstat"
+    else
+        echo -e "\a${RED}[!] Neither 'ss' nor 'netstat' is available.${RESET}"
+        echo -e "${YELLOW}[i] Install with: sudo apt install iproute2${RESET}"
+        return 1
+    fi
+
+    echo -e "${CYAN}[i] Using: $tool${RESET}"
+    echo
+
+    echo -e "${BOLD}Show:${RESET}"
+    echo "  1) All listening ports"
+    echo "  2) All established connections"
+    echo "  3) TCP only"
+    echo "  4) UDP only"
+    echo "  5) Full overview (listening + established, TCP + UDP)"
+    echo
+    read -rp "Choice [1-5]: " choice
+
+    local output
+    case "$choice" in
+        1)
+            echo -e "${CYAN}── Listening ports ──────────────────────────────────────────${RESET}"
+            if [[ "$tool" == "ss" ]]; then output=$(ss -tlnup 2>/dev/null)
+            else output=$(netstat -tlnup 2>/dev/null); fi ;;
+        2)
+            echo -e "${CYAN}── Established connections ──────────────────────────────────${RESET}"
+            if [[ "$tool" == "ss" ]]; then output=$(ss -tnp state established 2>/dev/null)
+            else output=$(netstat -tnp 2>/dev/null | grep ESTABLISHED); fi ;;
+        3)
+            echo -e "${CYAN}── TCP connections ──────────────────────────────────────────${RESET}"
+            if [[ "$tool" == "ss" ]]; then output=$(ss -tnp 2>/dev/null)
+            else output=$(netstat -tnp 2>/dev/null); fi ;;
+        4)
+            echo -e "${CYAN}── UDP connections ──────────────────────────────────────────${RESET}"
+            if [[ "$tool" == "ss" ]]; then output=$(ss -unp 2>/dev/null)
+            else output=$(netstat -unp 2>/dev/null); fi ;;
+        5)
+            echo -e "${CYAN}── Full overview ─────────────────────────────────────────────${RESET}"
+            if [[ "$tool" == "ss" ]]; then output=$(ss -tunap 2>/dev/null)
+            else output=$(netstat -tunap 2>/dev/null); fi ;;
+        *)
+            echo -e "\a${RED}[!] Invalid choice. Enter 1–5.${RESET}"; return 1 ;;
+    esac
+
+    echo -e "${CYAN}$output${RESET}"
+    echo
+
+    local listen_count
+    if [[ "$tool" == "ss" ]]; then listen_count=$(ss -tlnup 2>/dev/null | grep -c LISTEN || echo 0)
+    else listen_count=$(netstat -tlnup 2>/dev/null | grep -c LISTEN || echo 0); fi
+    echo -e "${CYAN}[i] Total listening ports: $listen_count${RESET}"
+
+    echo
+    echo -e "${GREEN}[+] Done.${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
+}
 # System Maintenance
 update_apps() {
     echo "───────────────────────────────────────────────────────────────"
@@ -1069,7 +1135,151 @@ install_onionshare () {
     fi
     echo "───────────────────────────────────────────────────────────────"
 }
+log_viewer() {
+     echo "───────────────────────────────────────────────────────────────"
+    echo "journalctl — systemd journal viewer"
+    echo -e "${YELLOW}[i] Reads the systemd journal. Some entries may require sudo.${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
+    echo
+
+    if ! command -v journalctl >/dev/null 2>&1; then
+        echo -e "\a"
+        echo -e "${RED}[!] journalctl is not available on this system.${RESET}"
+        echo -e "${YELLOW}[i] This tool requires a systemd-based distribution.${RESET}"
+        return 1
+    fi
+
+    echo -e "${BOLD}Filter by:${RESET}"
+    echo "  1) Recent entries       (last N lines)"
+    echo "  2) Errors & warnings    (priority: err and above)"
+    echo "  3) Specific service     (e.g. ssh, ufw, clamav)"
+    echo "  4) Since last boot"
+    echo "  5) Live follow          (like tail -f)"
+    echo
+    read -rp "Choice [1-5]: " choice
+
+    case "$choice" in
+        1)
+            read -rp "How many lines? (default: 50): " lines
+            lines=${lines:-50}
+            if ! [[ "$lines" =~ ^[0-9]+$ ]] || (( lines < 1 )); then
+                echo -e "${RED}[!] Invalid number.${RESET}"; return 1
+            fi
+            echo -e "${CYAN}── Last $lines journal entries ──────────────────────────────${RESET}"
+            journalctl -n "$lines" --no-pager 2>/dev/null
+            ;;
+        2)
+            echo -e "${CYAN}── Errors and above (current boot) ──────────────────────────${RESET}"
+            journalctl -p err -b --no-pager 2>/dev/null
+            local count
+            count=$(journalctl -p err -b --no-pager 2>/dev/null | wc -l)
+            echo -e "${CYAN}[i] $count error-level entries found in this boot.${RESET}"
+            ;;
+        3)
+            read -rp "Service name (e.g. ssh, ufw, clamav): " svc
+            [[ -z "$svc" ]] && { echo -e "${YELLOW}[!] No service entered.${RESET}"; return 1; }
+            echo -e "${CYAN}── Journal for '$svc' (current boot) ────────────────────────${RESET}"
+            journalctl -u "$svc" -b --no-pager 2>/dev/null
+            [[ $? -ne 0 ]] && { echo -e "\a${RED}[!] Failed. Check the service name.${RESET}"; return 1; }
+            ;;
+        4)
+            echo -e "${CYAN}── Journal since last boot ──────────────────────────────────${RESET}"
+            journalctl -b --no-pager 2>/dev/null
+            ;;
+        5)
+            echo -e "${CYAN}── Live journal feed (Ctrl+C to stop) ───────────────────────${RESET}"
+            journalctl -f 2>/dev/null
+            ;;
+        *)
+            echo -e "\a${RED}[!] Invalid choice. Enter 1–5.${RESET}"; return 1 ;;
+    esac
+
+    echo
+    echo -e "${GREEN}[+] Done.${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
+}
 # Security
+verify_installed_packages() {
+    echo "───────────────────────────────────────────────────────────────"
+    echo "debsums by Brendan O'Dea — https://packages.debian.org/debsums"
+    echo -e "${GREEN}[➜] Verify installed package file integrity${RESET}"
+    echo -e "${YELLOW}[i] Compares installed files against checksums from .deb packages.${RESET}"
+    echo -e "${YELLOW}[i] Requires root for a complete check.${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
+    echo
+
+    if ! command -v debsums >/dev/null 2>&1; then
+        echo -e "\a${RED}[!] debsums is not installed.${RESET}"
+        echo -e "${YELLOW}[i] Install with: sudo apt install debsums${RESET}"
+        return 1
+    fi
+
+    if [[ $EUID -ne 0 ]]; then
+        echo -e "${YELLOW}[!] Not running as root — some files will be skipped.${RESET}"
+        echo -e "${YELLOW}    For a full check, run: sudo peregrine check_debsums${RESET}"
+        echo
+        read -rp "Continue anyway? (y/n): " cont
+        [[ "$cont" != "y" ]] && return 0
+    fi
+
+    echo -e "${BOLD}Check scope:${RESET}"
+    echo "  1) All installed packages   (full system check — slow)"
+    echo "  2) Changed files only       (faster — highlights tampered files)"
+    echo "  3) Specific package"
+    echo
+    read -rp "Choice [1-3]: " choice
+
+    local tmpfile
+    tmpfile=$(mktemp)
+
+    case "$choice" in
+        1)
+            echo -e "${GREEN}[➜] Checking all packages — this may take several minutes...${RESET}"
+            echo "───────────────────────────────────────────────────────────────"
+            debsums --all 2>&1 | tee "$tmpfile" ;;
+        2)
+            echo -e "${GREEN}[➜] Checking for changed files...${RESET}"
+            echo "───────────────────────────────────────────────────────────────"
+            debsums --changed 2>&1 | tee "$tmpfile" ;;
+        3)
+            read -rp "Package name: " pkg
+            if [[ -z "$pkg" ]]; then
+                echo -e "${YELLOW}[!] No package entered.${RESET}"; rm -f "$tmpfile"; return 1
+            fi
+            if ! dpkg -l "$pkg" 2>/dev/null | grep -q '^ii'; then
+                echo -e "\a${RED}[!] Package '$pkg' is not installed.${RESET}"; rm -f "$tmpfile"; return 1
+            fi
+            echo -e "${GREEN}[➜] Checking package: $pkg...${RESET}"
+            echo "───────────────────────────────────────────────────────────────"
+            debsums "$pkg" 2>&1 | tee "$tmpfile" ;;
+        *)
+            echo -e "\a${RED}[!] Invalid choice. Enter 1–3.${RESET}"; rm -f "$tmpfile"; return 1 ;;
+    esac
+
+    echo
+    echo -e "${CYAN}── Summary ──────────────────────────────────────────────────${RESET}"
+    local ok changed missing
+    ok=$(grep -c '\bOK\b'       "$tmpfile" 2>/dev/null || echo 0)
+    changed=$(grep -c 'FAILED'  "$tmpfile" 2>/dev/null || echo 0)
+    missing=$(grep -c 'MISSING' "$tmpfile" 2>/dev/null || echo 0)
+    rm -f "$tmpfile"
+
+    echo -e "  ${GREEN}OK      : $ok${RESET}"
+    echo -e "  ${RED}Failed  : $changed${RESET}"
+    echo -e "  ${RED}Missing : $missing${RESET}"
+    echo
+
+    if [[ $changed -gt 0 || $missing -gt 0 ]]; then
+        echo -e "\a${RED}[!] Integrity issues found — $changed changed, $missing missing.${RESET}"
+        echo -e "${YELLOW}[i] FAILED may indicate tampering or manual edits. Verify before acting.${RESET}"
+        echo -e "${YELLOW}[i] Reinstall with: sudo apt install --reinstall <package>${RESET}"
+        echo "───────────────────────────────────────────────────────────────"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+] All checked files match their package checksums.${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
+}
 file_integrity_check() {
     echo "───────────────────────────────────────────────────────────────"
     echo "File Integrity Checker — sha256sum"
@@ -1660,6 +1870,166 @@ clean_metadata() {
     remaining=$(exiftool "$outfile" 2>/dev/null | grep -v "^File\|^Directory\|^MIME\|^ExifTool" | wc -l)
     echo -e "${GREEN}[+] Metadata removed → $outfile${RESET}"
     echo -e "${CYAN}[i] Remaining metadata fields: $remaining (filesystem/format fields only).${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
+}
+strip_metadata_mat2() {
+    echo "───────────────────────────────────────────────────────────────"
+    echo "MAT2 by the Tails Project https://0xacab.org/jvoisin/mat2"
+    echo -e "${GREEN}[➜] Strip metadata from files (PDF, Office, images, audio, video)${RESET}"
+    echo -e "${YELLOW}[i] MAT2 supports a wider range of formats than exiftool.${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
+    echo
+
+    if ! command -v mat2 >/dev/null 2>&1; then
+        echo -e "\a${RED}[!] mat2 is not installed.${RESET}"
+        echo -e "${YELLOW}[i] Install with: sudo apt install mat2${RESET}"
+        return 1
+    fi
+
+    read -rp "Enter file or directory to process: " target
+    [[ -z "$target" ]] && { echo -e "${YELLOW}[!] No target entered.${RESET}"; return 1; }
+    [[ ! -e "$target" ]] && { echo -e "\a${RED}[!] Not found: '$target'${RESET}"; return 1; }
+
+    local files=()
+    if [[ -f "$target" ]]; then
+        files=("$target")
+    elif [[ -d "$target" ]]; then
+        while IFS= read -r -d '' f; do files+=("$f")
+        done < <(find "$target" -type f -print0)
+        echo -e "${CYAN}[i] Found ${#files[@]} file(s) in '$target'.${RESET}"
+    fi
+
+    [[ ${#files[@]} -eq 0 ]] && { echo -e "${YELLOW}[!] No files found.${RESET}"; return 1; }
+
+    echo
+    echo -e "${BOLD}Action:${RESET}"
+    echo "  1) Preview only    (show metadata without modifying)"
+    echo "  2) Clean files     (saves as filename.cleaned.ext)"
+    echo "  3) Clean in-place  (overwrites originals — use with caution)"
+    echo
+    read -rp "Choice [1-3]: " choice
+
+    local ok=0 skipped=0 errors=0
+
+    _mat2_process() {
+        local flag="$1" f="$2" result
+        result=$(mat2 $flag "$f" 2>&1)
+        if [[ $? -eq 0 ]]; then
+            echo -e "  ${GREEN}[+]${RESET} $f"; (( ok++ ))
+        elif echo "$result" | grep -qi "unsupported\|unknown"; then
+            echo -e "  ${YELLOW}[~]${RESET} $f — unsupported, skipped"; (( skipped++ ))
+        else
+            echo -e "  ${RED}[!]${RESET} $f — $result"; (( errors++ ))
+        fi
+    }
+
+    case "$choice" in
+        1)
+            echo -e "${CYAN}── Metadata preview ─────────────────────────────────────────${RESET}"
+            for f in "${files[@]}"; do
+                echo -e "${BOLD}▶ $f${RESET}"
+                mat2 --show "$f" 2>/dev/null || echo -e "  ${YELLOW}[!] Unsupported or no metadata.${RESET}"
+                echo
+            done
+            echo -e "${YELLOW}[i] No files were modified.${RESET}"
+            echo "───────────────────────────────────────────────────────────────"
+            return 0
+            ;;
+        2)
+            echo -e "${GREEN}[➜] Cleaning ${#files[@]} file(s)...${RESET}"
+            for f in "${files[@]}"; do _mat2_process "" "$f"; done ;;
+        3)
+            echo -e "${YELLOW}[!] In-place mode overwrites originals. This cannot be undone.${RESET}"
+            read -rp "Confirm? (y/n): " confirm
+            [[ "$confirm" != "y" ]] && return 0
+            echo -e "${GREEN}[➜] Cleaning ${#files[@]} file(s) in-place...${RESET}"
+            for f in "${files[@]}"; do _mat2_process "--inplace" "$f"; done ;;
+        *)
+            echo -e "\a${RED}[!] Invalid choice. Enter 1–3.${RESET}"; return 1 ;;
+    esac
+
+    echo
+    echo -e "${CYAN}── Summary ──────────────────────────────────────────────────${RESET}"
+    echo -e "  ${GREEN}Cleaned  : $ok${RESET}"
+    echo -e "  ${YELLOW}Skipped  : $skipped${RESET}"
+    [[ $errors -gt 0 ]] && echo -e "  ${RED}Errors   : $errors${RESET}"
+    echo
+
+    if [[ $errors -gt 0 ]]; then
+        echo -e "\a${RED}[!] Some files could not be processed.${RESET}"
+        echo "───────────────────────────────────────────────────────────────"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+] Metadata stripping complete.${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
+}
+clean_system() {
+    echo "───────────────────────────────────────────────────────────────"
+    echo "BleachBit by Andrew Ziem https://www.bleachbit.org/"
+    echo -e "${GREEN}[➜] Clean browser caches, logs, temp files, and other artifacts${RESET}"
+    echo -e "${YELLOW}[i] Only use on your own system. Some actions are irreversible.${RESET}"
+    echo "───────────────────────────────────────────────────────────────"
+    echo
+
+    if ! command -v bleachbit >/dev/null 2>&1; then
+        echo -e "\a${RED}[!] BleachBit is not installed.${RESET}"
+        echo -e "${YELLOW}[i] Install with: sudo apt install bleachbit${RESET}"
+        return 1
+    fi
+
+    echo -e "${BOLD}Clean target:${RESET}"
+    echo "  1) Preview only         (no changes — shows what would be removed)"
+    echo "  2) System temp & logs   (apt cache, /tmp, system logs)"
+    echo "  3) Browser artifacts    (Firefox cache, history, cookies)"
+    echo "  4) Bash history"
+    echo "  5) All of the above     (preview first, then confirm)"
+    echo
+    read -rp "Choice [1-5]: " choice
+
+    local t_sys="apt.autoclean apt.autoremove system.cache system.localizations system.rotated_logs system.tmp"
+    local t_browser="firefox.cache firefox.cookies firefox.dom firefox.forms firefox.history firefox.session_restore"
+    local t_bash="bash.history"
+
+    case "$choice" in
+        1)
+            echo -e "${CYAN}── Preview (dry run) ────────────────────────────────────────${RESET}"
+            bleachbit --preview $t_sys $t_browser $t_bash 2>/dev/null
+            echo -e "${YELLOW}[i] No files were removed.${RESET}"
+            ;;
+        2)
+            read -rp "Clean system temp files and logs? (y/n): " confirm
+            [[ "$confirm" != "y" ]] && return 0
+            bleachbit --clean $t_sys 2>/dev/null
+            [[ $? -ne 0 ]] && { echo -e "\a${RED}[!] BleachBit reported errors.${RESET}"; return 1; }
+            ;;
+        3)
+            read -rp "Clean Firefox browser artifacts? (y/n): " confirm
+            [[ "$confirm" != "y" ]] && return 0
+            bleachbit --clean $t_browser 2>/dev/null
+            [[ $? -ne 0 ]] && { echo -e "\a${RED}[!] BleachBit reported errors.${RESET}"; return 1; }
+            ;;
+        4)
+            read -rp "Clear Bash history? (y/n): " confirm
+            [[ "$confirm" != "y" ]] && return 0
+            bleachbit --clean $t_bash 2>/dev/null
+            [[ $? -ne 0 ]] && { echo -e "\a${RED}[!] BleachBit reported errors.${RESET}"; return 1; }
+            ;;
+        5)
+            echo -e "${CYAN}── Preview ───────────────────────────────────────────────────${RESET}"
+            bleachbit --preview $t_sys $t_browser $t_bash 2>/dev/null
+            echo
+            read -rp "Proceed with full clean? (y/n): " confirm
+            [[ "$confirm" != "y" ]] && return 0
+            bleachbit --clean $t_sys $t_browser $t_bash 2>/dev/null
+            [[ $? -ne 0 ]] && { echo -e "\a${RED}[!] BleachBit reported errors.${RESET}"; return 1; }
+            ;;
+        *)
+            echo -e "\a${RED}[!] Invalid choice. Enter 1–5.${RESET}"; return 1 ;;
+    esac
+
+    echo
+    echo -e "${GREEN}[+] Clean completed.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
 }
 # Encryption
@@ -2628,6 +2998,9 @@ l() {
 v() {
     version
 }
+vip() {
+    verify_installed_packages
+}
 ghosttrash() {
     secure_empty_trash
 }
@@ -2689,6 +3062,12 @@ _PEREGINE_COMMANDS=(
     decrypt_file_aes256 
     encrypt_file_aes128
     decrypt_file_aes128
+    log_viewer
+    active_connections
+    verify_installed_packages vip
+    view_connections netstat
+    clean_system bleachbit
+    strip_metadata_mat2 mat2
     ghosttrash
     stalkip
     encryption
@@ -2726,12 +3105,16 @@ EOF
     printf "  %-36s %s\n" "tor_connect/tor"                "Start Tor service"
     printf "  %-36s %s\n" "check_tor"                      "Check if Tor is running"
     printf "  %-36s %s\n" "subdomain_enum"                 "Enumerate subdomains (subfinder)"
+    printf "  %-36s %s\n" "active_connections"                  "Show active network connections (ss)"
     echo
     echo -e "${YELLOW}System${RESET}"
     echo "───────────────────────────────────────────────────────────────"
     printf "  %-36s %s\n" "update_apps/update"                 "Update APT / Flatpak / Snap"
     printf "  %-36s %s\n" "systeminfo"                         "Show system info (fastfetch)"
     printf "  %-36s %s\n" "remove_temp_files/rm_tmp"           "Delete /tmp/*"
+    printf "  %-36s %s\n" "view_connections/netstat"           "View network connections (netstat)"
+    printf "  %-36s %s\n" "clean_system/bleachbit"           "Clean system with BleachBit"
+    printf "  %-36s %s\n" "strip_metadata_mat2/mat2"           "Strip metadata with mat2"   
     echo
     echo -e "${YELLOW}Security & Hardening${RESET}"
     echo "───────────────────────────────────────────────────────────────"
@@ -2754,6 +3137,8 @@ EOF
     printf "  %-36s %s\n" "generate_key/genkey"                 "Generate a 128/192/256/512-bit key"
     printf "  %-36s %s\n" "subdomain_enum"                      "Enumerate subdomains (subfinder)"
     printf "  %-36s %s\n" "file_integrity_check"                "Create or verify file integrity manifest (sha256sum)"
+    printf "  %-36s %s\n" "log_viewer"                          "View logs with less"
+    printf "  %-36s %s\n" "verify_installed_packages/vip"       "Verify installed packages with APT logs"
     echo
     echo -e "${YELLOW}Encrypt / Decrypt Files${RESET}"
     echo "───────────────────────────────────────────────────────────────"
