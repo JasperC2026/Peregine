@@ -5,7 +5,7 @@
 
 <img width="1280" height="640" alt="Build" src="https://github.com/user-attachments/assets/c8a622e7-2539-4837-a087-23d2d0aa7d71" />
 
-![Version](https://img.shields.io/badge/Version-2.2-00008b?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-2.3-00008b?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-00008b?style=for-the-badge)
 ![Shell](https://img.shields.io/badge/Shell-Bash-black?style=for-the-badge&logo=gnubash&logoColor=black)
 ![Platform](https://img.shields.io/badge/Platform-Linux-black?style=for-the-badge&logo=linux&logoColor=black)

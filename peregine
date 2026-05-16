@@ -657,7 +657,6 @@ get_ip() {
     echo "───────────────────────────────────────────────────────────────"
 }
 ip_osint() {
-    clear
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${YELLOW}[i] Note: This tool queries ipinfo.io for geolocation and ISP data.${RESET}"
     echo -e "${YELLOW}[i] Only use on authorized systems, and respect privacy policies.${RESET}"
@@ -755,17 +754,18 @@ maigret_search() {
     read -p "[TOR] Route through Tor? (y/n): " USE_TOR
     echo -e "${RESET}"
 
-    output_file="maigret_${username}_$(date +%s).json"
+    local output_dir="maigret_${username}_$(date +%s)"
+    mkdir -p "$output_dir"
 
     echo -e "${GREEN}[➜] Searching for username: ${username}${RESET}"
     echo -e "${YELLOW}[!] Note: Requests go to external sites.${RESET}"
     echo
 
-    run_with_tor maigret "$username" --json "$output_file" --top-sites 50 --timeout 5
+    run_with_tor maigret "$username" -J simple --folderoutput "$output_dir" --top-sites 50 --timeout 5
 
     echo
     echo -e "${GREEN}[+] Scan completed.${RESET}"
-    echo -e "${GREEN}[➜] Results saved to: ${output_file}${RESET}"
+    echo -e "${GREEN}[➜] Results saved to: ${output_dir}/${RESET}"
     echo "───────────────────────────────────────────────────────────────"
 }
 tor_connect() {
@@ -1256,12 +1256,15 @@ verify_installed_packages() {
             echo -e "\a${RED}[!] Invalid choice. Enter 1–3.${RESET}"; rm -f "$tmpfile"; return 1 ;;
     esac
 
-    echo
+        echo
     echo -e "${CYAN}── Summary ──────────────────────────────────────────────────${RESET}"
-    local ok changed missing
-    ok=$(grep -c '\bOK\b'       "$tmpfile" 2>/dev/null || echo 0)
-    changed=$(grep -c 'FAILED'  "$tmpfile" 2>/dev/null || echo 0)
-    missing=$(grep -c 'MISSING' "$tmpfile" 2>/dev/null || echo 0)
+
+    local ok changed missing failed_lines missing_lines
+    ok=$(grep -c '\bOK\b'       "$tmpfile" 2>/dev/null); ok=${ok:-0}
+    changed=$(grep -c 'FAILED'  "$tmpfile" 2>/dev/null); changed=${changed:-0}
+    missing=$(grep -c 'MISSING' "$tmpfile" 2>/dev/null); missing=${missing:-0}
+    failed_lines=$(grep 'FAILED'  "$tmpfile" 2>/dev/null)
+    missing_lines=$(grep 'MISSING' "$tmpfile" 2>/dev/null)
     rm -f "$tmpfile"
 
     echo -e "  ${GREEN}OK      : $ok${RESET}"
@@ -1269,8 +1272,25 @@ verify_installed_packages() {
     echo -e "  ${RED}Missing : $missing${RESET}"
     echo
 
+    if [[ $changed -gt 0 ]]; then
+        echo -e "${CYAN}── Failed files ─────────────────────────────────────────────${RESET}"
+        while IFS= read -r line; do
+            echo -e "  ${RED}$line${RESET}"
+        done <<< "$failed_lines"
+        echo
+    fi
+
+    if [[ $missing -gt 0 ]]; then
+        echo -e "${CYAN}── Missing files ────────────────────────────────────────────${RESET}"
+        while IFS= read -r line; do
+            echo -e "  ${YELLOW}$line${RESET}"
+        done <<< "$missing_lines"
+        echo
+    fi
+
     if [[ $changed -gt 0 || $missing -gt 0 ]]; then
-        echo -e "\a${RED}[!] Integrity issues found — $changed changed, $missing missing.${RESET}"
+        echo -e "\a"
+        echo -e "${RED}[!] Integrity issues found — $changed changed, $missing missing.${RESET}"
         echo -e "${YELLOW}[i] FAILED may indicate tampering or manual edits. Verify before acting.${RESET}"
         echo -e "${YELLOW}[i] Reinstall with: sudo apt install --reinstall <package>${RESET}"
         echo "───────────────────────────────────────────────────────────────"
