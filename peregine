@@ -2849,7 +2849,7 @@ clone_source() {
     sleep 0.5
 
     if command -v git >/dev/null 2>&1; then
-        if git clone https://codeberg.org/peregine/Peregine.git; then
+        if git clone https://codeberg.org/JasperC/Peregine.git; then
             echo -e "${GREEN}[+] Source code cloned successfully.${RESET}"
         else
             echo -e "\a"
