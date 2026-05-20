@@ -2810,7 +2810,12 @@ decrypt_file_serpent() {
 }   
 # Other
 license() {
-    clear
+    echo "───────────────────────────────────────────────────────────────"
+    echo "This software is licensed under the MIT License. For details, see below:"
+    echo "TL;DR:"
+    echo "You may use this software for any purpose, including commercial and private use."
+    echo "You may modify and distribute this software, but you must include the original copyright notice and license."
+    echo "The software is provided 'as is', without warranty of any kind. No liability for any damages arising from the use of this software."
     echo "───────────────────────────────────────────────────────────────"
     cat <<'EOF'
 MIT License
