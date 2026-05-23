@@ -1,16 +1,16 @@
 #!/bin/bash
 
 # Peregine - A versatile Linux system utility script
-# Version: 2.3
+# Version: 3.0 
 # Licensed under the MIT License, you are free to use, modify and distribute this script. License and copyright notice must be included in all copies or substantial portions of the script. See LICENSE file for details.
 # No warranty expressed or implied. Liability for any damages arising from the use of this script is DISCLAIMED. See LICENSE file for details.
 
 # Variables
-MAIN_VERSION="2"
-SUB_VERSION=".3"
-TESTED="Tested"
-TESTED_ON="15-5-2026"
-TESTED_RELEASE="Stable"
+MAIN_VERSION="3"
+SUB_VERSION=".0"
+TESTED=""
+TESTED_ON=""
+TESTED_RELEASE="Beta"
 LICENSE="MIT License"
 DIVIDER-="───────────────────────────────────────────────────────────────"
 # Colors for ASCII art and use in output messages
@@ -686,80 +686,64 @@ get_ip() {
     echo "{DIVIDER}"
 }
 ip_osint() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${YELLOW}[i] Note: This tool queries ipinfo.io for geolocation and ISP data.${RESET}"
-    echo -e "${YELLOW}[i] Only use on authorized systems, and respect privacy policies.${RESET}"
-    echo -e "${YELLOW}[i] Gathering OSINT data can be illegal in certain cases, use wisely.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-    echo "IPinfo https://ipinfo.io/"
-    read -p "Enter IP or domain: " target
+    echo "{DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v curl >/dev/null 2>&1; then  # Check if curl is installed 
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install curl"
+        exit 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
 
-    if [[ -z "$target" ]]; then
-        echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
+    echo "{DIVIDER}"
+    echo -e "${RED}[!]${RESET}Note: This tool queries ipinfo.io for geolocation and ISP data.${RESET} "
+    echo -e "${RED}[!]${RESET} Be mindful of the number of queries you make to avoid hitting rate limits or violating terms of service."
+    echo -e "${RED}[!]${RESET} Only use on authorized systems, and respect privacy policies."
+    echo -e "${RED}[!]${RESET} Gathering OSINT data can be illegal in certain cases, use wisely."
+    echo "{DIVIDER}"
+
+    echo -n "Enter IP address to perform OSINT on: "
+    read -r target # Read user input for the IP address to perform OSINT on
+
+    if [[ -z "$target" ]]; then # Check if the user entered a target
+        echo -e "${RED}[!]${RESET} No target entered. Exiting."
         return 1
     fi
 
-    # Strip protocol/path if user pastes a URL
-    target=$(echo "$target" | sed -E 's|^https?://||; s|/.*||')
-
-    # Validate: IPv4, IPv6, or domain
-    local ipv4='^([0-9]{1,3}\.){3}[0-9]{1,3}$'
-    local ipv6='^([0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}$'
-    local domain='^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$'
-
-    if ! echo "$target" | grep -qE "${ipv4}|${ipv6}|${domain}"; then
-        echo -e "${RED}[!] Invalid target: '$target'${RESET}"
-        echo -e "${YELLOW}    Expected: a domain (example.com), IPv4 (1.2.3.4), or IPv6 (::1)${RESET}"
+    if ! echo "$target" | grep -qE '^(([0-9]{1,3}\.){3}[0-9]{1,3})$'; then # Validate the target format using a regex for IP address
+        echo -e "${RED}[!] Invalid IP address format: '$target'${RESET}"
         return 1
-    fi
-
-    # Extra check: each IPv4 octet must be 0-255
-    if echo "$target" | grep -qE "$ipv4"; then
-        IFS='.' read -r o1 o2 o3 o4 <<< "$target"
-        if (( o1 > 255 || o2 > 255 || o3 > 255 || o4 > 255 )); then
-            echo -e "${RED}[!] Invalid IPv4 address: '$target' (octet out of range).${RESET}"
-            return 1
-        fi
     fi
 
     echo -e "${PURPLE}"
     read -p "Route through Tor? (y/n): " USE_TOR
     echo -e "${RESET}"
 
-    echo -e "${GREEN}[➜] Fetching OSINT for $target...${RESET}"
-    sleep 0.5
-
-    data=$(run_with_tor curl -s --max-time 5 "https://ipinfo.io/$target" 2>&1)
-    status=$?
-
-    if [[ $status -ne 0 || -z "$data" ]]; then
-        echo -e "\a"
-        echo -e "${RED}[!] Failed to fetch OSINT data.${RESET}"
-        return 1
+    if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+        if ! command -v torsocks >/dev/null 2>&1; then # Check if torsocks is installed
+            echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+            echo "Install with: sudo apt install torsocks"
+            exit 1
+        fi
+        echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        output=$(torsocks curl -s --max-time 10 "https://ipinfo.io/$target/json" 2>&1) # Use torsocks to route the curl command through Tor
+        status=$? # Capture the exit status of the curl command to check for errors
+    else 
+        output=$(curl -s --max-time 10 "https://ipinfo.io/$target/json" 2>&1) # Perform a standard curl request without Tor
+        status=$? # Capture the exit status of the curl command to check for errors
     fi
 
-    if ! echo "$data" | jq . >/dev/null 2>&1; then
-        echo -e "\a"
-        echo -e "${RED}[!] Invalid response (not JSON or API error).${RESET}"
+    if [[ $status -ne 0 ]]; then # Check if the curl command executed successfully
+        echo -e "${RED}[!]${RESET} Failed to retrieve OSINT data: $output"
         return 1
+    else
+        echo -e "${GREEN}[+]${RESET} OSINT data retrieved successfully for $target"
+        echo -e "${CYAN}OSINT Information for $target:${RESET}"
+        echo -e "${CYAN}$output${RESET}"
     fi
-
-    if echo "$data" | jq -e '.bogon' >/dev/null 2>&1; then
-        echo -e "${YELLOW}[!] Invalid or private IP address.${RESET}"
-        return 1
-    fi
-
-    echo "IP:       $(echo "$data" | jq -r '.ip // "N/A"')"
-    echo "City:     $(echo "$data" | jq -r '.city // "N/A"')"
-    echo "Region:   $(echo "$data" | jq -r '.region // "N/A"')"
-    echo "Country:  $(echo "$data" | jq -r '.country // "N/A"')"
-    echo "ISP:      $(echo "$data" | jq -r '.org // "N/A"')"
-    echo "Timezone: $(echo "$data" | jq -r '.timezone // "N/A"')"
-
-    echo
-    echo -e "${GREEN}[+] IP OSINT lookup completed successfully.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
 }
 maigret_search() {
     echo "───────────────────────────────────────────────────────────────"
