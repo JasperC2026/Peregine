@@ -474,37 +474,6 @@ update_apps() {
     echo "[->] Command executed"
     echo "{DIVIDER}"
 }
-systeminfo() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "Fastfetch https://github.com/fastfetch-cli/fastfetch"
-    echo -e "${GREEN}[➜] Gathering system information...${RESET}"
-    echo
-
-    if command -v fastfetch >/dev/null 2>&1; then
-        if fastfetch; then
-            echo
-            echo -e "${GREEN}[+] System information displayed.${RESET}"
-        else
-            echo
-            echo -e "\a"
-            echo -e "${RED}[!] Fastfetch failed to run.${RESET}"
-            return 1
-        fi
-    else
-        echo -e "${YELLOW}[!] fastfetch not installed. Falling back to basic system info...${RESET}"
-        echo
-
-        uname -a
-        echo
-        lsb_release -a 2>/dev/null
-        echo
-        uptime
-
-        echo
-        echo -e "${GREEN}[+] Basic system information displayed.${RESET}"
-    fi
-    echo "───────────────────────────────────────────────────────────────"
-}
 # Security
 secure_shred_dir() {
     echo "───────────────────────────────────────────────────────────────"
