@@ -33,7 +33,7 @@ i=0
 # Commands
 # Networking
 local_server() {
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
     if ! command -v python3 >/dev/null 2>&1; then  # Check if python is installed 
@@ -73,10 +73,10 @@ local_server() {
     fi
 
     echo "[->] Command executed" 
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
 }
 whois_lookup() {
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
     if ! command -v whois >/dev/null 2>&1; then  # Check if whois is installed 
@@ -135,10 +135,10 @@ whois_lookup() {
         echo -e "${CYAN}$output${RESET}"
     fi
     echo "[->] Command executed"
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
 }
 ping() {
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
     if ! command -v ping >/dev/null 2>&1; then  # Check if ping is installed 
@@ -184,10 +184,10 @@ ping() {
     fi
 
     echo "[->] Command executed"
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
 }
 traceroute() {
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
     if ! command -v traceroute >/dev/null 2>&1; then  # Check if traceroute is installed 
@@ -240,10 +240,10 @@ traceroute() {
     fi
 
     echo "[->] Command executed"
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
 }
 dns_info() {
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
     if ! command -v dig >/dev/null 2>&1; then  # Check if dig is installed 
@@ -296,10 +296,10 @@ dns_info() {
     fi
 
     echo "[->] Command executed"
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
 }
 get_ip() {
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
     if ! command -v curl >/dev/null 2>&1; then  # Check if curl is installed 
@@ -322,10 +322,10 @@ get_ip() {
     fi
 
     echo "[->] Command executed"
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
 }
 ip_osint() {
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
     if ! command -v curl >/dev/null 2>&1; then  # Check if curl is installed 
@@ -337,12 +337,12 @@ ip_osint() {
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
 
-    echo "{DIVIDER}"
+    echo "${DIVIDER}"
     echo -e "${RED}[!]${RESET}Note: This tool queries ipinfo.io for geolocation and ISP data.${RESET} "
     echo -e "${RED}[!]${RESET} Be mindful of the number of queries you make to avoid hitting rate limits or violating terms of service."
     echo -e "${RED}[!]${RESET} Only use on authorized systems, and respect privacy policies."
     echo -e "${RED}[!]${RESET} Gathering OSINT data can be illegal in certain cases, use wisely."
-    echo "{DIVIDER}"
+    echo "${DIVIDER}"
 
     echo -n "Enter IP address to perform OSINT on: "
     read -r target # Read user input for the IP address to perform OSINT on
@@ -384,10 +384,10 @@ ip_osint() {
         echo -e "${CYAN}$output${RESET}"
     fi
     echo "[->] Command executed"
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
 }
 maigret_search () {
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
     if ! command -v maigret >/dev/null 2>&1; then  # Check if maigret is installed 
@@ -440,11 +440,11 @@ maigret_search () {
         echo -e "${CYAN}$output${RESET}"
     fi
     echo "[->] Command executed"
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
 }
 # System Maintenance
 update_apps() {
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
     echo -n "Name package manager (apt, pacman, dnf, etc.): "
     read -r package_manager # Read user input for the package manager to use for updating apps
 
@@ -469,7 +469,7 @@ update_apps() {
     fi
     
     echo "[->] Command executed"
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
 }
 # Security
 secure_shred_dir() {
@@ -1986,7 +1986,7 @@ EOF
     echo "───────────────────────────────────────────────────────────────"
 }
 clone_source() {
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
     if ! command -v git >/dev/null 2>&1; then  # Check if git is installed 
@@ -2007,17 +2007,17 @@ clone_source() {
     fi
 
     echo "[->] Command executed"
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
 }
 version() {
-    echo "{DIVIDER}"
+    echo "${DIVIDER}"
     echo -e "${BOLD} Peregine: A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface."
     echo "License MIT: see LICENSE file or use peregine license to view the license"
     echo
     echo "Current version: $type $version"
     echo "Release date: $release_date"
     echo "Latest test on: $test_date"
-    echo "{DIVIDER}"
+    echo "${DIVIDER}"
 }
 encryption () {
   echo -e "${YELLOW}Encrypt / Decrypt Files${RESET}"
