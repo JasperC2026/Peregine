@@ -446,66 +446,33 @@ maigret_search () {
 }
 # System Maintenance
 update_apps() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Starting update process...${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
+    echo "{DIVIDER}"
 
-    local overall_status=0
-    local start_time=$SECONDS
+    echo -n "Name package manager (apt, pacman, dnf, etc.): "
+    read -r package_manager # Read user input for the package manager to use for updating apps
 
-    _update_section() {
-        local label="$1"; shift
-        local section_start=$SECONDS
-        echo
-        echo -e "${CYAN}── $label ─────────────────────────────────────────────${RESET}"
-        "$@"
-        local status=$?
-        local elapsed=$(( SECONDS - section_start ))
-        if [[ $status -eq 0 ]]; then
-            echo -e "${GREEN}[+] $label completed (${elapsed}s).${RESET}"
-        else
-            echo -e "\a"
-            echo -e "${RED}[!] $label failed (${elapsed}s).${RESET}"
-            overall_status=1
-        fi
-        return $status
-    }
+    if [[ -z "$package_manager" ]]; then # Check if the user entered a package manager
+        echo -e "${RED}[!]${RESET} No package manager entered. Exiting."
+        return 1
+    fi
 
-    # APT
-    _update_section "APT" bash -c 'sudo apt update && sudo apt upgrade -y'
-
-    # Flatpak
-    if command -v flatpak >/dev/null 2>&1; then
-        _update_section "Flatpak" flatpak update -y
+    if [[ "$package_manager" == "apt" ]]; then
+        sudo apt update && sudo apt upgrade -y
+    elif [[ "$package_manager" == "pacman" ]]; then
+        sudo pacman -Syu --noconfirm
+    elif [[ "$package_manager" == "snap" ]]; then
+        sudo snap refresh
+    elif [[ "$package_manager" == "pipx" ]]; then
+        pipx upgrade-all
+    elif [[ "$package_manager" == "pip" ]]; then
+        pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip install -U
     else
-        echo -e "${YELLOW}[i] Flatpak not installed — skipping.${RESET}"
+        echo -e "${RED}[!]${RESET} Unsupported package manager: '$package_manager'. Please use apt, pacman, or dnf."
+        return 1
     fi
-
-    # Snap
-    if command -v snap >/dev/null 2>&1; then
-        _update_section "Snap" sudo snap refresh
-    else
-        echo -e "${YELLOW}[i] Snap not installed — skipping.${RESET}"
-    fi
-
-    # pip (user packages)
-    if command -v pip3 >/dev/null 2>&1; then
-        _update_section "pip3 (user)" bash -c \
-            'pip3 list --outdated --format=freeze 2>/dev/null \
-             | cut -d= -f1 \
-             | xargs -r pip3 install --upgrade --quiet'
-    fi
-
-    local total_elapsed=$(( SECONDS - start_time ))
-    echo
-    echo "───────────────────────────────────────────────────────────────"
-    if [[ $overall_status -eq 0 ]]; then
-        echo -e "${GREEN}[+] All updates completed successfully (${total_elapsed}s total).${RESET}"
-    else
-        echo -e "\a"
-        echo -e "${RED}[!] Some updates failed — check output above (${total_elapsed}s total).${RESET}"
-    fi
-    echo "───────────────────────────────────────────────────────────────"
+    
+    echo "[->] Command executed"
+    echo "{DIVIDER}"
 }
 systeminfo() {
     echo "───────────────────────────────────────────────────────────────"
