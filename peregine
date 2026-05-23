@@ -1989,23 +1989,28 @@ EOF
     echo "───────────────────────────────────────────────────────────────"
 }
 clone_source() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Cloning source code from codeberg...${RESET}"
-    sleep 0.5
+    echo "{DIVIDER}"
+    echo "[->] Checking dependencies"
 
-    if command -v git >/dev/null 2>&1; then
-        if git clone https://codeberg.org/JasperC/Peregine.git; then
-            echo -e "${GREEN}[+] Source code cloned successfully.${RESET}"
-        else
-            echo -e "\a"
-            echo -e "${RED}[!] Failed to clone source code.${RESET}"
-            return 1
-        fi
-    else
-        echo -e "\a"
-        echo -e "${RED}[!] Git is not installed.${RESET}"
-        return 1
+    if ! command -v git >/dev/null 2>&1; then  # Check if git is installed 
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: apt install git"
+        exit 1
     fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+
+    git clone https://codeberg.org/JasperC/Peregine.git # Clone the source code from the specified repository
+
+     if [[ $? -ne 0 ]]; then # Check if the git clone command executed successfully
+        echo -e "${RED}[!]${RESET} Failed to clone source code."
+        return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Source code cloned successfully."
+    fi
+
+    echo "[->] Command executed"
+    echo "{DIVIDER}"
 }
 version() { 
     echo "───────────────────────────────────────────────────────────────"
