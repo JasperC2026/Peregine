@@ -21,4 +21,7 @@ chmod +x $INSTALL_DIR/$SCRIPT_NAME
 echo "[✓] Peregine installed!"
 echo "Run with: peregine"
 
+echo "For more information, visit: https://codeberg.org/JasperC/peregine"
+echo "Please note, some dependencies may be required for full functionality. Refer to the documentation for details."
+
 
