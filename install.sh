@@ -3,9 +3,9 @@
 set -e
 
 INSTALL_DIR="/usr/local/bin"
-SCRIPT_NAME="jas"
+SCRIPT_NAME="Peregine"
 
-echo "[+] Installing Jas Toolbox..."
+echo "[+] Installing Peregine..."
 
 if [[ $EUID -ne 0 ]]; then
    echo "Run with sudo."
@@ -18,7 +18,7 @@ curl -L https://codeberg.org/JasperC/peregine -o $INSTALL_DIR/$SCRIPT_NAME
 
 chmod +x $INSTALL_DIR/$SCRIPT_NAME
 
-echo "[✓] Jas Toolbox installed!"
-echo "Run with: jas"
+echo "[✓] Peregine installed!"
+echo "Run with: peregine"
 
 
