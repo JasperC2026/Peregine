@@ -19,6 +19,8 @@ BLUE="\e[34m"
 CYAN="\e[36m"
 PURPLE="\e[35m"
 ORANGE="\e[38;5;208m"
+WHITE="\e[97m"    
+BLACK="\e[30m"   
 BOLD="\e[1m"
 RESET="\e[0m"
 COLORS=(
@@ -36,7 +38,7 @@ local_server() {
     echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
-    if ! command -v python3 >/dev/null 2>&1; then  # Check if python is installed 
+    if ! command -v python3 >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install python3"
         exit 1
@@ -45,27 +47,27 @@ local_server() {
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo 
 
-    echo "{DIVIDER}"
+    echo -e "${DIVIDER}"   
     echo -e "${RED}[!]${RESET} Note: This will expose the contents of the current directory to anyone who can access the specified port on your machine. Make sure you understand the security implications before proceeding."
     echo "This will start a local HTTP server using Python's built-in http.server module. You can access it by navigating to http://localhost:PORT in your web browser, where PORT is the port number you specify."
     echo "Make sure to stop the server when you're done by pressing Ctrl+C in the terminal."
-    echo "{DIVIDER}"
+    echo -e "${DIVIDER}"    
 
     echo -n "Are you sure you want to start a local server? (y/n): "
-    read -r confirm # Read user input to confirm starting the local server
+    read -r confirm
 
     if [[ "$confirm" =~ ^[Yy]$ ]]; then
         echo -n "Enter port number (default 8000): "
-        read -r port # Read user input for the port number to use for the local server
+        read -r port
 
-        python3 -m http.server "$port" # Start a local HTTP server on the specified port
-        status=$? # Capture the exit status of the python command to check for errors
+        python3 -m http.server "$port"
+        status=$?
     else
         echo -e "${YELLOW}[i]${RESET} Local server setup cancelled."
         return 1
     fi
 
-    if [[ $status -ne 0 ]]; then # Check if the python command executed successfully
+    if [[ $status -ne 0 ]]; then
         echo -e "${RED}[!]${RESET} Failed to start local server: $output"
         return 1
     else
@@ -79,7 +81,7 @@ whois_lookup() {
     echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
-    if ! command -v whois >/dev/null 2>&1; then  # Check if whois is installed 
+    if ! command -v whois >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install whois"
         exit 1
@@ -89,35 +91,35 @@ whois_lookup() {
     echo 
 
     echo -n "Enter domain: "
-    read -r domain # Read user input for the domain to look up
+    read -r domain
 
-    if [[ -z "$domain" ]]; then # Check if the user entered a domain
+    if [[ -z "$domain" ]]; then
         echo -e "${RED}[!]${RESET} No domain entered. Exiting."
         return 1
     fi
 
-    if ! echo "$domain" | grep -qE '^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$'; then # Validate the domain format using a regex
+    if ! echo "$domain" | grep -qE '^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$'; then
         echo -e "${RED}[!] Invalid domain format: '$domain'${RESET}"
         return 1
     fi
 
     echo -e "${PURPLE}"
-    read -p "[TOR] Route through Tor? (y/n): " USE_TOR # Ask the user if they want to route through Tor
+    read -p "[TOR] Route through Tor? (y/n): " USE_TOR
     echo -e "${RESET}"
 
     if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
-        if ! command -v torsocks >/dev/null 2>&1; then # Check if torsocks is installed
+        if ! command -v torsocks >/dev/null 2>&1; then
             echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
             echo "Install with: sudo apt install torsocks"
             exit 1
         fi
 
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-        output=$(torsocks whois $domain  2>&1) # Use torsocks to route the whois command through Tor
-        status=$? # Capture the exit status of the whois command to check for errors
+        output=$(torsocks whois $domain 2>&1)
+        status=$?
     else 
-        output=$(whois $domain 2>&1) # Perform a standard whois lookup without Tor
-        status=$? # Capture the exit status of the whois command to check for errors
+        output=$(whois $domain 2>&1)
+        status=$?
     fi
 
     if echo "$output" | grep -qiE "no match|not found|no data found|status: free"; then
@@ -126,7 +128,7 @@ whois_lookup() {
         return 1
     fi
 
-    if [[ $status -ne 0 ]]; then # Check if the whois command executed successfully
+    if [[ $status -ne 0 ]]; then
         echo -e "${RED}[!]${RESET} Whois lookup failed: $output"
         return 1
     else
@@ -141,7 +143,7 @@ ping() {
     echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
-    if ! command -v ping >/dev/null 2>&1; then  # Check if ping is installed 
+    if ! command -v ping >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install iputils-ping"
         exit 1
@@ -151,32 +153,32 @@ ping() {
     echo 
 
     echo -n "Enter IP address or domain to ping: "
-    read -r target # Read user input for the IP address or domain to ping
+    read -r target
 
-    if [[ -z "$target" ]]; then # Check if the user entered a target
+    if [[ -z "$target" ]]; then
         echo -e "${RED}[!]${RESET} No target entered. Exiting."
         return 1
     fi
 
     echo -e "${PURPLE}"
-    read -p "[TOR] Route through Tor? (y/n): " USE_TOR # Ask the user if they want to route through Tor
+    read -p "[TOR] Route through Tor? (y/n): " USE_TOR
     echo -e "${RESET}"
 
     if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
-        if ! command -v torsocks >/dev/null 2>&1; then # Check if torsocks is installed
+        if ! command -v torsocks >/dev/null 2>&1; then
             echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
             echo "Install with: sudo apt install torsocks"
             exit 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-        ping  -c 4 "$target" # Use torsocks to route the ping command through Tor
-        status=$? # Capture the exit status of the ping command to check for errors
+        torsocks "$(command -v ping)" -c 6 "$target"    
+        status=$?
     else 
-        ping -c 4 "$target" # Perform a standard ping without Tor
-        status=$? # Capture the exit status of the ping command to check for errors
+        command ping -c 6 "$target"    
+        status=$?
     fi
 
-    if [[ $status -ne 0 ]]; then # Check if the ping command executed successfully
+    if [[ $status -ne 0 ]]; then
         echo -e "${RED}[!]${RESET} Ping failed: $output"
         return 1
     else
@@ -190,7 +192,7 @@ traceroute() {
     echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
-    if ! command -v traceroute >/dev/null 2>&1; then  # Check if traceroute is installed 
+    if ! command -v traceroute >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install traceroute"
         exit 1
@@ -200,37 +202,37 @@ traceroute() {
     echo 
 
     echo -n "Enter IP address or domain to traceroute: "
-    read -r target # Read user input for the IP address or domain to traceroute
+    read -r target
 
-    if [[ -z "$target" ]]; then # Check if the user entered a target
+    if [[ -z "$target" ]]; then
         echo -e "${RED}[!]${RESET} No target entered. Exiting."
         return 1
     fi
 
-    if ! echo "$target" | grep -qE '^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$|^(([0-9]{1,3}\.){3}[0-9]{1,3})$'; then # Validate the target format using a regex for both domain and IP address
+    if ! echo "$target" | grep -qE '^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$|^(([0-9]{1,3}\.){3}[0-9]{1,3})$'; then
         echo -e "${RED}[!] Invalid target format: '$target'${RESET}"
         return 1
     fi
 
     echo -e "${PURPLE}"
-    read -p "[TOR] Route through Tor? (y/n): " USE_TOR # Ask the user if they want to route through Tor
+    read -p "[TOR] Route through Tor? (y/n): " USE_TOR
     echo -e "${RESET}"
 
     if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
-        if ! command -v torsocks >/dev/null 2>&1; then # Check if torsocks is installed
+        if ! command -v torsocks >/dev/null 2>&1; then
             echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
             echo "Install with: sudo apt install torsocks"
             exit 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-        output=$(torsocks traceroute "$target" 2>&1) # Use torsocks to route the traceroute command through Tor
-        status=$? # Capture the exit status of the traceroute command to check for errors
+        output=$(torsocks "$(command -v traceroute)" "$target" 2>&1)  
+        status=$?
     else 
-        output=$(traceroute "$target" 2>&1) # Perform a standard traceroute without Tor
-        status=$? # Capture the exit status of the traceroute command to check for errors
+        output=$(command traceroute "$target" 2>&1)   
+        status=$?
     fi
 
-    if [[ $status -ne 0 ]]; then # Check if the traceroute command executed successfully
+    if [[ $status -ne 0 ]]; then
         echo -e "${RED}[!]${RESET} Traceroute failed: $output"
         return 1
     else
@@ -246,7 +248,7 @@ dns_info() {
     echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
-    if ! command -v dig >/dev/null 2>&1; then  # Check if dig is installed 
+    if ! command -v dig >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install dnsutils"
         exit 1
@@ -256,37 +258,37 @@ dns_info() {
     echo 
 
     echo -n "Enter domain to retrieve DNS information: "
-    read -r domain # Read user input for the domain to retrieve DNS information for
+    read -r domain
 
-    if [[ -z "$domain" ]]; then # Check if the user entered a domain
+    if [[ -z "$domain" ]]; then
         echo -e "${RED}[!]${RESET} No domain entered. Exiting."
         return 1
     fi
 
-    if ! echo "$domain" | grep -qE '^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$'; then # Validate the domain format using a regex
+    if ! echo "$domain" | grep -qE '^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$'; then
         echo -e "${RED}[!] Invalid domain format: '$domain'${RESET}"
         return 1
     fi
 
     echo -e "${PURPLE}"
-    read -p "[TOR] Route through Tor? (y/n): " USE_TOR # Ask the user if they want to route through Tor
+    read -p "[TOR] Route through Tor? (y/n): " USE_TOR
     echo -e "${RESET}"
 
     if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
-        if ! command -v torsocks >/dev/null 2>&1; then # Check if torsocks is installed
+        if ! command -v torsocks >/dev/null 2>&1; then
             echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
             echo "Install with: sudo apt install torsocks"
             exit 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-        output=$(torsocks dig "$domain" ANY +noall +answer 2>&1) # Use torsocks to route the dig command through Tor
-        status=$? # Capture the exit status of the dig command to check for errors
+        output=$(torsocks dig "$domain" ANY +noall +answer 2>&1)
+        status=$?
     else 
-        output=$(dig "$domain" ANY +noall +answer 2>&1) # Perform a standard dig lookup without Tor
-        status=$? # Capture the exit status of the dig command to check for errors
+        output=$(dig "$domain" ANY +noall +answer 2>&1)
+        status=$?
     fi
 
-    if [[ $status -ne 0 ]]; then # Check if the dig command executed successfully
+    if [[ $status -ne 0 ]]; then
         echo -e "${RED}[!]${RESET} Failed to retrieve DNS information: $output"
         return 1
     else
@@ -302,7 +304,7 @@ get_ip() {
     echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
-    if ! command -v curl >/dev/null 2>&1; then  # Check if curl is installed 
+    if ! command -v curl >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install curl"
         exit 1
@@ -314,7 +316,7 @@ get_ip() {
     output=$(curl -s --max-time 5 ifconfig.me 2>&1)
     status=$?
 
-    if [[ $status -ne 0 ]]; then # Check if the curl command executed successfully
+    if [[ $status -ne 0 ]]; then
         echo -e "${RED}[!]${RESET} Failed to retrieve IP address: $output"
         return 1
     else
@@ -328,7 +330,7 @@ ip_osint() {
     echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
-    if ! command -v curl >/dev/null 2>&1; then  # Check if curl is installed 
+    if ! command -v curl >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install curl"
         exit 1
@@ -345,14 +347,14 @@ ip_osint() {
     echo "${DIVIDER}"
 
     echo -n "Enter IP address to perform OSINT on: "
-    read -r target # Read user input for the IP address to perform OSINT on
+    read -r target
 
-    if [[ -z "$target" ]]; then # Check if the user entered a target
+    if [[ -z "$target" ]]; then
         echo -e "${RED}[!]${RESET} No target entered. Exiting."
         return 1
     fi
 
-    if ! echo "$target" | grep -qE '^(([0-9]{1,3}\.){3}[0-9]{1,3})$'; then # Validate the target format using a regex for IP address
+    if ! echo "$target" | grep -qE '^(([0-9]{1,3}\.){3}[0-9]{1,3})$'; then
         echo -e "${RED}[!] Invalid IP address format: '$target'${RESET}"
         return 1
     fi
@@ -362,20 +364,20 @@ ip_osint() {
     echo -e "${RESET}"
 
     if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
-        if ! command -v torsocks >/dev/null 2>&1; then # Check if torsocks is installed
+        if ! command -v torsocks >/dev/null 2>&1; then
             echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
             echo "Install with: sudo apt install torsocks"
             exit 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-        output=$(torsocks curl -s --max-time 10 "https://ipinfo.io/$target/json" 2>&1) # Use torsocks to route the curl command through Tor
-        status=$? # Capture the exit status of the curl command to check for errors
+        output=$(torsocks curl -s --max-time 10 "https://ipinfo.io/$target/json" 2>&1)
+        status=$?
     else 
-        output=$(curl -s --max-time 10 "https://ipinfo.io/$target/json" 2>&1) # Perform a standard curl request without Tor
-        status=$? # Capture the exit status of the curl command to check for errors
+        output=$(curl -s --max-time 10 "https://ipinfo.io/$target/json" 2>&1)
+        status=$?
     fi
 
-    if [[ $status -ne 0 ]]; then # Check if the curl command executed successfully
+    if [[ $status -ne 0 ]]; then
         echo -e "${RED}[!]${RESET} Failed to retrieve OSINT data: $output"
         return 1
     else
@@ -390,7 +392,7 @@ maigret_search () {
     echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
-    if ! command -v maigret >/dev/null 2>&1; then  # Check if maigret is installed 
+    if ! command -v maigret >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: pipx install maigret"
         exit 1
@@ -399,16 +401,16 @@ maigret_search () {
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo 
 
-    echo "{DIVIDER}"
+    echo -e "${DIVIDER}"   
     echo -e "${RED}[!]${RESET} Note: Maigret is a powerful OSINT tool for username enumeration across various platforms. Use it responsibly and only on authorized systems."
     echo -e "${RED}[!]${RESET} Always respect privacy policies and legal boundaries when"
     echo -e "${RED}[!]${RESET} gathering OSINT data. Misuse can lead to legal consequences."
-    echo "{DIVIDER}"
+    echo -e "${DIVIDER}"  
 
     echo -n "Enter username to search for: "
-    read -r username # Read user input for the username to search for
+    read -r username
 
-    if [[ -z "$username" ]]; then # Check if the user entered a username
+    if [[ -z "$username" ]]; then
         echo -e "${RED}[!]${RESET} No username entered. Exiting."
         return 1
     fi
@@ -418,20 +420,20 @@ maigret_search () {
     echo -e "${RESET}"
 
     if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
-        if ! command -v torsocks >/dev/null 2>&1; then # Check if torsocks is installed
+        if ! command -v torsocks >/dev/null 2>&1; then
             echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
             echo "Install with: sudo apt install torsocks"
             exit 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-        output=$(torsocks maigret "$username" 2>&1) # Use torsocks to route the maigret command through Tor
-        status=$? # Capture the exit status of the maigret command to check for errors
+        output=$(torsocks maigret "$username" 2>&1)
+        status=$?
     else 
-        output=$(maigret "$username" 2>&1) # Perform a standard maigret search without Tor
-        status=$? # Capture the exit status of the maigret command to check for errors
+        output=$(maigret "$username" 2>&1)
+        status=$?
     fi
 
-    if [[ $status -ne 0 ]]; then # Check if the maigret command executed successfully
+    if [[ $status -ne 0 ]]; then
         echo -e "${RED}[!]${RESET} Maigret search failed: $output"
         return 1
     else
@@ -445,10 +447,10 @@ maigret_search () {
 # System Maintenance
 update_apps() {
     echo -e "${DIVIDER}"
-    echo -n "Name package manager (apt, pacman, dnf, etc.): "
-    read -r package_manager # Read user input for the package manager to use for updating apps
+    echo -n "Name package manager (apt, pacman, snap, pipx, pip): "
+    read -r package_manager
 
-    if [[ -z "$package_manager" ]]; then # Check if the user entered a package manager
+    if [[ -z "$package_manager" ]]; then
         echo -e "${RED}[!]${RESET} No package manager entered. Exiting."
         return 1
     fi
@@ -464,7 +466,7 @@ update_apps() {
     elif [[ "$package_manager" == "pip" ]]; then
         pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip install -U
     else
-        echo -e "${RED}[!]${RESET} Unsupported package manager: '$package_manager'. Please use apt, pacman, or dnf."
+        echo -e "${RED}[!]${RESET} Unsupported package manager: '$package_manager'. Please use apt, pacman, snap, pipx, or pip."  
         return 1
     fi
     
@@ -481,7 +483,6 @@ secure_shred_dir() {
     echo -e "${YELLOW}    due to wear-levelling. Use disk encryption for SSDs.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
  
-    # ── Dependency check ─────────────────────────────────────────────
     if ! command -v shred >/dev/null 2>&1; then
         echo -e "\a"
         echo -e "${RED}[!] shred not found.${RESET}"
@@ -489,7 +490,6 @@ secure_shred_dir() {
         return 1
     fi
  
-    # ── Target input ─────────────────────────────────────────────────
     echo
     read -rp "Enter directory to shred: " target
  
@@ -498,7 +498,6 @@ secure_shred_dir() {
         return 1
     fi
  
-    # Expand ~ manually in case the user typed it
     target="${target/#\~/$HOME}"
  
     if [[ ! -e "$target" ]]; then
@@ -514,7 +513,6 @@ secure_shred_dir() {
         return 1
     fi
  
-    # Refuse to shred root or home
     local abs_target
     abs_target=$(realpath "$target")
     if [[ "$abs_target" == "/" || "$abs_target" == "$HOME" ]]; then
@@ -523,7 +521,6 @@ secure_shred_dir() {
         return 1
     fi
  
-    # ── Pass count ───────────────────────────────────────────────────
     echo
     echo -e "  Overwrite passes:"
     echo -e "  ${CYAN}[1]${RESET} 1 pass  — fast, good enough for most SSDs / already-encrypted"
@@ -538,10 +535,9 @@ secure_shred_dir() {
         1) passes=1  ;;
         3) passes=7  ;;
         4) passes=35 ;;
-        *) passes=3  ;;   # default: DoD 3-pass
+        *) passes=3  ;;
     esac
  
-    # ── Count files before starting ──────────────────────────────────
     local total_files
     total_files=$(find "$abs_target" -type f | wc -l)
  
@@ -562,7 +558,6 @@ secure_shred_dir() {
         return 0
     fi
  
-    # ── Confirmation ─────────────────────────────────────────────────
     echo -e "${RED}[!] This will permanently destroy $total_files file(s) in:${RESET}"
     echo -e "    ${BOLD}$abs_target${RESET}"
     echo
@@ -573,7 +568,6 @@ secure_shred_dir() {
         return 0
     fi
  
-    # ── Shred ────────────────────────────────────────────────────────
     echo
     echo -e "${GREEN}[➜] Shredding $total_files file(s) with $passes pass(es)...${RESET}"
     echo
@@ -594,15 +588,13 @@ secure_shred_dir() {
         fi
     done < <(find "$abs_target" -type f -print0)
  
-    echo   # newline after progress line
+    echo
     echo
  
-    # ── Remove remaining empty dirs and symlinks ──────────────────────
     echo -e "${GREEN}[➜] Removing directory structure...${RESET}"
-    find "$abs_target" -type l -delete 2>/dev/null   # remove any symlinks
+    find "$abs_target" -type l -delete 2>/dev/null
     rm -rf "$abs_target"
  
-    # ── Verify ───────────────────────────────────────────────────────
     echo
     echo -e "${CYAN}── Summary ──────────────────────────────────────────────────${RESET}"
     echo -e "  Files processed : $current"
@@ -638,7 +630,6 @@ secure_empty_trash() {
         return 1
     fi
 
-    # Count items using find to avoid glob expansion issues on empty dirs
     local file_count
     file_count=$(find "$TRASH_FILES" -mindepth 1 2>/dev/null | wc -l)
 
@@ -665,7 +656,6 @@ secure_empty_trash() {
     echo -e "${GREEN}[➜] Removing trash metadata...${RESET}"
     find "$TRASH_INFO" -mindepth 1 -name "*.trashinfo" -exec srm -v {} + 2>/dev/null
 
-    # Verify
     local remaining
     remaining=$(find "$TRASH_FILES" -mindepth 1 2>/dev/null | wc -l)
     if [[ $remaining -eq 0 ]]; then
@@ -693,7 +683,7 @@ secure_overwrite_free_space() {
 
     echo
     echo -e "${GREEN}[+] Overwriting free space on $root_partition...${RESET}"
-    sfill -v -z "$root_partition"
+    sfill -v -z /   
 
     echo
     echo -e "${GREEN}[+] Free space securely overwritten.${RESET}"
@@ -702,7 +692,7 @@ secure_overwrite_free_space() {
 system_audit() {
     echo "───────────────────────────────────────────────────────────────"
     echo "Lynis by CISOfy https://cisofy.com/lynis/"
-    echo -e "${YELLOW}[i] Lynis is an external tool not affiliated with Jas-toolbox.${RESET}"
+    echo -e "${YELLOW}[i] Lynis is an external tool not affiliated with Peregine.${RESET}"
     echo -e "${YELLOW}    It audits for vulnerabilities, misconfigurations, and compliance issues.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
     echo
@@ -715,11 +705,10 @@ system_audit() {
         return 1
     fi
 
-    # Warn if not running as root (Lynis gives incomplete results without sudo)
     if [[ $EUID -ne 0 ]]; then
         echo
         echo -e "${YELLOW}[!] Not running as root. Some checks may be skipped.${RESET}"
-        echo -e "${YELLOW}    For a full audit, run: sudo jas system_audit${RESET}"
+        echo -e "${YELLOW}    For a full audit, run: sudo peregine system_audit${RESET}"
         echo
         read -rp "Continue anyway? (y/n): " cont
         [[ "$cont" != "y" ]] && return 0
@@ -730,7 +719,6 @@ system_audit() {
     echo "───────────────────────────────────────────────────────────────"
     echo
 
-    # Stream output live instead of buffering
     sudo lynis audit system
     status=$?
 
@@ -743,7 +731,6 @@ system_audit() {
         return 1
     fi
 
-    # Parse the report file for a summary
     local report="/var/log/lynis-report.dat"
     if [[ -f "$report" ]]; then
         echo -e "${CYAN}── Audit Summary ────────────────────────────────────────────${RESET}"
@@ -753,7 +740,6 @@ system_audit() {
         warnings=$(sudo grep -c '^warning\[\]=' "$report" 2>/dev/null || echo 0)
         suggestions=$(sudo grep -c '^suggestion\[\]=' "$report" 2>/dev/null || echo 0)
 
-        # Colour the hardening index: <60 red, 60-79 yellow, 80+ green
         if [[ -n "$index" ]]; then
             if   (( index >= 80 )); then echo -e "  Hardening index : ${GREEN}${index}/100${RESET}"
             elif (( index >= 60 )); then echo -e "  Hardening index : ${YELLOW}${index}/100${RESET}"
@@ -770,10 +756,9 @@ system_audit() {
     fi
 }
 rootkit_hunt() {
-    echo -e "${GREEN}[+] System audit completed successfully.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
     echo "chkrootkit by chkrootkit Team https://chkrootkit.org/"
-    echo -e "${YELLOW}[i] chkrootkit is an external tool not affiliated with Jas-toolbox.${RESET}"
+    echo -e "${YELLOW}[i] chkrootkit is an external tool not affiliated with Peregine.${RESET}"
     echo "───────────────────────────────────────────────────────────────"
     echo
 
@@ -784,10 +769,9 @@ rootkit_hunt() {
         return 1
     fi
 
-    # chkrootkit needs root for meaningful results
     if [[ $EUID -ne 0 ]]; then
         echo -e "${YELLOW}[!] Not running as root. Many checks will be skipped or unreliable.${RESET}"
-        echo -e "${YELLOW}    For a full scan, run: sudo jas rootkit_hunt${RESET}"
+        echo -e "${YELLOW}    For a full scan, run: sudo peregine rootkit_hunt${RESET}"
         echo
         read -rp "Continue anyway? (y/n): " cont
         [[ "$cont" != "y" ]] && return 0
@@ -798,8 +782,6 @@ rootkit_hunt() {
     echo "───────────────────────────────────────────────────────────────"
     echo
 
-    # Capture and stream simultaneously so output is visible live
-    # and we can still parse it for the summary
     local tmpfile
     tmpfile=$(mktemp)
 
@@ -809,7 +791,6 @@ rootkit_hunt() {
     echo
     echo "───────────────────────────────────────────────────────────────"
 
-    # Parse results from the captured output
     local infected warnings suspicious
     infected=$(grep -ciE "^INFECTED"  "$tmpfile" 2>/dev/null || echo 0)
     warnings=$(grep -ciE "^WARNING"   "$tmpfile" 2>/dev/null || echo 0)
@@ -870,10 +851,8 @@ generate_password() {
 
     read -rp "Password length (default: 16, max: 128): " length
 
-    # Default to 16 if blank
     length=${length:-16}
 
-    # Validate: must be a number between 8 and 128
     if ! [[ "$length" =~ ^[0-9]+$ ]] || (( length < 8 || length > 128 )); then
         echo
         echo -e "\a"
@@ -884,26 +863,22 @@ generate_password() {
     echo
     echo -e "${CYAN}── Passwords ────────────────────────────────────────────────${RESET}"
 
-    # Alphanumeric (URL-safe, easy to type)
     local pass_alnum
     pass_alnum=$(openssl rand -base64 96 | tr -dc 'A-Za-z0-9' | head -c "$length")
     echo -e "  Alphanumeric : ${CYAN}${pass_alnum}${RESET}"
 
-    # Full ASCII symbols (maximum entropy)
     local pass_full
     pass_full=$(openssl rand -base64 96 | tr -dc 'A-Za-z0-9!@#$%^&*()-_=+[]{}|;:,.<>?' | head -c "$length")
     echo -e "  With symbols : ${CYAN}${pass_full}${RESET}"
 
-    # Hex (useful for keys/tokens)
     local pass_hex
     pass_hex=$(openssl rand -hex 64 | head -c "$length")
     echo -e "  Hex          : ${CYAN}${pass_hex}${RESET}"
 
     echo
-    # Rough entropy estimate: log2(charset^length)
     local entropy_alnum entropy_full
-    entropy_alnum=$(awk "BEGIN { printf \"%d\", $length * 5.954 }")  # log2(62)
-    entropy_full=$(awk  "BEGIN { printf \"%d\", $length * 6.554 }")  # log2(95)
+    entropy_alnum=$(awk "BEGIN { printf \"%d\", $length * 5.954 }")
+    entropy_full=$(awk  "BEGIN { printf \"%d\", $length * 6.554 }")
     echo -e "${CYAN}[i] Estimated entropy — alphanumeric: ~${entropy_alnum} bits  |  with symbols: ~${entropy_full} bits${RESET}"
     echo "───────────────────────────────────────────────────────────────"
 }
@@ -987,7 +962,6 @@ clean_metadata() {
         return 1
     fi
 
-    # Check it's a supported format
     local mimetype
     mimetype=$(file --mime-type -b "$file")
     case "$mimetype" in
@@ -1001,7 +975,6 @@ clean_metadata() {
             ;;
     esac
 
-    # Show existing metadata count before stripping
     local meta_count
     meta_count=$(exiftool "$file" 2>/dev/null | grep -v "^File\|^Directory\|^MIME\|^ExifTool" | wc -l)
     echo -e "${CYAN}[i] Found $meta_count metadata fields in '$file'.${RESET}"
@@ -1596,7 +1569,6 @@ decrypt_text_aes256() {
     echo "───────────────────────────────────────────────────────────────"
 }
 decrypt_text_aes128() {
-
     echo "───────────────────────────────────────────────────────────────"
     echo "OpenSSL by the OpenSSL Project https://openssl.org/"
     echo -e "${GREEN}[➜] Decrypting text (AES-128-CBC)...${RESET}"
@@ -1774,6 +1746,15 @@ encrypt_text_chacha20() {
 
     echo
     printf "%s" "$text" | openssl enc -chacha20 -pbkdf2 -iter 100000 -salt -a
+    status=$?  
+
+    if [[ $status -eq 0 ]]; then
+        echo -e "${GREEN}[+] Text encrypted.${RESET}"
+    else
+        echo -e "\a"
+        echo -e "${RED}[!] Encryption failed.${RESET}"
+        return 1
+    fi
 
     echo "───────────────────────────────────────────────────────────────"
 }
@@ -1816,13 +1797,6 @@ encrypt_file_twofish() {
         return 1
     fi
 
-    read -rp "Enter key size (128/192/256): " bits
-
-    if [[ "$bits" != "128" && "$bits" != "192" && "$bits" != "256" ]]; then
-        echo -e "${RED}[!] Invalid key size.${RESET}"
-        return 1
-    fi
-
     read -rp "Enter file to encrypt: " file
 
     if [[ ! -f "$file" ]]; then
@@ -1838,7 +1812,6 @@ encrypt_file_twofish() {
 
     if [[ $status -eq 0 ]]; then
         echo -e "${GREEN}[+] File encrypted → $outfile${RESET}"
-        echo -e "${CYAN}[i] Twofish supports 128/192/256-bit keys internally.${RESET}"
     else
         echo -e "${RED}[!] Encryption failed.${RESET}"
         return 1
@@ -1886,13 +1859,6 @@ encrypt_file_serpent() {
     if ! command -v gpg >/dev/null 2>&1; then
         echo -e "${RED}[!] GPG is not installed.${RESET}"
         echo -e "${YELLOW}[i] Install with: sudo apt install gnupg${RESET}"
-        return 1
-    fi
-
-    read -rp "Enter key size (128/192/256): " bits
-
-    if [[ "$bits" != "128" && "$bits" != "192" && "$bits" != "256" ]]; then
-        echo -e "${RED}[!] Invalid key size.${RESET}"
         return 1
     fi
 
@@ -1949,7 +1915,7 @@ decrypt_file_serpent() {
     fi
 
     echo "───────────────────────────────────────────────────────────────"
-}   
+}
 # Other
 license() {
     echo "───────────────────────────────────────────────────────────────"
@@ -1989,7 +1955,7 @@ clone_source() {
     echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
-    if ! command -v git >/dev/null 2>&1; then  # Check if git is installed 
+    if ! command -v git >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: apt install git"
         exit 1
@@ -1997,9 +1963,9 @@ clone_source() {
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
 
-    git clone https://codeberg.org/JasperC/Peregine.git # Clone the source code from the specified repository
+    git clone https://codeberg.org/JasperC/Peregine.git
 
-     if [[ $? -ne 0 ]]; then # Check if the git clone command executed successfully
+     if [[ $? -ne 0 ]]; then
         echo -e "${RED}[!]${RESET} Failed to clone source code."
         return 1
     else
@@ -2020,7 +1986,7 @@ version() {
     echo "${DIVIDER}"
 }
 encryption () {
-  echo -e "${YELLOW}Encrypt / Decrypt Files${RESET}"
+    echo -e "${YELLOW}Encrypt / Decrypt Files${RESET}"
     printf "  %-36s %s\n" "encrypt_file_aes256"         "Encrypt file (AES-256-CBC)"
     printf "  %-36s %s\n" "encrypt_file_aes128"         "Encrypt file (AES-128-CBC)"
     printf "  %-36s %s\n" "decrypt_file_aes256"         "Decrypt file (AES-256-CBC)"
@@ -2050,14 +2016,10 @@ encryption () {
 }
 security () {
     echo -e "${YELLOW}Security & Hardening${RESET}"
-    printf "  %-36s %s\n" "setup_clamav"                        "Install & configure ClamAV"
-    printf "  %-36s %s\n" "setup_usbguard"                      "Install & configure USBGuard"
-    printf "  %-36s %s\n" "setup_ufw"                           "Install & configure UFW"
-    printf "  %-36s %s\n" "setup_tor_browser"                   "Install Tor Browser Launcher"
     printf "  %-36s %s\n" "system_audit/audit"                  "Run Lynis security audit"
     printf "  %-36s %s\n" "rootkit_hunt"                        "Scan for rootkits (chkrootkit)"
-    printf "  %-36s %s\n" "secure_empty_trash/set/SET"          "Securely wipe Trash (srm)"
-    printf "  %-36s %s\n" "secure_overwrite_free_space/sofs"    "Wipe free disk space (srm)"
+    printf "  %-36s %s\n" "secure_empty_trash/SET"              "Securely wipe Trash (srm)"   
+    printf "  %-36s %s\n" "secure_overwrite_free_space/sofs"    "Wipe free disk space (sfill)"
     printf "  %-36s %s\n" "secure_shred_dir"                    "Securely shred all files in a directory (shred)"
     echo
 }
@@ -2065,13 +2027,12 @@ networking() {
     echo -e "${YELLOW}Networking / OSINT${RESET}"
     printf "  %-36s %s\n" "local_server"              "Spin up a local HTTP file server (Python)"
     printf "  %-36s %s\n" "whois_lookup/whois"        "WHOIS lookup for a domain"
-    printf "  %-36s %s\n" "ping"                      "Ping a host (6 packets)"
+    printf "  %-36s %s\n" "ping"                      "Ping a host (6 packets)"    
     printf "  %-36s %s\n" "traceroute"                "Traceroute to a host"
     printf "  %-36s %s\n" "dns_info/dns"              "DNS records via dig"
     printf "  %-36s %s\n" "get_ip/ip"                 "Show your public IP"
     printf "  %-36s %s\n" "ip_osint"                  "IP/domain OSINT (ipinfo.io)"
     printf "  %-36s %s\n" "maigret_search/maigret"    "Username OSINT (Maigret)"
-    printf "  %-36s %s\n" "tor_connect/tor"           "Start Tor service"
     echo
 }
 aes() {
@@ -2096,8 +2057,8 @@ test_colors() {
     echo -e "${YELLOW}This is YELLOW${RESET}"
     echo -e "${BLUE}This is BLUE${RESET}"
     echo -e "${CYAN}This is CYAN${RESET}"
-    echo -e "${WHITE}This is WHITE${RESET}"
-    echo -e "${BLACK}This is BLACK${RESET}"
+    echo -e "${WHITE}This is WHITE${RESET}"   
+    echo -e "${BLACK}This is BLACK${RESET}"   
     echo -e "${BOLD}This is BOLD${RESET}"
     echo -e "${BOLD}${RED}This is BOLD RED${RESET}"
     echo -e "${BOLD}${GREEN}This is BOLD GREEN${RESET}"
@@ -2121,9 +2082,6 @@ ip () {
 }
 maigret() {
     maigret_search
-}
-tor() {
-    tor_connect
 }
 rm_tmp() {
     remove_temp_files
@@ -2158,9 +2116,6 @@ metadata() {
 genkey() {
     generate_key
 }
-fic() {
-    file_integrity_check
-}
 rot13() {
     rot13_cipher
 }
@@ -2171,6 +2126,9 @@ l() {
     license
 }
 v() {
+    version
+}
+V() {  
     version
 }
 ghosttrash() {
@@ -2188,10 +2146,9 @@ _PEREGINE_COMMANDS=(
     traceroute
     dns_info dns
     get_ip ip
-    ip_osint 
+    ip_osint
     maigret_search maigret
     update_apps update
-    systeminfo
     remove_temp_files rm_tmp
     system_audit audit
     rootkit_hunt rootkit
@@ -2202,7 +2159,6 @@ _PEREGINE_COMMANDS=(
     secure_delete sedl
     clean_metadata metadata
     generate_key genkey
-    file_integrity_check fic
     rot13_cipher rot13
     encrypt_text_aes256
     decrypt_text_aes256
@@ -2226,8 +2182,8 @@ _PEREGINE_COMMANDS=(
     decrypt_file_aes256 
     encrypt_file_aes128
     decrypt_file_aes128
-    clean_system bleachbit
-    strip_metadata_mat2 mat2
+    clean_system    
+    strip_metadata_mat2   
     ghosttrash
     stalkip
     encryption
@@ -2236,27 +2192,26 @@ _PEREGINE_COMMANDS=(
     aes
     license l
     clone_source c
-    version v
+    version v V    
 )
 
-_peregrine_list_commands() {
+_peregine_list_commands() { 
     echo "───────────────────────────────────────────────────────────────"
     cat <<EOF
-PPPPPP  EEEEEEE RRRRRR  EEEEEEE   GGGG  IIIII NN   NN EEEEEEE 
-PP   PP EE      RR   RR EE       GG  GG  III  NNN  NN EE      
-PPPPPP  EEEEE   RRRRRR  EEEEE   GG       III  NN N NN EEEEE   
-PP      EE      RR  RR  EE      GG   GG  III  NN  NNN EE      
-PP      EEEEEEE RR   RR EEEEEEE  GGGGGG IIIII NN   NN EEEEEEE 
-                                                              
+PPPPPP  EEEEEEE RRRRRR  EEEEEEE   GGGG  IIIII NN   NN EEEEEEE 
+PP   PP EE      RR   RR EE       GG  GG  III  NNN  NN EE      
+PPPPPP  EEEEE   RRRRRR  EEEEE   GG       III  NN N NN EEEEE   
+PP      EE      RR  RR  EE      GG   GG  III  NN  NNN EE      
+PP      EEEEEEE RR   RR EEEEEEE  GGGGGG IIIII NN   NN EEEEEEE 
+                                                              
 EOF
     echo "───────────────────────────────────────────────────────────────"
-    echo -e "${CYAN}Usage:${RESET}  peregrine <command>"
-    echo
+    echo -e "${CYAN}Usage:${RESET}  peregine <command>"   
     echo -e "${YELLOW}Networking / OSINT${RESET}"
     echo "───────────────────────────────────────────────────────────────"
     printf "  %-36s %s\n" "local_server"                   "Spin up a local HTTP file server (Python)"
     printf "  %-36s %s\n" "whois_lookup/whois"             "WHOIS lookup for a domain"
-    printf "  %-36s %s\n" "ping"                           "Ping a host (6 packets)"
+    printf "  %-36s %s\n" "ping"                           "Ping a host (6 packets)"  
     printf "  %-36s %s\n" "traceroute"                     "Traceroute to a host"
     printf "  %-36s %s\n" "dns_info/dns"                   "DNS records via dig"
     printf "  %-36s %s\n" "get_ip/ip"                      "Show your public IP"
@@ -2265,24 +2220,23 @@ EOF
     echo
     echo -e "${YELLOW}System${RESET}"
     echo "───────────────────────────────────────────────────────────────"
-    printf "  %-36s %s\n" "update_apps/update"                 "Update APT / Flatpak / Snap"
-    printf "  %-36s %s\n" "systeminfo"                         "Show system info (fastfetch)"
-    printf "  %-36s %s\n" "remove_temp_files/rm_tmp"           "Delete /tmp/*"
-    printf "  %-36s %s\n" "clean_system/bleachbit"           "Clean system with BleachBit"
-    printf "  %-36s %s\n" "strip_metadata_mat2/mat2"           "Strip metadata with mat2"   
+    printf "  %-36s %s\n" "update_apps/update"             "Update APT / Flatpak / Snap"
+    printf "  %-36s %s\n" "remove_temp_files/rm_tmp"       "Delete /tmp/*"
+    printf "  %-36s %s\n" "clean_system"                   "Clean system with BleachBit"    
+    printf "  %-36s %s\n" "strip_metadata_mat2"            "Strip metadata with mat2"      
     echo
     echo -e "${YELLOW}Security & Hardening${RESET}"
     echo "───────────────────────────────────────────────────────────────"
     printf "  %-36s %s\n" "system_audit/audit"                "Run Lynis security audit"
     printf "  %-36s %s\n" "rootkit_hunt"                      "Scan for rootkits (chkrootkit)"
-    printf "  %-36s %s\n" "secure_empty_trash/set/SET"        "Securely wipe Trash (srm)"
-    printf "  %-36s %s\n" "secure_overwrite_free_space/sofs"  "Wipe free disk space (srm)"
+    printf "  %-36s %s\n" "secure_empty_trash/SET"            "Securely wipe Trash (srm)" 
+    printf "  %-36s %s\n" "secure_overwrite_free_space/sofs"  "Wipe free disk space (sfill)"
     printf "  %-36s %s\n" "secure_shred_dir"                  "Securely shred all files in a directory (shred)"
     echo
     echo -e "${YELLOW}Privacy / Files${RESET}"
     echo "───────────────────────────────────────────────────────────────"
     printf "  %-36s %s\n" "generate_password/genpass"           "Generate a secure password"
-    printf "  %-36s %s\n" "secure_delete/sedl"                  "Securely delete a file or directory(shred)"
+    printf "  %-36s %s\n" "secure_delete/sedl"                  "Securely delete a file or directory (shred)"
     printf "  %-36s %s\n" "clean_metadata"                      "Strip image metadata (exiftool)"
     printf "  %-36s %s\n" "generate_key/genkey"                 "Generate a 128/192/256/512-bit key"
     echo
@@ -2318,18 +2272,18 @@ EOF
     echo -e "${YELLOW}Misc${RESET}"
     echo "───────────────────────────────────────────────────────────────"
     printf "  %-36s %s\n" "license"                     "Show license"
-    printf "  %-36s %s\n" "clone_source"                "Clone source from GitHub"
-    printf "  %-36s %s\n" "version/v/V"                 "Show version"
+    printf "  %-36s %s\n" "clone_source"                "Clone source from Codeberg"   
+    printf "  %-36s %s\n" "version/v/V"                 "Show version"  
     echo
 }
 
 if [[ $# -eq 0 ]]; then
-    _peregrine_list_commands
+    _peregine_list_commands   
 elif [[ " ${_PEREGINE_COMMANDS[*]} " == *" $1 "* ]]; then
     "$1"
 else
     echo -e "${RED}[!] Unknown command: $1${RESET}"
-    echo -e "    Run ${CYAN}peregrine${RESET} without arguments to list all commands."
+    echo -e "    Run ${CYAN}peregine${RESET} without arguments to list all commands."   
     exit 1
 fi
 
