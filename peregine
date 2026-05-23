@@ -744,104 +744,64 @@ ip_osint() {
         echo -e "${CYAN}OSINT Information for $target:${RESET}"
         echo -e "${CYAN}$output${RESET}"
     fi
+    echo "[->] Command executed"
+    echo "{DIVIDER}"
 }
-maigret_search() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${YELLOW}[i] Note: This tool uses maigret for username OSINT search.${RESET}"
-    echo -e "${YELLOW}[i] Only use on authorized systems, and respect privacy policies.${RESET}"
-    echo -e "${YELLOW}[i] Gathering OSINT data can be illegal in certain cases, use wisely.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Maigret Username OSINT${RESET}"
-    echo
+maigret_search () {
+    echo "{DIVIDER}"
+    echo "[->] Checking dependencies"
 
-    if ! command -v maigret &>/dev/null; then
-        echo -e "\a"
-        echo -e "${RED}[!] Maigret not installed.${RESET}"
-        echo -e "${YELLOW}[➜] Install with: pipx install maigret${RESET}"
-        return
+    if ! command -v maigret >/dev/null 2>&1; then  # Check if maigret is installed 
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: pipx install maigret"
+        exit 1
     fi
 
-    read -p "Enter username to search: " username
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo 
 
-    echo -e "${PURPLE}"
-    read -p "[TOR] Route through Tor? (y/n): " USE_TOR
-    echo -e "${RESET}"
+    echo "{DIVIDER}"
+    echo -e "${RED}[!]${RESET} Note: Maigret is a powerful OSINT tool for username enumeration across various platforms. Use it responsibly and only on authorized systems."
+    echo -e "${RED}[!]${RESET} Always respect privacy policies and legal boundaries when"
+    echo -e "${RED}[!]${RESET} gathering OSINT data. Misuse can lead to legal consequences."
+    echo "{DIVIDER}"
 
-    local output_dir="maigret_${username}_$(date +%s)"
-    mkdir -p "$output_dir"
+    echo -n "Enter username to search for: "
+    read -r username # Read user input for the username to search for
 
-    echo -e "${GREEN}[➜] Searching for username: ${username}${RESET}"
-    echo -e "${YELLOW}[!] Note: Requests go to external sites.${RESET}"
-    echo
-
-    run_with_tor maigret "$username" -J simple --folderoutput "$output_dir" --top-sites 50 --timeout 5
-
-    echo
-    echo -e "${GREEN}[+] Scan completed.${RESET}"
-    echo -e "${GREEN}[➜] Results saved to: ${output_dir}/${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-}
-tor_connect() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${PURPLE}[➜] Initializing Tor connection...${RESET}"
-    echo
-
-    if ! command -v tor &>/dev/null; then
-        echo -e "\a"
-        echo -e "${RED}[!] Tor is not installed.${RESET}"
-        echo -e "${YELLOW}[➜] Install with: sudo apt install tor torsocks${RESET}"
-        return
-    fi
-
-    echo -e "${PURPLE}[➜] Starting Tor service...${RESET}"
-    sudo systemctl start tor
-
-    if systemctl is-active --quiet tor; then
-        echo -e "${PURPLE}[+] Tor is running.${RESET}"
-    else
-        echo -e "\a"
-        echo -e "${RED}[!] Failed to start Tor.${RESET}"
-        return
-    fi
-
-    echo
-    echo -e "${PURPLE}[➜] Checking Tor IP...${RESET}"
-    torsocks curl -s https://check.torproject.org/api/ip | grep -o '"IP":"[^"]*' | cut -d'"' -f4
-    echo
-    echo -e "${PURPLE}[+] Traffic is now routed through Tor (torsocks).${RESET}"
-
-    echo
-    read -p "Install tor browser? (y/n): " install_tor_browser
-    if [[ "$install_tor_browser" == "y" ]]; then
-        echo -e "${PURPLE}[➜] Installing Tor Browser...${RESET}"
-        sudo apt install torbrowser-launcher
-        echo -e "${PURPLE}[+] Tor Browser installed successfully.${RESET}"
-    fi
-    echo "───────────────────────────────────────────────────────────────"
-}
-check_tor() {
-    local api_url="https://check.torproject.org/api/ip"
-    local response ip is_tor
-
-    echo "[->] Checking Tor status..."
-
-    response=$(curl -s --max-time 10 "$api_url" 2>/dev/null)
-
-    if [[ -z "$response" ]]; then
-        echo "${YELLOW}[!] Failed to reach $api_url. Is Tor/network up?${RESET}"
+    if [[ -z "$username" ]]; then # Check if the user entered a username
+        echo -e "${RED}[!]${RESET} No username entered. Exiting."
         return 1
     fi
 
-    ip=$(echo "$response" | grep -oP '"IP"\s*:\s*"\K[^"]+')
-    is_tor=$(echo "$response" | grep -oP '"IsTor"\s*:\s*\K(true|false)')
+    echo -e "${PURPLE}"
+    read -p "Route through Tor? (y/n): " USE_TOR
+    echo -e "${RESET}"
 
-    if [[ "$is_tor" == "true" ]]; then
-        echo "${GREEN}[+] You ARE connected through Tor.${RESET}"
-    else
-        echo "${RED}[!] You are NOT using Tor.${RESET}"
+    if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+        if ! command -v torsocks >/dev/null 2>&1; then # Check if torsocks is installed
+            echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+            echo "Install with: sudo apt install torsocks"
+            exit 1
+        fi
+        echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        output=$(torsocks maigret "$username" 2>&1) # Use torsocks to route the maigret command through Tor
+        status=$? # Capture the exit status of the maigret command to check for errors
+    else 
+        output=$(maigret "$username" 2>&1) # Perform a standard maigret search without Tor
+        status=$? # Capture the exit status of the maigret command to check for errors
     fi
 
-    echo "${CYAN}[i] Visible IP: ${ip:-unknown}${RESET}"
+    if [[ $status -ne 0 ]]; then # Check if the maigret command executed successfully
+        echo -e "${RED}[!]${RESET} Maigret search failed: $output"
+        return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Maigret search successful for $username"
+        echo -e "${CYAN}Maigret results for $username:${RESET}"
+        echo -e "${CYAN}$output${RESET}"
+    fi
+    echo "[->] Command executed"
+    echo "{DIVIDER}"
 }
 view_connections() {
     echo "───────────────────────────────────────────────────────────────"
@@ -3140,8 +3100,6 @@ EOF
     printf "  %-36s %s\n" "get_ip/ip"                      "Show your public IP"
     printf "  %-36s %s\n" "ip_osint"                       "IP/domain OSINT (ipinfo.io)"
     printf "  %-36s %s\n" "maigret_search/maigret"         "Username OSINT (Maigret)"
-    printf "  %-36s %s\n" "tor_connect/tor"                "Start Tor service"
-    printf "  %-36s %s\n" "check_tor"                      "Check if Tor is running"
     printf "  %-36s %s\n" "subdomain_enum"                 "Enumerate subdomains (subfinder)"
     printf "  %-36s %s\n" "active_connections"                  "Show active network connections (ss)"
     echo
