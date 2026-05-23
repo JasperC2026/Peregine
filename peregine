@@ -499,59 +499,38 @@ whois_lookup() {
     echo "{DIVIDER}"
 }
 ping() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -n "Enter item to ping (domain or IP): "
-    read -r itemping
-    echo
+    echo "{DIVIDER}"
+    echo "[->] Checking dependencies"
 
-    if [[ -z "$itemping" ]]; then
-        echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
+    if ! command -v ping >/dev/null 2>&1; then  # Check if ping is installed 
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install iputils-ping"
+        exit 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo 
+
+    echo -n "Enter IP address or domain to ping: "
+    read -r target # Read user input for the IP address or domain to ping
+
+    if [[ -z "$target" ]]; then # Check if the user entered a target
+        echo -e "${RED}[!]${RESET} No target entered. Exiting."
         return 1
     fi
 
-    # Strip protocol/path if user pastes a URL
-    itemping=$(echo "$itemping" | sed -E 's|^https?://||; s|/.*||')
+    ping -c 4 "$target" # Ping the specified target 4 times
+    status=$? # Capture the exit status of the ping command to check for errors
 
-    # Validate: IPv4, IPv6, or domain
-    local ipv4='^([0-9]{1,3}\.){3}[0-9]{1,3}$'
-    local ipv6='^([0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}$'
-    local domain='^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$'
-
-    if ! echo "$itemping" | grep -qE "${ipv4}|${ipv6}|${domain}"; then
-        echo -e "${RED}[!] Invalid target: '$itemping'${RESET}"
-        echo -e "${YELLOW}    Expected: a domain (example.com), IPv4 (1.2.3.4), or IPv6 (::1)${RESET}"
+    if [[ $status -ne 0 ]]; then # Check if the ping command executed successfully
+        echo -e "${RED}[!]${RESET} Ping failed: $output"
         return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Ping successful"
     fi
-
-    # Extra check: each IPv4 octet must be 0-255
-    if echo "$itemping" | grep -qE "$ipv4"; then
-        IFS='.' read -r o1 o2 o3 o4 <<< "$itemping"
-        if (( o1 > 255 || o2 > 255 || o3 > 255 || o4 > 255 )); then
-            echo -e "${RED}[!] Invalid IPv4 address: '$itemping' (octet out of range).${RESET}"
-            return 1
-        fi
-    fi
-
-    output=$(command ping -c 6 "$itemping" 2>&1)
-    status=$?
-
-    echo -e "${CYAN}$output${RESET}"
-
-    if [[ $status -ne 0 ]]; then
-        echo -e "\a"
-        echo -e "${RED}[!] Ping failed (host unreachable or network issue).${RESET}"
-        return 1
-    fi
-
-    if echo "$output" | grep -q "100% packet loss"; then
-        echo -e "\a"
-        echo -e "${RED}[!] Ping failed (100% packet loss).${RESET}"
-        return 1
-    fi
-
-    echo
-    echo -e "${GREEN}[+] Ping completed successfully.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
+    
+    echo "[->] Command executed"
+    echo "{DIVIDER}"
 }
 traceroute() {
     echo "───────────────────────────────────────────────────────────────"
