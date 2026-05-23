@@ -432,6 +432,7 @@ local_server() {
     else
         echo -e "${GREEN}[+]${RESET} Local server started successfully on port $port"
     fi
+
     echo "[->] Command executed" 
     echo "{DIVIDER}"
 }
@@ -480,21 +481,20 @@ whois_lookup() {
         status=$? # Capture the exit status of the whois command to check for errors
     fi
 
-    if [[ $status -ne 0 ]]; then # Check if the whois command executed successfully
-        echo -e "${RED}[!]${RESET} Whois lookup failed: $output"
-        return 1
-    else
-        echo -e "${GREEN}[+]${RESET} Whois lookup successful"
-    fi
-
     if echo "$output" | grep -qiE "no match|not found|no data found|status: free"; then
         echo -e "\a"
         echo -e "${RED}[!]${RESET} Domain not found or no WHOIS data available."
         return 1
     fi
 
-    echo -e "${CYAN}WHOIS Information for $domain:${RESET}"
-    echo -e "${CYAN}$output${RESET}"
+    if [[ $status -ne 0 ]]; then # Check if the whois command executed successfully
+        echo -e "${RED}[!]${RESET} Whois lookup failed: $output"
+        return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Whois lookup successful"
+        echo -e "${CYAN}WHOIS Information for $domain:${RESET}"
+        echo -e "${CYAN}$output${RESET}"
+    fi
     echo "[->] Command executed"
     echo "{DIVIDER}"
 }
@@ -519,8 +519,23 @@ ping() {
         return 1
     fi
 
-    ping -c 4 "$target" # Ping the specified target 4 times
-    status=$? # Capture the exit status of the ping command to check for errors
+    echo -e "${PURPLE}"
+    read -p "[TOR] Route through Tor? (y/n): " USE_TOR # Ask the user if they want to route through Tor
+    echo -e "${RESET}"
+
+    if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+        if ! command -v torsocks >/dev/null 2>&1; then # Check if torsocks is installed
+            echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+            echo "Install with: sudo apt install torsocks"
+            exit 1
+        fi
+        echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        ping  -c 4 "$target" # Use torsocks to route the ping command through Tor
+        status=$? # Capture the exit status of the ping command to check for errors
+    else 
+        ping -c 4 "$target" # Perform a standard ping without Tor
+        status=$? # Capture the exit status of the ping command to check for errors
+    fi
 
     if [[ $status -ne 0 ]]; then # Check if the ping command executed successfully
         echo -e "${RED}[!]${RESET} Ping failed: $output"
@@ -528,7 +543,7 @@ ping() {
     else
         echo -e "${GREEN}[+]${RESET} Ping successful"
     fi
-    
+
     echo "[->] Command executed"
     echo "{DIVIDER}"
 }
@@ -548,94 +563,101 @@ traceroute() {
     echo -n "Enter IP address or domain to traceroute: "
     read -r target # Read user input for the IP address or domain to traceroute
 
-    if ! echo "$target" | grep -qE '^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$|^(([0-9]{1,3}\.){3}[0-9]{1,3})$'; then # Validate the target format using a regex for both domain and IP address
-        echo -e "${RED}[!] Invalid target format: '$target'${RESET}"
-        return 1
-    fi
-    
     if [[ -z "$target" ]]; then # Check if the user entered a target
         echo -e "${RED}[!]${RESET} No target entered. Exiting."
         return 1
     fi
 
-    traceroute "$target" # Perform a traceroute to the specified target
-    status=$? # Capture the exit status of the traceroute command to check for errors
+    if ! echo "$target" | grep -qE '^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$|^(([0-9]{1,3}\.){3}[0-9]{1,3})$'; then # Validate the target format using a regex for both domain and IP address
+        echo -e "${RED}[!] Invalid target format: '$target'${RESET}"
+        return 1
+    fi
+
+    echo -e "${PURPLE}"
+    read -p "[TOR] Route through Tor? (y/n): " USE_TOR # Ask the user if they want to route through Tor
+    echo -e "${RESET}"
+
+    if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+        if ! command -v torsocks >/dev/null 2>&1; then # Check if torsocks is installed
+            echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+            echo "Install with: sudo apt install torsocks"
+            exit 1
+        fi
+        echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        output=$(torsocks traceroute "$target" 2>&1) # Use torsocks to route the traceroute command through Tor
+        status=$? # Capture the exit status of the traceroute command to check for errors
+    else 
+        output=$(traceroute "$target" 2>&1) # Perform a standard traceroute without Tor
+        status=$? # Capture the exit status of the traceroute command to check for errors
+    fi
 
     if [[ $status -ne 0 ]]; then # Check if the traceroute command executed successfully
         echo -e "${RED}[!]${RESET} Traceroute failed: $output"
         return 1
     else
         echo -e "${GREEN}[+]${RESET} Traceroute successful"
+        echo -e "${CYAN}Traceroute results for $target:${RESET}"
+        echo -e "${CYAN}$output${RESET}"
     fi
 
     echo "[->] Command executed"
     echo "{DIVIDER}"
 }
 dns_info() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -n "Enter domain or IP to get DNS info: "
-    read -r domaindns
+    echo "{DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v dig >/dev/null 2>&1; then  # Check if dig is installed 
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install dnsutils"
+        exit 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo 
 
-    if [[ -z "$domaindns" ]]; then
-        echo -e "${YELLOW}[!] Error: Target cannot be empty.${RESET}"
+    echo -n "Enter domain to retrieve DNS information: "
+    read -r domain # Read user input for the domain to retrieve DNS information for
+
+    if [[ -z "$domain" ]]; then # Check if the user entered a domain
+        echo -e "${RED}[!]${RESET} No domain entered. Exiting."
         return 1
     fi
 
-    # Strip protocol/path if user pastes a URL
-    domaindns=$(echo "$domaindns" | sed -E 's|^https?://||; s|/.*||')
-
-    # Validate: IPv4, IPv6, or domain
-    local ipv4='^([0-9]{1,3}\.){3}[0-9]{1,3}$'
-    local ipv6='^([0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}$'
-    local domain='^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$'
-
-    if ! echo "$domaindns" | grep -qE "${ipv4}|${ipv6}|${domain}"; then
-        echo -e "${RED}[!] Invalid target: '$domaindns'${RESET}"
-        echo -e "${YELLOW}    Expected: a domain (example.com), IPv4 (1.2.3.4), or IPv6 (::1)${RESET}"
+    if ! echo "$domain" | grep -qE '^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$'; then # Validate the domain format using a regex
+        echo -e "${RED}[!] Invalid domain format: '$domain'${RESET}"
         return 1
-    fi
-
-    # Extra check: each IPv4 octet must be 0-255
-    if echo "$domaindns" | grep -qE "$ipv4"; then
-        IFS='.' read -r o1 o2 o3 o4 <<< "$domaindns"
-        if (( o1 > 255 || o2 > 255 || o3 > 255 || o4 > 255 )); then
-            echo -e "${RED}[!] Invalid IPv4 address: '$domaindns' (octet out of range).${RESET}"
-            return 1
-        fi
     fi
 
     echo -e "${PURPLE}"
-    read -p "[TOR] Route through Tor? (y/n): " USE_TOR
+    read -p "[TOR] Route through Tor? (y/n): " USE_TOR # Ask the user if they want to route through Tor
     echo -e "${RESET}"
 
-    echo -e "${GREEN}[➜] Getting DNS info for $domaindns...${RESET}"
-    sleep 0.5
-
-    output=$(run_with_tor dig "$domaindns" 2>&1)
-    status=$?
-
-    echo -e "${CYAN}$output${RESET}"
-
-    if [[ $status -ne 0 ]]; then
-        echo -e "\a"
-        echo -e "${RED}[!] DNS lookup failed (network/DNS issue).${RESET}"
-        return 1
+    if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+        if ! command -v torsocks >/dev/null 2>&1; then # Check if torsocks is installed
+            echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+            echo "Install with: sudo apt install torsocks"
+            exit 1
+        fi
+        echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        output=$(torsocks dig "$domain" ANY +noall +answer 2>&1) # Use torsocks to route the dig command through Tor
+        status=$? # Capture the exit status of the dig command to check for errors
+    else 
+        output=$(dig "$domain" ANY +noall +answer 2>&1) # Perform a standard dig lookup without Tor
+        status=$? # Capture the exit status of the dig command to check for errors
     fi
 
-    if echo "$output" | grep -q "status: NXDOMAIN"; then
-        echo -e "${YELLOW}[!] Domain does not exist (NXDOMAIN).${RESET}"
+    if [[ $status -ne 0 ]]; then # Check if the dig command executed successfully
+        echo -e "${RED}[!]${RESET} Failed to retrieve DNS information: $output"
         return 1
+    else
+        echo -e "${GREEN}[+]${RESET} DNS information retrieved successfully for $domain"
+        echo -e "${CYAN}DNS Information for $domain:${RESET}"
+        echo -e "${CYAN}$output${RESET}"
     fi
 
-    if ! echo "$output" | grep -q "ANSWER SECTION"; then
-        echo -e "${YELLOW}[!] No DNS records found.${RESET}"
-        return 1
-    fi
-
-    echo
-    echo -e "${GREEN}[+] DNS info retrieved successfully.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
+    echo "[->] Command executed"
+    echo "{DIVIDER}"
 }
 get_ip() {
     echo -e "$───────────────────────────────────────────────────────────────"
