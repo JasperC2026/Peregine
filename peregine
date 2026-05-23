@@ -803,72 +803,6 @@ maigret_search () {
     echo "[->] Command executed"
     echo "{DIVIDER}"
 }
-view_connections() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "ss / netstat — active network connections viewer"
-    echo -e "${YELLOW}[i] Shows listening ports and established connections.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-    echo
-
-    local tool
-    if command -v ss >/dev/null 2>&1; then tool="ss"
-    elif command -v netstat >/dev/null 2>&1; then tool="netstat"
-    else
-        echo -e "\a${RED}[!] Neither 'ss' nor 'netstat' is available.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install iproute2${RESET}"
-        return 1
-    fi
-
-    echo -e "${CYAN}[i] Using: $tool${RESET}"
-    echo
-
-    echo -e "${BOLD}Show:${RESET}"
-    echo "  1) All listening ports"
-    echo "  2) All established connections"
-    echo "  3) TCP only"
-    echo "  4) UDP only"
-    echo "  5) Full overview (listening + established, TCP + UDP)"
-    echo
-    read -rp "Choice [1-5]: " choice
-
-    local output
-    case "$choice" in
-        1)
-            echo -e "${CYAN}── Listening ports ──────────────────────────────────────────${RESET}"
-            if [[ "$tool" == "ss" ]]; then output=$(ss -tlnup 2>/dev/null)
-            else output=$(netstat -tlnup 2>/dev/null); fi ;;
-        2)
-            echo -e "${CYAN}── Established connections ──────────────────────────────────${RESET}"
-            if [[ "$tool" == "ss" ]]; then output=$(ss -tnp state established 2>/dev/null)
-            else output=$(netstat -tnp 2>/dev/null | grep ESTABLISHED); fi ;;
-        3)
-            echo -e "${CYAN}── TCP connections ──────────────────────────────────────────${RESET}"
-            if [[ "$tool" == "ss" ]]; then output=$(ss -tnp 2>/dev/null)
-            else output=$(netstat -tnp 2>/dev/null); fi ;;
-        4)
-            echo -e "${CYAN}── UDP connections ──────────────────────────────────────────${RESET}"
-            if [[ "$tool" == "ss" ]]; then output=$(ss -unp 2>/dev/null)
-            else output=$(netstat -unp 2>/dev/null); fi ;;
-        5)
-            echo -e "${CYAN}── Full overview ─────────────────────────────────────────────${RESET}"
-            if [[ "$tool" == "ss" ]]; then output=$(ss -tunap 2>/dev/null)
-            else output=$(netstat -tunap 2>/dev/null); fi ;;
-        *)
-            echo -e "\a${RED}[!] Invalid choice. Enter 1–5.${RESET}"; return 1 ;;
-    esac
-
-    echo -e "${CYAN}$output${RESET}"
-    echo
-
-    local listen_count
-    if [[ "$tool" == "ss" ]]; then listen_count=$(ss -tlnup 2>/dev/null | grep -c LISTEN || echo 0)
-    else listen_count=$(netstat -tlnup 2>/dev/null | grep -c LISTEN || echo 0); fi
-    echo -e "${CYAN}[i] Total listening ports: $listen_count${RESET}"
-
-    echo
-    echo -e "${GREEN}[+] Done.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-}
 # System Maintenance
 update_apps() {
     echo "───────────────────────────────────────────────────────────────"
@@ -3008,7 +2942,6 @@ stalkip() {
 # ─── Command dispatcher ───────────────────────────────────────────────────────
 
 _PEREGINE_COMMANDS=(
-    subdomain_enum
     local_server
     whois_lookup whois
     ping
@@ -3017,16 +2950,9 @@ _PEREGINE_COMMANDS=(
     get_ip ip
     ip_osint 
     maigret_search maigret
-    tor_connect tor
-    check_tor
     update_apps update
     systeminfo
     remove_temp_files rm_tmp
-    setup_clamav
-    setup_usbguard
-    setup_ufw
-    setup_tor_browser
-    install_onionshare
     system_audit audit
     rootkit_hunt rootkit
     secure_empty_trash SET
@@ -3060,10 +2986,6 @@ _PEREGINE_COMMANDS=(
     decrypt_file_aes256 
     encrypt_file_aes128
     decrypt_file_aes128
-    log_viewer
-    active_connections
-    verify_installed_packages vip
-    view_connections netstat
     clean_system bleachbit
     strip_metadata_mat2 mat2
     ghosttrash
@@ -3100,25 +3022,17 @@ EOF
     printf "  %-36s %s\n" "get_ip/ip"                      "Show your public IP"
     printf "  %-36s %s\n" "ip_osint"                       "IP/domain OSINT (ipinfo.io)"
     printf "  %-36s %s\n" "maigret_search/maigret"         "Username OSINT (Maigret)"
-    printf "  %-36s %s\n" "subdomain_enum"                 "Enumerate subdomains (subfinder)"
-    printf "  %-36s %s\n" "active_connections"                  "Show active network connections (ss)"
     echo
     echo -e "${YELLOW}System${RESET}"
     echo "───────────────────────────────────────────────────────────────"
     printf "  %-36s %s\n" "update_apps/update"                 "Update APT / Flatpak / Snap"
     printf "  %-36s %s\n" "systeminfo"                         "Show system info (fastfetch)"
     printf "  %-36s %s\n" "remove_temp_files/rm_tmp"           "Delete /tmp/*"
-    printf "  %-36s %s\n" "view_connections/netstat"           "View network connections (netstat)"
     printf "  %-36s %s\n" "clean_system/bleachbit"           "Clean system with BleachBit"
     printf "  %-36s %s\n" "strip_metadata_mat2/mat2"           "Strip metadata with mat2"   
     echo
     echo -e "${YELLOW}Security & Hardening${RESET}"
     echo "───────────────────────────────────────────────────────────────"
-    printf "  %-36s %s\n" "setup_clamav"                "Install & configure ClamAV"
-    printf "  %-36s %s\n" "setup_usbguard"              "Install & configure USBGuard"
-    printf "  %-36s %s\n" "setup_ufw"                   "Install & configure UFW"
-    printf "  %-36s %s\n" "setup_tor_browser"           "Install Tor Browser Launcher"
-    printf "  %-36s %s\n" "install_onionshare"          "Install OnionShare"
     printf "  %-36s %s\n" "system_audit/audit"                "Run Lynis security audit"
     printf "  %-36s %s\n" "rootkit_hunt"                      "Scan for rootkits (chkrootkit)"
     printf "  %-36s %s\n" "secure_empty_trash/set/SET"        "Securely wipe Trash (srm)"
@@ -3131,10 +3045,6 @@ EOF
     printf "  %-36s %s\n" "secure_delete/sedl"                  "Securely delete a file or directory(shred)"
     printf "  %-36s %s\n" "clean_metadata"                      "Strip image metadata (exiftool)"
     printf "  %-36s %s\n" "generate_key/genkey"                 "Generate a 128/192/256/512-bit key"
-    printf "  %-36s %s\n" "subdomain_enum"                      "Enumerate subdomains (subfinder)"
-    printf "  %-36s %s\n" "file_integrity_check"                "Create or verify file integrity manifest (sha256sum)"
-    printf "  %-36s %s\n" "log_viewer"                          "View logs with less"
-    printf "  %-36s %s\n" "verify_installed_packages/vip"       "Verify installed packages with APT logs"
     echo
     echo -e "${YELLOW}Encrypt / Decrypt Files${RESET}"
     echo "───────────────────────────────────────────────────────────────"
