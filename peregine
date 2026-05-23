@@ -394,14 +394,46 @@ subdomain_enum() {
     echo "───────────────────────────────────────────────────────────────"
 }
 local_server() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "Opens HTTP server on port 8000"
-    echo -e "${YELLOW}[!] Note: This will serve the current directory over HTTP.${RESET}"
-    echo -e "${YELLOW}[!] Tool uses Python's built-in HTTP server.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-    echo
-    python3 -m http.server 8000
-    echo -e "${GREEN}[+] HTTP server started.${RESET}"
+    echo "{DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v python3 >/dev/null 2>&1; then  # Check if python is installed 
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install python3"
+        exit 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo 
+
+    echo "{DIVIDER}"
+    echo -e "${RED}[!]${RESET} Note: This will expose the contents of the current directory to anyone who can access the specified port on your machine. Make sure you understand the security implications before proceeding."
+    echo "This will start a local HTTP server using Python's built-in http.server module. You can access it by navigating to http://localhost:PORT in your web browser, where PORT is the port number you specify."
+    echo "Make sure to stop the server when you're done by pressing Ctrl+C in the terminal."
+    echo "{DIVIDER}"
+
+    echo -n "Are you sure you want to start a local server? (y/n): "
+    read -r confirm # Read user input to confirm starting the local server
+
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        echo -n "Enter port number (default 8000): "
+        read -r port # Read user input for the port number to use for the local server
+
+        python3 -m http.server "$port" # Start a local HTTP server on the specified port
+        status=$? # Capture the exit status of the python command to check for errors
+    else
+        echo -e "${YELLOW}[i]${RESET} Local server setup cancelled."
+        return 1
+    fi
+
+    if [[ $status -ne 0 ]]; then # Check if the python command executed successfully
+        echo -e "${RED}[!]${RESET} Failed to start local server: $output"
+        return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Local server started successfully on port $port"
+    fi
+    echo "[->] Command executed" 
+    echo "{DIVIDER}"
 }
 whois_lookup() {
     echo "{DIVIDER}"
