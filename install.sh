@@ -14,7 +14,7 @@ fi
 
 echo "[+] Downloading tool..."
 
-curl -L https://raw.githubusercontent.com/DarkShadowUser/Jas-toolbox/main/jas -o $INSTALL_DIR/$SCRIPT_NAME
+curl -L https://codeberg.org/JasperC/peregine -o $INSTALL_DIR/$SCRIPT_NAME
 
 chmod +x $INSTALL_DIR/$SCRIPT_NAME
 
