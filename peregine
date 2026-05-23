@@ -12,7 +12,7 @@ TESTED="Tested"
 TESTED_ON="15-5-2026"
 TESTED_RELEASE="Stable"
 LICENSE="MIT License"
-
+DIVIDER-="───────────────────────────────────────────────────────────────"
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
 GREEN="\e[32m"
@@ -32,14 +32,6 @@ COLORS=(
 )
 i=0
 
-# Tor use wrapper
-run_with_tor() {
-    if [[ "$USE_TOR" == "y" ]]; then
-        torsocks "$@"
-    else
-        "$@"
-    fi
-}
 # File integrity commands
 _fic_create() {
     read -rp "Enter file or directory to hash: " target
@@ -412,53 +404,67 @@ local_server() {
     echo -e "${GREEN}[+] HTTP server started.${RESET}"
 }
 whois_lookup() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -n "Enter domain (ex: example.com): "
-    read -r domain
-    echo
+    echo "{DIVIDER}"
+    echo "[->] Checking dependencies"
 
-    if [[ -z "$domain" ]]; then
-        echo -e "${YELLOW}[!] Error: Domain cannot be empty.${RESET}"
+    if ! command -v whois >/dev/null 2>&1; then  # Check if whois is installed 
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install whois"
+        exit 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo 
+
+    echo -n "Enter domain: "
+    read -r domain # Read user input for the domain to look up
+
+    if [[ -z "$domain" ]]; then # Check if the user entered a domain
+        echo -e "${RED}[!]${RESET} No domain entered. Exiting."
         return 1
     fi
 
-    # Strip protocol/path if user pastes a full URL (e.g. https://example.com/page)
-    domain=$(echo "$domain" | sed -E 's|^https?://||; s|/.*||')
-
-    # Validate domain format: labels of 1-63 chars, TLD of 2-63 chars
-    if ! echo "$domain" | grep -qE '^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$'; then
+    if ! echo "$domain" | grep -qE '^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$'; then # Validate the domain format using a regex
         echo -e "${RED}[!] Invalid domain format: '$domain'${RESET}"
-        echo -e "${YELLOW}    Expected format: example.com or sub.example.co.uk${RESET}"
         return 1
     fi
 
     echo -e "${PURPLE}"
-    read -p "[TOR] Route through Tor? (y/n): " USE_TOR
+    read -p "[TOR] Route through Tor? (y/n): " USE_TOR # Ask the user if they want to route through Tor
     echo -e "${RESET}"
 
-    echo -e "${GREEN}[➜] Performing Whois lookup for $domain...${RESET}"
-    echo
+    if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+        if ! command -v torsocks >/dev/null 2>&1; then # Check if torsocks is installed
+            echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+            echo "Install with: sudo apt install torsocks"
+            exit 1
+        fi
 
-    output=$(run_with_tor whois "$domain" 2>&1)
-    status=$?
+        echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        output=$(torsocks whois $domain  2>&1) # Use torsocks to route the whois command through Tor
+        status=$? # Capture the exit status of the whois command to check for errors
+    else 
+        output=$(whois $domain 2>&1) # Perform a standard whois lookup without Tor
+        status=$? # Capture the exit status of the whois command to check for errors
+    fi
 
-    echo -e "${CYAN}$output${RESET}"
-
-    if [[ $status -ne 0 ]]; then
-        echo -e "\a"
-        echo -e "${RED}[!] Whois lookup failed (network/command error).${RESET}"
+    if [[ $status -ne 0 ]]; then # Check if the whois command executed successfully
+        echo -e "${RED}[!]${RESET} Whois lookup failed: $output"
         return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Whois lookup successful"
     fi
 
     if echo "$output" | grep -qiE "no match|not found|no data found|status: free"; then
         echo -e "\a"
-        echo -e "${RED}[!] Domain not found or no WHOIS data available.${RESET}"
+        echo -e "${RED}[!]${RESET} Domain not found or no WHOIS data available."
         return 1
     fi
 
-    echo
-    echo -e "${GREEN}[+] Whois lookup completed successfully.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${CYAN}WHOIS Information for $domain:${RESET}"
+    echo -e "${CYAN}$output${RESET}"
+    echo "[->] Command executed"
+    echo "{DIVIDER}"
 }
 ping() {
     echo "───────────────────────────────────────────────────────────────"
