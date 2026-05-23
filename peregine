@@ -660,24 +660,30 @@ dns_info() {
     echo "{DIVIDER}"
 }
 get_ip() {
-    echo -e "$───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Fetching public IP...${RESET}"
-    echo
+    echo "{DIVIDER}"
+    echo "[->] Checking dependencies"
 
-    output=$(run_with_tor curl -s --max-time 5 ifconfig.me 2>&1)
-    status=$?
-
-    echo -e "${CYAN}$output${RESET}"
-
-    if [[ $status -ne 0 ]]; then
-        echo -e "\a"
-        echo -e "${RED}[!] Failed to fetch public IP (network issue).${RESET}"
-        return 1
+    if ! command -v curl >/dev/null 2>&1; then  # Check if curl is installed 
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install curl"
+        exit 1
     fi
 
-    echo
-    echo -e "${GREEN}[+] Public IP fetched successfully.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo 
+
+    output=$(curl -s --max-time 5 ifconfig.me 2>&1)
+    status=$?
+
+    if [[ $status -ne 0 ]]; then # Check if the curl command executed successfully
+        echo -e "${RED}[!]${RESET} Failed to retrieve IP address: $output"
+        return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Your public IP address is: ${CYAN}$output${RESET}"
+    fi
+
+    echo "[->] Command executed"
+    echo "{DIVIDER}"
 }
 ip_osint() {
     echo "───────────────────────────────────────────────────────────────"
