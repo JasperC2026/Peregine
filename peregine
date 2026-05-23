@@ -6,13 +6,11 @@
 # No warranty expressed or implied. Liability for any damages arising from the use of this script is DISCLAIMED. See LICENSE file for details.
 
 # Variables
-MAIN_VERSION="3"
-SUB_VERSION=".0"
-TESTED=""
-TESTED_ON=""
-TESTED_RELEASE="Beta"
-LICENSE="MIT License"
-DIVIDER-="───────────────────────────────────────────────────────────────"
+type="Beta"
+version="V3.0"
+release_date="23-5-2026"
+test_date="N/A"
+DIVIDER="───────────────────────────────────────────────────────────────"
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
 GREEN="\e[32m"
@@ -2012,12 +2010,15 @@ clone_source() {
     echo "[->] Command executed"
     echo "{DIVIDER}"
 }
-version() { 
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${WHITE} PEREGINE ${MAIN_VERSION}${SUB_VERSION}${RESET}" 
-    echo "Release: $TESTED_RELEASE tested on: $TESTED_ON" 
-    echo -e "${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
+version() {
+    echo "{DIVIDER}"
+    echo -e "${BOLD} Peregine: A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface."
+    echo "License MIT: see LICENSE file or use peregine license to view the license"
+    echo
+    echo "Current version: $type $version"
+    echo "Release date: $release_date"
+    echo "Latest test on: $test_date"
+    echo "{DIVIDER}"
 }
 encryption () {
   echo -e "${YELLOW}Encrypt / Decrypt Files${RESET}"
