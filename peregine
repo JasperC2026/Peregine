@@ -2198,12 +2198,18 @@ _PEREGINE_COMMANDS=(
 _peregine_list_commands() { 
     echo "───────────────────────────────────────────────────────────────"
     cat <<EOF
-PPPPPP  EEEEEEE RRRRRR  EEEEEEE   GGGG  IIIII NN   NN EEEEEEE 
-PP   PP EE      RR   RR EE       GG  GG  III  NNN  NN EE      
-PPPPPP  EEEEE   RRRRRR  EEEEE   GG       III  NN N NN EEEEE   
-PP      EE      RR  RR  EE      GG   GG  III  NN  NNN EE      
-PP      EEEEEEE RR   RR EEEEEEE  GGGGGG IIIII NN   NN EEEEEEE 
-                                                              
+                                                  $$\                     
+                                                  \__|                    
+ $$$$$$\   $$$$$$\   $$$$$$\   $$$$$$\   $$$$$$\  $$\ $$$$$$$\   $$$$$$\  
+$$  __$$\ $$  __$$\ $$  __$$\ $$  __$$\ $$  __$$\ $$ |$$  __$$\ $$  __$$\ 
+$$ /  $$ |$$$$$$$$ |$$ |  \__|$$$$$$$$ |$$ /  $$ |$$ |$$ |  $$ |$$$$$$$$ |
+$$ |  $$ |$$   ____|$$ |      $$   ____|$$ |  $$ |$$ |$$ |  $$ |$$   ____|
+$$$$$$$  |\$$$$$$$\ $$ |      \$$$$$$$\ \$$$$$$$ |$$ |$$ |  $$ |\$$$$$$$\ 
+$$  ____/  \_______|\__|       \_______| \____$$ |\__|\__|  \__| \_______|
+$$ |                                    $$\   $$ |                        
+$$ |                                    \$$$$$$  |                        
+\__|                                     \______/                         
+                                                          
 EOF
     echo "───────────────────────────────────────────────────────────────"
     echo -e "${CYAN}Usage:${RESET}  peregine <command>"   
