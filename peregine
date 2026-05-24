@@ -2050,8 +2050,7 @@ aes() {
 
 # Development / Testing
 test_colors() {
-    clear
-    echo "-------------------------------------------------------------------"
+    echo -e "${DIVIDER}"
     echo -e "${RED}This is RED${RESET}"
     echo -e "${GREEN}This is GREEN${RESET}"
     echo -e "${YELLOW}This is YELLOW${RESET}"
@@ -2067,7 +2066,7 @@ test_colors() {
     echo -e "${BOLD}${CYAN}This is BOLD CYAN${RESET}"
     echo -e "${BOLD}${WHITE}This is BOLD WHITE${RESET}"
     echo -e "${RESET}This is DEFAULT"
-    echo "---------------------------------------------------------------"
+    echo -e "${DIVIDER}"
 }
 
 # Alternatives
