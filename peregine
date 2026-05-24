@@ -1966,7 +1966,248 @@ aes() {
     printf "  %-36s %s\n" "decrypt_text_aes128"         "Decrypt text (AES-128-CBC)"
     echo -e "${DIVIDER}"
 }
+help() {
+    if [[ -z "$1" ]]; then
+        _peregine_list_commands
+        return 0
+    fi
 
+    echo -e "${DIVIDER}"
+
+    case "$1" in
+
+        # ── Networking / OSINT ───────────────────────────────────────────────
+        local_server)
+            echo -e "${CYAN}local_server${RESET}"
+            echo "  Spin up a local HTTP file server using Python's http.server module."
+            echo "  Serves the current directory on a port you choose (default: 8000)."
+            echo -e "  ${YELLOW}[!] Anyone who can reach that port on your machine can browse your files.${RESET}"
+            echo -e "  ${GREEN}Requires:${RESET} python3  (sudo apt install python3)"
+            ;;
+        whois_lookup|whois)
+            echo -e "${CYAN}whois_lookup / whois${RESET}"
+            echo "  WHOIS domain lookup. Accepts a valid domain name."
+            echo "  Supports optional Tor routing via torsocks."
+            echo -e "  ${GREEN}Requires:${RESET} whois  (sudo apt install whois)"
+            echo -e "  ${GREEN}Optional:${RESET} torsocks  (sudo apt install torsocks)"
+            ;;
+        ping)
+            echo -e "${CYAN}ping${RESET}"
+            echo "  Ping a host or IP address (sends 6 packets)."
+            echo "  Supports optional Tor routing via torsocks."
+            echo -e "  ${GREEN}Requires:${RESET} ping  (sudo apt install iputils-ping)"
+            echo -e "  ${GREEN}Optional:${RESET} torsocks  (sudo apt install torsocks)"
+            ;;
+        traceroute)
+            echo -e "${CYAN}traceroute${RESET}"
+            echo "  Trace the network path to a host or IP address."
+            echo "  Supports optional Tor routing via torsocks."
+            echo -e "  ${GREEN}Requires:${RESET} traceroute  (sudo apt install traceroute)"
+            echo -e "  ${GREEN}Optional:${RESET} torsocks  (sudo apt install torsocks)"
+            ;;
+        dns_info|dns)
+            echo -e "${CYAN}dns_info / dns${RESET}"
+            echo "  Query DNS records for a domain (uses dig ANY)."
+            echo "  Supports optional Tor routing via torsocks."
+            echo -e "  ${GREEN}Requires:${RESET} dig  (sudo apt install dnsutils)"
+            echo -e "  ${GREEN}Optional:${RESET} torsocks  (sudo apt install torsocks)"
+            ;;
+        get_ip|ip)
+            echo -e "${CYAN}get_ip / ip${RESET}"
+            echo "  Fetch and display your current public IP address (via ifconfig.me)."
+            echo -e "  ${GREEN}Requires:${RESET} curl  (sudo apt install curl)"
+            ;;
+        ip_osint|stalkip)
+            echo -e "${CYAN}ip_osint / stalkip${RESET}"
+            echo "  Query ipinfo.io for geolocation, ISP, and ASN data on a given IP."
+            echo -e "  ${YELLOW}[!] Only use on systems you are authorised to investigate.${RESET}"
+            echo "  Supports optional Tor routing via torsocks."
+            echo -e "  ${GREEN}Requires:${RESET} curl  (sudo apt install curl)"
+            echo -e "  ${GREEN}Optional:${RESET} torsocks  (sudo apt install torsocks)"
+            ;;
+        maigret_search|maigret)
+            echo -e "${CYAN}maigret_search / maigret${RESET}"
+            echo "  Username OSINT — searches hundreds of platforms for a given username."
+            echo -e "  ${YELLOW}[!] Use responsibly. Misuse may be illegal.${RESET}"
+            echo "  Supports optional Tor routing via torsocks."
+            echo -e "  ${GREEN}Requires:${RESET} maigret  (pipx install maigret)"
+            echo -e "  ${GREEN}Optional:${RESET} torsocks  (sudo apt install torsocks)"
+            ;;
+
+        # ── System ───────────────────────────────────────────────────────────
+        update_apps|update)
+            echo -e "${CYAN}update_apps / update${RESET}"
+            echo "  Update packages via apt, pacman, snap, pipx, or pip."
+            echo "  You will be prompted to choose your package manager."
+            ;;
+        remove_temp_files|rm_tmp)
+            echo -e "${CYAN}remove_temp_files / rm_tmp${RESET}"
+            echo "  Deletes all files in /tmp/*."
+            ;;
+        clean_system)
+            echo -e "${CYAN}clean_system${RESET}"
+            echo "  Clean system junk using BleachBit."
+            echo -e "  ${GREEN}Requires:${RESET} bleachbit  (sudo apt install bleachbit)"
+            ;;
+        strip_metadata_mat2)
+            echo -e "${CYAN}strip_metadata_mat2${RESET}"
+            echo "  Strip metadata from files using MAT2."
+            echo "  Supports preview, clean (saves as .cleaned), and in-place modes."
+            echo "  Accepts individual files or entire directories."
+            echo -e "  ${GREEN}Requires:${RESET} mat2  (sudo apt install mat2)"
+            ;;
+
+        # ── Security ─────────────────────────────────────────────────────────
+        system_audit|audit)
+            echo -e "${CYAN}system_audit / audit${RESET}"
+            echo "  Run a full Lynis security audit on the system."
+            echo "  Shows hardening index, warnings, and suggestions on completion."
+            echo -e "  ${YELLOW}[!] Run as root for full coverage: sudo peregine audit${RESET}"
+            echo -e "  ${GREEN}Requires:${RESET} lynis  (sudo apt install lynis)"
+            ;;
+        rootkit_hunt|rootkit)
+            echo -e "${CYAN}rootkit_hunt / rootkit${RESET}"
+            echo "  Scan for rootkits using chkrootkit."
+            echo "  Shows a summary of INFECTED, WARNING, and suspicious entries."
+            echo -e "  ${YELLOW}[!] Run as root for reliable results: sudo peregine rootkit_hunt${RESET}"
+            echo -e "  ${YELLOW}[!] chkrootkit can produce false positives — verify findings manually.${RESET}"
+            echo -e "  ${GREEN}Requires:${RESET} chkrootkit  (sudo apt install chkrootkit)"
+            ;;
+        secure_empty_trash|SET|ghosttrash)
+            echo -e "${CYAN}secure_empty_trash / SET / ghosttrash${RESET}"
+            echo "  Securely wipe all files in the system Trash using srm (3 passes)."
+            echo "  Also removes the corresponding .trashinfo metadata files."
+            echo -e "  ${GREEN}Requires:${RESET} srm  (sudo apt install secure-delete)"
+            ;;
+        secure_overwrite_free_space|sofs)
+            echo -e "${CYAN}secure_overwrite_free_space / sofs${RESET}"
+            echo "  Overwrite all free space on the root partition using sfill."
+            echo "  Helps prevent recovery of previously deleted files."
+            echo -e "  ${YELLOW}[!] This can take a very long time. Close other applications first.${RESET}"
+            echo -e "  ${GREEN}Requires:${RESET} sfill  (sudo apt install secure-delete)"
+            ;;
+        secure_shred_dir|ssd)
+            echo -e "${CYAN}secure_shred_dir / ssd${RESET}"
+            echo "  Securely shred all files in a directory using shred, then remove it."
+            echo "  Supports 1, 3, 7, or 35 (Gutmann) overwrite passes."
+            echo "  Requires typing the directory name to confirm before proceeding."
+            echo -e "  ${YELLOW}[!] Irreversible. Refusing to shred / or \$HOME.${RESET}"
+            echo -e "  ${GREEN}Requires:${RESET} shred  (sudo apt install coreutils)"
+            ;;
+
+        # ── Privacy / Files ──────────────────────────────────────────────────
+        generate_password|genpass)
+            echo -e "${CYAN}generate_password / genpass${RESET}"
+            echo "  Generate a cryptographically secure password using OpenSSL."
+            echo "  Outputs alphanumeric, symbols, and hex variants."
+            echo "  Length: 8–128 characters (default: 16). Includes entropy estimate."
+            echo -e "  ${GREEN}Requires:${RESET} openssl  (sudo apt install openssl)"
+            ;;
+        secure_delete|sedl)
+            echo -e "${CYAN}secure_delete / sedl${RESET}"
+            echo "  Securely delete a file or directory using shred (5 passes)."
+            echo "  Prompts for confirmation before proceeding."
+            echo -e "  ${GREEN}Requires:${RESET} shred  (sudo apt install coreutils)"
+            ;;
+        clean_metadata|metadata)
+            echo -e "${CYAN}clean_metadata / metadata${RESET}"
+            echo "  Strip metadata from an image, video, audio, or PDF file using exiftool."
+            echo "  Can overwrite the original or write to a new output file."
+            echo -e "  ${GREEN}Requires:${RESET} exiftool  (sudo apt install libimage-exiftool-perl)"
+            ;;
+        generate_key|genkey)
+            echo -e "${CYAN}generate_key / genkey${RESET}"
+            echo "  Generate a random cryptographic key using OpenSSL."
+            echo "  Sizes: 128-bit, 192-bit, 256-bit, or 512-bit (hex output)."
+            echo -e "  ${GREEN}Requires:${RESET} openssl  (sudo apt install openssl)"
+            ;;
+
+        # ── Encryption ───────────────────────────────────────────────────────
+        encrypt_file_aes256|decrypt_file_aes256|encrypt_text_aes256|decrypt_text_aes256)
+            echo -e "${CYAN}AES-256-CBC${RESET}"
+            echo "  Encrypt or decrypt a file/text using AES-256-CBC."
+            echo "  Uses PBKDF2 key derivation with 100,000 iterations."
+            echo "  Encrypted output is password-protected."
+            echo -e "  ${GREEN}Requires:${RESET} openssl  (sudo apt install openssl)"
+            ;;
+        encrypt_file_aes128|decrypt_file_aes128|encrypt_text_aes128|decrypt_text_aes128)
+            echo -e "${CYAN}AES-128-CBC${RESET}"
+            echo "  Encrypt or decrypt a file/text using AES-128-CBC."
+            echo "  Uses PBKDF2 key derivation with 100,000 iterations."
+            echo -e "  ${GREEN}Requires:${RESET} openssl  (sudo apt install openssl)"
+            ;;
+        encrypt_file_chacha20|decrypt_file_chacha20|encrypt_text_chacha20|decrypt_text_chacha20)
+            echo -e "${CYAN}ChaCha20${RESET}"
+            echo "  Encrypt or decrypt a file/text using ChaCha20."
+            echo "  Uses PBKDF2 key derivation with 100,000 iterations."
+            echo -e "  ${GREEN}Requires:${RESET} openssl  (sudo apt install openssl)"
+            ;;
+        encrypt_file_twofish|decrypt_file_twofish)
+            echo -e "${CYAN}Twofish${RESET}"
+            echo "  Encrypt or decrypt a file using Twofish via GPG symmetric encryption."
+            echo "  Uses SHA-512 for key derivation."
+            echo -e "  ${GREEN}Requires:${RESET} gpg  (sudo apt install gnupg)"
+            ;;
+        encrypt_file_serpent|decrypt_file_serpent)
+            echo -e "${CYAN}Serpent${RESET}"
+            echo "  Encrypt or decrypt a file using Serpent-256 via GPG symmetric encryption."
+            echo "  Uses SHA-512 for key derivation."
+            echo -e "  ${GREEN}Requires:${RESET} gpg  (sudo apt install gnupg)"
+            ;;
+        encrypt_text_ceasar|decrypt_text_ceasar)
+            echo -e "${CYAN}Caesar cipher${RESET}"
+            echo "  Shift-based substitution cipher on alphabetic text."
+            echo "  Provide the shift value (positive to encrypt, same value to decrypt)."
+            echo -e "  ${YELLOW}[!] Not cryptographically secure — educational use only.${RESET}"
+            ;;
+        encrypt_text_vigenere|decrypt_text_vigenere)
+            echo -e "${CYAN}Vigenère cipher${RESET}"
+            echo "  Polyalphabetic substitution cipher using a keyword."
+            echo "  Input is converted to uppercase before processing."
+            echo -e "  ${YELLOW}[!] Not cryptographically secure — educational use only.${RESET}"
+            ;;
+        encrypt_text_base64|decrypt_text_base64)
+            echo -e "${CYAN}Base64 encode / decode${RESET}"
+            echo "  Encode or decode text using Base64."
+            echo -e "  ${YELLOW}[!] Not encryption — Base64 is encoding only, not secure.${RESET}"
+            ;;
+        rot13_cipher|rot13)
+            echo -e "${CYAN}ROT13${RESET}"
+            echo "  Apply ROT13 substitution to text. Running it twice restores the original."
+            echo -e "  ${YELLOW}[!] Not cryptographically secure — educational use only.${RESET}"
+            ;;
+
+        # ── Misc ─────────────────────────────────────────────────────────────
+        license|l)
+            echo -e "${CYAN}license / l${RESET}"
+            echo "  Display the full GPL-3.0 license text and a plain-English summary."
+            ;;
+        clone_source|c)
+            echo -e "${CYAN}clone_source / c${RESET}"
+            echo "  Clone the Peregine source code from Codeberg."
+            echo -e "  ${GREEN}Requires:${RESET} git  (sudo apt install git)"
+            ;;
+        version|v|V)
+            echo -e "${CYAN}version / v / V${RESET}"
+            echo "  Show the current Peregine version, type, release date, and test date."
+            ;;
+        help)
+            echo -e "${CYAN}help [command]${RESET}"
+            echo "  With no arguments: show all available commands."
+            echo "  With a command name: show details and dependencies for that command."
+            echo -e "  Example: ${GREEN}peregine help whois${RESET}"
+            ;;
+
+        *)
+            echo -e "${RED}[!] No help entry for '$1'.${RESET}"
+            echo -e "    Run ${CYAN}peregine help${RESET} to list all commands."
+            echo -e "${DIVIDER}"
+            return 1
+            ;;
+    esac
+
+    echo -e "${DIVIDER}"
+}
 # Development / Testing
 test_colors() {
     echo -e "${DIVIDER}"
@@ -1989,6 +2230,9 @@ test_colors() {
 }
 
 # Alternatives
+h () {
+    help
+}
 whois () {
     whois_lookup 
 }
@@ -2111,6 +2355,7 @@ _PEREGINE_COMMANDS=(
     license l
     clone_source c
     version v V    
+    help h
 )
 
 _peregine_list_commands() { 
@@ -2201,15 +2446,17 @@ EOF
     echo
 }
 
-if [[ $# -eq 0 ]]; then
-    _peregine_list_commands   
-elif [[ " ${_PEREGINE_COMMANDS[*]} " == *" $1 "* ]]; then
-    "$1"
-else
+    if [[ $# -eq 0 ]]; then
+       _peregine_list_commands
+    elif [[ "$1" == "help" ]]; then
+       help "$2"
+    elif [[ " ${_PEREGINE_COMMANDS[*]} " == *" $1 "* ]]; then
+       "$1"
+    else
     echo -e "${RED}[!] Unknown command: $1${RESET}"
     echo -e "    Run ${CYAN}peregine${RESET} without arguments to list all commands."   
     exit 1
-fi
+    fi
 
 # Creators note: if you are reading this, thank you for checking out my script! Love you all <3
 # If you have any suggestions, improvements, or just want to say hi, feel free to reach out.
