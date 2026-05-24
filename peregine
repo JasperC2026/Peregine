@@ -591,14 +591,14 @@ secure_empty_trash() {
     echo -e "{DIVIDER}"
     echo "[->] Checking dependencies"
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
-
     if ! command -v srm >/dev/null 2>&1; then # Check if srm is installed 
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install srm"
         exit 1
     fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
 
     local file_count
     file_count=$(find "$TRASH_FILES" -mindepth 1 2>/dev/null | wc -l) # Count the number of files in the trash to provide feedback
@@ -625,7 +625,7 @@ secure_empty_trash() {
 
     local remaining
     remaining=$(find "$TRASH_FILES" -mindepth 1 2>/dev/null | wc -l)
-    
+
     if [[ $remaining -eq 0 ]]; then
         echo -e "${GREEN}[+] Trash securely emptied.${RESET}"
     else
@@ -638,25 +638,45 @@ secure_empty_trash() {
     echo -e "{DIVIDER}" 
 }
 secure_overwrite_free_space() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Securely overwriting free space...${RESET}"
-    echo
-    root_partition=$(df / | tail -1 | awk '{print $1}')
+    echo -e "{DIVIDER}"
+    echo "[->] Checking dependencies"
 
-    if ! command -v sfill &> /dev/null; then
-        echo -e "\a"
-        echo
-        echo -e "${RED}[!] sfill command not found. Please install it to use this feature.${RESET}"
+    if ! command -v sfill &> /dev/null; then # Check if sfill is installed
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install secure-delete"
+        exit 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+
+    root_partition=$(df / | tail -1 | awk '{print $1}')
+    echo -e "${CYAN}[i] Root partition detected: $root_partition${RESET}"
+
+    echo -e "${RED}[!]${RESET} This will securely overwrite all free space on the root partition ($root_partition) to help prevent recovery of deleted files."
+    echo -e "${RED}[!]${RESET} This process can take a long time depending on the size of the partition and the amount of free space. Make sure to close other applications and save your work before proceeding."
+    
+    echo -n "Proceed with secure free space overwrite? (y/n): "
+    read -r confirm
+
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        echo -e "${GREEN}[+]${RESET} Starting secure free space overwrite on $root_partition..."
+        sudo sfill -v "$root_partition" # Use sfill to securely overwrite free space on the root partition with verbose output
+        status=$? # Capture the exit status of the sfill command to check for errors
+    else
+        echo -e "${YELLOW}[i]${RESET} Secure free space overwrite cancelled."
         return 1
     fi
 
-    echo
-    echo -e "${GREEN}[+] Overwriting free space on $root_partition...${RESET}"
-    sfill -v -z /   
-
-    echo
-    echo -e "${GREEN}[+] Free space securely overwritten.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
+    if [[ $status -ne 0 ]]; then # Check if the sfill command executed successfully
+        echo -e "${RED}[!]${RESET} Secure free space overwrite failed."
+        return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Secure free space overwrite completed successfully on $root_partition."
+    fi
+    
+    echo "[->] Command executed"
+    echo -e "{DIVIDER}"
 }
 system_audit() {
     echo "───────────────────────────────────────────────────────────────"
