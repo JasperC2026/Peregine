@@ -475,54 +475,40 @@ update_apps() {
 }
 # Security
 secure_shred_dir() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "Secure Directory Shredder — shred (coreutils)"
-    echo -e "${YELLOW}[!] This permanently destroys all files inside a directory.${RESET}"
-    echo -e "${YELLOW}[!] Note: shred is most effective on traditional HDDs.${RESET}"
-    echo -e "${YELLOW}    SSDs/flash storage may not honour overwrite passes fully${RESET}"
-    echo -e "${YELLOW}    due to wear-levelling. Use disk encryption for SSDs.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
- 
-    if ! command -v shred >/dev/null 2>&1; then
-        echo -e "\a"
-        echo -e "${RED}[!] shred not found.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install coreutils${RESET}"
-        return 1
+    echo -e "{DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v shred >/dev/null 2>&1; then # Check if shred is installed 
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install coreutils"
+        exit 1
     fi
- 
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
-    read -rp "Enter directory to shred: " target
- 
-    if [[ -z "$target" ]]; then
-        echo -e "${YELLOW}[!] No target entered.${RESET}"
+    
+    read -rp "Enter directory to shred: " target # Read user input for the directory to shred
+    if [[ -z "$target" ]]; then # Check if the user entered a target
+        echo -e "${RED}[!]${RESET} No target entered. Exiting."
         return 1
     fi
- 
-    target="${target/#\~/$HOME}"
- 
-    if [[ ! -e "$target" ]]; then
-        echo -e "\a"
-        echo -e "${RED}[!] Target does not exist: '$target'${RESET}"
+
+    target="${target/#\~/$HOME}" # Expand ~ to the user's home directory if it is used in the target path
+    if [[ ! -d "$target" ]]; then # Check if the target is a valid directory
+        echo -e "${RED}[!]${RESET} Target is not a valid directory: '$target'"
         return 1
     fi
- 
-    if [[ ! -d "$target" ]]; then
-        echo -e "\a"
-        echo -e "${RED}[!] '$target' is not a directory.${RESET}"
-        echo -e "${YELLOW}[i] Use 'secure_delete' for single files.${RESET}"
-        return 1
-    fi
- 
-    local abs_target
-    abs_target=$(realpath "$target")
-    if [[ "$abs_target" == "/" || "$abs_target" == "$HOME" ]]; then
+
+    local abs_target # Get the absolute path of the target directory to ensure we are checking the correct path for safety
+    abs_target=$(realpath "$target") # Get the absolute path of the target directory to ensure we are checking the correct path for safety
+    if [[ "$abs_target" == "/" || "$abs_target" == "$HOME" ]]; then # Check if the target directory is the root directory or the user's home directory, which would be too dangerous to shred
         echo -e "\a"
         echo -e "${RED}[!] Refusing to shred '$abs_target' — too dangerous.${RESET}"
         return 1
     fi
- 
+
     echo
-    echo -e "  Overwrite passes:"
+    echo -e "  Overwrite passes:" 
     echo -e "  ${CYAN}[1]${RESET} 1 pass  — fast, good enough for most SSDs / already-encrypted"
     echo -e "  ${CYAN}[2]${RESET} 3 passes — DoD 5220.22-M (default, recommended for HDDs)"
     echo -e "  ${CYAN}[3]${RESET} 7 passes — stricter"
@@ -530,7 +516,7 @@ secure_shred_dir() {
     echo
     read -rp "Select pass count (1-4, default: 2): " pass_choice
  
-    local passes
+    local passes # Determine the number of passes based on the user's choice, defaulting to 3 if the input is invalid or empty
     case "$pass_choice" in
         1) passes=1  ;;
         3) passes=7  ;;
@@ -539,39 +525,25 @@ secure_shred_dir() {
     esac
  
     local total_files
-    total_files=$(find "$abs_target" -type f | wc -l)
- 
+    total_files=$(find "$abs_target" -type f | wc -l) # Count the total number of files in the target directory to provide progress feedback during shredding
+
     echo
     echo -e "${CYAN}  Directory : $abs_target${RESET}"
     echo -e "${CYAN}  Files     : $total_files${RESET}"
     echo -e "${CYAN}  Passes    : $passes${RESET}"
     echo
- 
-    if [[ $total_files -eq 0 ]]; then
-        echo -e "${YELLOW}[i] Directory is empty — nothing to shred.${RESET}"
-        read -rp "Remove the empty directory structure? (y/n): " rm_empty
-        if [[ "$rm_empty" == "y" ]]; then
-            rm -rf "$abs_target"
-            echo -e "${GREEN}[+] Empty directory removed.${RESET}"
-        fi
-        echo "───────────────────────────────────────────────────────────────"
-        return 0
-    fi
- 
-    echo -e "${RED}[!] This will permanently destroy $total_files file(s) in:${RESET}"
+
+    echo -e "${RED}[!]${RESET} This will permanently destroy $total_files file(s) in:"
     echo -e "    ${BOLD}$abs_target${RESET}"
     echo
     read -rp "Type the directory name to confirm: " confirm_name
- 
-    if [[ "$confirm_name" != "$(basename "$abs_target")" ]]; then
-        echo -e "${YELLOW}[!] Name did not match — operation aborted.${RESET}"
-        return 0
+
+    if [[ "$confirm_name" != "$(basename "$abs_target")" ]]; then # Check if the user correctly confirmed the directory name to prevent accidental shredding
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} Confirmation failed. Directory name did not match. Exiting."
+        return 1
     fi
- 
-    echo
-    echo -e "${GREEN}[➜] Shredding $total_files file(s) with $passes pass(es)...${RESET}"
-    echo
- 
+
     local current=0
     local errors=0
  
@@ -587,15 +559,12 @@ secure_shred_dir() {
             (( errors++ ))
         fi
     done < <(find "$abs_target" -type f -print0)
- 
-    echo
-    echo
- 
-    echo -e "${GREEN}[➜] Removing directory structure...${RESET}"
+
+    echo -e "${GREEN}[➜]${RESET} Removing directory structure..."
     find "$abs_target" -type l -delete 2>/dev/null
     rm -rf "$abs_target"
- 
-    echo
+
+  echo
     echo -e "${CYAN}── Summary ──────────────────────────────────────────────────${RESET}"
     echo -e "  Files processed : $current"
  
@@ -605,16 +574,18 @@ secure_shred_dir() {
  
     if [[ -e "$abs_target" ]]; then
         echo -e "\a"
-        echo -e "${RED}[!] Directory still exists — some files may not have been removed.${RESET}"
-        echo -e "${YELLOW}    Check manually: $abs_target${RESET}"
+        echo -e "${RED}[!]${RESET} Directory still exists — some files may not have been removed."
+        echo -e "Check manually: $abs_target"
         echo "───────────────────────────────────────────────────────────────"
         return 1
     fi
  
-    echo -e "  ${GREEN}Directory verified gone.${RESET}"
+    echo -e "  ${GREEN}${RESET}Directory verified gone."
     echo
-    echo -e "${GREEN}[+] Secure directory shred completed.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${GREEN}[+]${RESET} Secure directory shred completed."
+
+    echo "[->] Command executed"
+    echo -e "{DIVIDER}" 
 }
 secure_empty_trash() {
     echo "───────────────────────────────────────────────────────────────"
