@@ -1169,17 +1169,17 @@ clean_system() {
 }
 # Encryption
 generate_key () {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Generate a cryptographic key${RESET}"
-    echo
+    echo -e "{DIVIDER}"
+    echo "[->] Checking dependencies"
 
-    if ! command -v openssl >/dev/null 2>&1; then
-        echo -e "\a"
-        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
-        return 1
+    if ! command -v openssl >/dev/null 2>&1; then  # Check if openssl is installed 
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install openssl"
+        exit 1
     fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
 
     echo -e "${BOLD}Select key size:${RESET}"
     echo "  1) 128-bit  (16 bytes  — AES-128)"
@@ -1200,24 +1200,23 @@ generate_key () {
             return 1
             ;;
     esac
+    
+    echo 
+    echo -e "${GREEN}[+]${RESET} Generating $bits-bit key ($bytes bytes)..."
 
-    echo
-    echo -e "${GREEN}[➜] Generating ${bits}-bit key...${RESET}"
-    sleep 0.3
+    key=$(openssl rand -hex "$bytes" 2>/dev/null) # Generate a random key of the specified size using openssl
+    status=$? # Capture the exit status of the openssl command to check for errors
 
-    key=$(openssl rand -hex "$bytes" 2>/dev/null)
-    status=$?
-
-    if [[ $status -eq 0 && -n "$key" ]]; then
-        echo -e "${CYAN}$key${RESET}"
-        echo
-        echo -e "${GREEN}[+] ${bits}-bit key generated successfully.${RESET}"
-    else
-        echo -e "\a"
-        echo -e "${RED}[!] Failed to generate key.${RESET}"
+    if [[ $status -ne 0 ]]; then # Check if the openssl command executed successfully
+        echo -e "${RED}[!]${RESET} Key generation failed."
         return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Key generated successfully:"
+        echo -e "${CYAN}$key${RESET}"
     fi
-    echo "───────────────────────────────────────────────────────────────"
+
+    echo "[->] Command executed"
+    echo -e "{DIVIDER}"
 }
 encrypt_file_aes256() {
     echo "───────────────────────────────────────────────────────────────"
