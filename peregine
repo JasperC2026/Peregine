@@ -732,40 +732,25 @@ local report="/var/log/lynis-report.dat"
     echo -e "${DIVIDER}"
 }
 rootkit_hunt() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "chkrootkit by chkrootkit Team https://chkrootkit.org/"
-    echo -e "${YELLOW}[i] chkrootkit is an external tool not affiliated with Peregine.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-    echo
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
 
-    if ! command -v chkrootkit >/dev/null 2>&1; then
-        echo -e "\a"
-        echo -e "${RED}[!] chkrootkit is not installed.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install chkrootkit${RESET}"
-        return 1
+    if ! command -v chkrootkit  &> /dev/null; then # Check if chkrootkit is installed
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install chkrootkit"
+        exit 1
     fi
 
-    if [[ $EUID -ne 0 ]]; then
-        echo -e "${YELLOW}[!] Not running as root. Many checks will be skipped or unreliable.${RESET}"
-        echo -e "${YELLOW}    For a full scan, run: sudo peregine rootkit_hunt${RESET}"
-        echo
-        read -rp "Continue anyway? (y/n): " cont
-        [[ "$cont" != "y" ]] && return 0
-    fi
-
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
+
     echo -e "${GREEN}[➜] Scanning for rootkits — this may take a moment...${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-    echo
 
     local tmpfile
     tmpfile=$(mktemp)
 
-    sudo chkrootkit 2>&1 | tee "$tmpfile"
+    chkrootkit 2>&1 | tee "$tmpfile" # run chkrootkit
     status=${PIPESTATUS[0]}
-
-    echo
-    echo "───────────────────────────────────────────────────────────────"
 
     local infected warnings suspicious
     infected=$(grep -ciE "^INFECTED"  "$tmpfile" 2>/dev/null || echo 0)
@@ -782,19 +767,19 @@ rootkit_hunt() {
 
     if [[ $infected -gt 0 || $warnings -gt 0 ]]; then
         echo -e "\a"
-        echo -e "${RED}[!] Potential threats detected — review the output above carefully.${RESET}"
-        echo -e "${YELLOW}[i] Note: chkrootkit can produce false positives. Verify findings manually.${RESET}"
+        echo -e "${RED}[!]${RESET} Potential threats detected — review the output above carefully."
+        echo -e "${YELLOW}[i]${RESET} Note: chkrootkit can produce false positives. Verify findings manually."
         return 1
     fi
 
     if [[ $status -ne 0 ]]; then
         echo -e "\a"
-        echo -e "${RED}[!] chkrootkit finished with errors (exit code $status).${RESET}"
+        echo -e "${RED}[!]${RESET} chkrootkit finished with errors (exit code $status)."
         return 1
     fi
 
-    echo -e "${GREEN}[+] Rootkit scan completed — no obvious threats found.${RESET}"
-    echo "---------------------------------------------------------------"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
 remove_temp_files() {
     echo "───────────────────────────────────────────────────────────────"
