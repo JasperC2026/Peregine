@@ -47,6 +47,60 @@ Built for speed, simplicity, and control — privacy-first by design.
 
 ---
 
+
+## Dependencies
+ 
+All dependencies are optional — only install what you need for the tools you use. Nothing is required just to run Peregine itself.
+ 
+**Networking & OSINT**
+ 
+| Tool | Package | Used by |
+|---|---|---|
+| `curl` | `sudo apt install curl` | `get_ip`, `ip_osint` |
+| `whois` | `sudo apt install whois` | `whois_lookup` |
+| `dig` | `sudo apt install dnsutils` | `dns_info` |
+| `ping` | `sudo apt install iputils-ping` | `ping` |
+| `traceroute` | `sudo apt install traceroute` | `traceroute` |
+| `python3` | `sudo apt install python3` | `local_server` |
+| `maigret` | `pipx install maigret` | `maigret_search` |
+| `torsocks` | `sudo apt install torsocks` | Tor routing (all network tools) |
+ 
+**Security & System**
+ 
+| Tool | Package | Used by |
+|---|---|---|
+| `lynis` | `sudo apt install lynis` | `system_audit` |
+| `chkrootkit` | `sudo apt install chkrootkit` | `rootkit_hunt` |
+| `shred` | `sudo apt install coreutils` | `secure_shred_dir`, `secure_delete` |
+| `srm` | `sudo apt install secure-delete` | `secure_empty_trash` |
+| `sfill` | `sudo apt install secure-delete` | `secure_overwrite_free_space` |
+ 
+**Privacy & Metadata**
+ 
+| Tool | Package | Used by |
+|---|---|---|
+| `exiftool` | `sudo apt install libimage-exiftool-perl` | `clean_metadata` |
+| `mat2` | `sudo apt install mat2` | `strip_metadata_mat2` |
+ 
+**Encryption**
+ 
+| Tool | Package | Used by |
+|---|---|---|
+| `openssl` | `sudo apt install openssl` | All AES/ChaCha20 encrypt/decrypt, `generate_password`, `generate_key` |
+| `gpg` | `sudo apt install gnupg` | `encrypt_file_twofish`, `encrypt_file_serpent` and their decrypt counterparts |
+ 
+**Install everything at once (Debian/Ubuntu):**
+ 
+```bash
+sudo apt install curl whois dnsutils iputils-ping traceroute python3 torsocks \
+  lynis chkrootkit coreutils secure-delete \
+  libimage-exiftool-perl mat2 \
+  openssl gnupg git
+pipx install maigret
+```
+ 
+---
+
 ## Getting Started
 
 Use the install.sh file or just clone the repo. 
