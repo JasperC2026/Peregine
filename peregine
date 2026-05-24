@@ -477,7 +477,7 @@ update_apps() {
 }
 # Security
 secure_shred_dir() {
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
     if ! command -v shred >/dev/null 2>&1; then # Check if shred is installed 
@@ -587,10 +587,10 @@ secure_shred_dir() {
     echo -e "${GREEN}[+]${RESET} Secure directory shred completed."
 
     echo "[->] Command executed"
-    echo -e "{DIVIDER}" 
+    echo -e "${DIVIDER}" 
 }
 secure_empty_trash() {
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
     if ! command -v srm >/dev/null 2>&1; then # Check if srm is installed 
@@ -637,10 +637,10 @@ secure_empty_trash() {
     fi
 
     echo "[->] Command executed"
-    echo -e "{DIVIDER}" 
+    echo -e "${DIVIDER}" 
 }
 secure_overwrite_free_space() {
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
     if ! command -v sfill &> /dev/null; then # Check if sfill is installed
@@ -678,43 +678,25 @@ secure_overwrite_free_space() {
     fi
     
     echo "[->] Command executed"
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
 }
 system_audit() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "Lynis by CISOfy https://cisofy.com/lynis/"
-    echo -e "${YELLOW}[i] Lynis is an external tool not affiliated with Peregine.${RESET}"
-    echo -e "${YELLOW}    It audits for vulnerabilities, misconfigurations, and compliance issues.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-    echo
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
 
-    if ! command -v lynis >/dev/null 2>&1; then
-        echo -e "\a"
-        echo
-        echo -e "${RED}[!] Lynis is not installed.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install lynis${RESET}"
-        return 1
+    if ! command -v lynis &> /dev/null; then # Check if lynis is installed
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install lynis"
+        exit 1
     fi
 
-    if [[ $EUID -ne 0 ]]; then
-        echo
-        echo -e "${YELLOW}[!] Not running as root. Some checks may be skipped.${RESET}"
-        echo -e "${YELLOW}    For a full audit, run: sudo peregine system_audit${RESET}"
-        echo
-        read -rp "Continue anyway? (y/n): " cont
-        [[ "$cont" != "y" ]] && return 0
-    fi
-
-    echo
-    echo -e "${GREEN}[➜] Starting Lynis system audit — this may take a few minutes...${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
 
-    sudo lynis audit system
+    echo -e "${GREEN}[->]${RESET} Starting Lynis system audit — this may take a few minutes..."
+
+    lynis audit stystem # Execute lynis
     status=$?
-
-    echo
-    echo "───────────────────────────────────────────────────────────────"
 
     if [[ $status -ne 0 ]]; then
         echo -e "\a"
@@ -722,7 +704,7 @@ system_audit() {
         return 1
     fi
 
-    local report="/var/log/lynis-report.dat"
+local report="/var/log/lynis-report.dat"
     if [[ -f "$report" ]]; then
         echo -e "${CYAN}── Audit Summary ────────────────────────────────────────────${RESET}"
 
@@ -743,8 +725,11 @@ system_audit() {
         echo
         echo -e "  Full report     : ${CYAN}/var/log/lynis-report.dat${RESET}"
         echo -e "  Log             : ${CYAN}/var/log/lynis.log${RESET}"
-        echo "───────────────────────────────────────────────────────────────"
+        echo -e "${DIVIDER}"
     fi
+
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
 rootkit_hunt() {
     echo "───────────────────────────────────────────────────────────────"
@@ -1092,7 +1077,7 @@ strip_metadata_mat2() {
 }
 # Encryption
 generate_key () {
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
     if ! command -v openssl >/dev/null 2>&1; then  # Check if openssl is installed 
@@ -1139,7 +1124,7 @@ generate_key () {
     fi
 
     echo "[->] Command executed"
-    echo -e "{DIVIDER}"
+    echo -e "${DIVIDER}"
 }
 encrypt_file_aes256() {
     echo "───────────────────────────────────────────────────────────────"
