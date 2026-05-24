@@ -1,9 +1,11 @@
 #!/bin/bash
 
 # Peregine - A versatile Linux system utility script
+# Licensed under GPL-3.0 
+# You are free to use, copy, modify, and distribute this software for any purpose.
+# With the requirements of: keeping the source code open and availible, license any modified or derived versions under GPL-3.0 as well and keeping all copyright and license notices intact.
+# You cannot distribute it as closed-source / proprietary, add restrictions that prevent others from exercising these rights, hold the author (JasperC) liable for anything — the software comes with no warranty.
 # Version: 3.0 
-# Licensed under the MIT License, you are free to use, modify and distribute this script. License and copyright notice must be included in all copies or substantial portions of the script. See LICENSE file for details.
-# No warranty expressed or implied. Liability for any damages arising from the use of this script is DISCLAIMED. See LICENSE file for details.
 
 # Variables
 type="Beta"
@@ -1839,35 +1841,31 @@ decrypt_file_serpent() {
 # Other
 license() {
     echo -e "${DIVIDER}"
-    echo "This software is licensed under the MIT License. For details, see below:"
-    echo "TL;DR:"
-    echo "You may use this software for any purpose, including commercial and private use."
-    echo "You may modify and distribute this software, but you must include the original copyright notice and license."
-    echo "The software is provided 'as is', without warranty of any kind. No liability for any damages arising from the use of this software."
-    echo -e "${DIVIDER}"
     cat <<'EOF'
-MIT License
+Peregine - A powerful, lightweight Bash-based CLI toolbox for networking,
+system management, and privacy/security -- all in one interactive interface.
+Copyright (C) 2026  JasperC
 
-Copyright (c) 2026 Jasper C https://codeberg.org/JasperC/Peregine
+SPDX-License-Identifier: GPL-3.0-or-later
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+If you want to contact me you can find my email or matrix in my profile readme, you can also open a PR or issue on codeberg.
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+TLDR of the license:
+You are free to: use, copy, modify, and distribute this software for any purpose
+With the requirements: keep the source code open and available, license any modified or derived versions under GPL-3.0 as well, keep all copyright and license notices intact.
+You cannot: distribute it as closed-source / proprietary, add restrictions that prevent others from exercising these rights, hold the author (JasperC) liable for anything — the software comes with no warranty.
 EOF
     echo -e "${DIVIDER}"
 }
@@ -1898,7 +1896,7 @@ clone_source() {
 version() {
     echo "${DIVIDER}"
     echo -e "${BOLD} Peregine: A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface."
-    echo "License MIT: see LICENSE file or use peregine license to view the license"
+    echo "License GPL-v3: see LICENSE file or use peregine license to view the license"
     echo
     echo "Current version: $type $version"
     echo "Release date: $release_date"
