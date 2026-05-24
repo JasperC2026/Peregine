@@ -1918,13 +1918,13 @@ decrypt_file_serpent() {
 }
 # Other
 license() {
-    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${DIVIDER}"
     echo "This software is licensed under the MIT License. For details, see below:"
     echo "TL;DR:"
     echo "You may use this software for any purpose, including commercial and private use."
     echo "You may modify and distribute this software, but you must include the original copyright notice and license."
     echo "The software is provided 'as is', without warranty of any kind. No liability for any damages arising from the use of this software."
-    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${DIVIDER}"
     cat <<'EOF'
 MIT License
 
@@ -1949,7 +1949,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 EOF
-    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${DIVIDER}"
 }
 clone_source() {
     echo -e "${DIVIDER}"
@@ -1986,6 +1986,7 @@ version() {
     echo "${DIVIDER}"
 }
 encryption () {
+    echo -e "${DIVIDER}"
     echo -e "${YELLOW}Encrypt / Decrypt Files${RESET}"
     printf "  %-36s %s\n" "encrypt_file_aes256"         "Encrypt file (AES-256-CBC)"
     printf "  %-36s %s\n" "encrypt_file_aes128"         "Encrypt file (AES-128-CBC)"
@@ -2012,19 +2013,19 @@ encryption () {
     printf "  %-36s %s\n" "encrypt_text_base64"         "Base64 encode"
     printf "  %-36s %s\n" "decrypt_text_base64"         "Base64 decode"
     printf "  %-36s %s\n" "rot13_cipher/rot13"          "ROT13"
-    echo   
+    echo -e "${DIVIDER}"
 }
 security () {
-    echo -e "${YELLOW}Security & Hardening${RESET}"
+    echo -e "${DIVIDER}"
     printf "  %-36s %s\n" "system_audit/audit"                  "Run Lynis security audit"
     printf "  %-36s %s\n" "rootkit_hunt"                        "Scan for rootkits (chkrootkit)"
     printf "  %-36s %s\n" "secure_empty_trash/SET"              "Securely wipe Trash (srm)"   
     printf "  %-36s %s\n" "secure_overwrite_free_space/sofs"    "Wipe free disk space (sfill)"
     printf "  %-36s %s\n" "secure_shred_dir"                    "Securely shred all files in a directory (shred)"
-    echo
+    echo -e "${DIVIDER}"
 }
 networking() {
-    echo -e "${YELLOW}Networking / OSINT${RESET}"
+    echo -e "${DIVIDER}"
     printf "  %-36s %s\n" "local_server"              "Spin up a local HTTP file server (Python)"
     printf "  %-36s %s\n" "whois_lookup/whois"        "WHOIS lookup for a domain"
     printf "  %-36s %s\n" "ping"                      "Ping a host (6 packets)"    
@@ -2033,10 +2034,10 @@ networking() {
     printf "  %-36s %s\n" "get_ip/ip"                 "Show your public IP"
     printf "  %-36s %s\n" "ip_osint"                  "IP/domain OSINT (ipinfo.io)"
     printf "  %-36s %s\n" "maigret_search/maigret"    "Username OSINT (Maigret)"
-    echo
+    echo -e "${DIVIDER}"
 }
 aes() {
-    echo -e "${YELLOW}AES Encryption / Decryption${RESET}"
+    echo -e "${DIVIDER}"
     printf "  %-36s %s\n" "encrypt_file_aes256"         "Encrypt file (AES-256-CBC)"
     printf "  %-36s %s\n" "encrypt_file_aes128"         "Encrypt file (AES-128-CBC)"
     printf "  %-36s %s\n" "decrypt_file_aes256"         "Decrypt file (AES-256-CBC)"
@@ -2045,7 +2046,7 @@ aes() {
     printf "  %-36s %s\n" "encrypt_text_aes128"         "Encrypt text (AES-128-CBC)"
     printf "  %-36s %s\n" "decrypt_text_aes256"         "Decrypt text (AES-256-CBC)"
     printf "  %-36s %s\n" "decrypt_text_aes128"         "Decrypt text (AES-128-CBC)"
-    echo
+    echo -e "${DIVIDER}"
 }
 
 # Development / Testing
