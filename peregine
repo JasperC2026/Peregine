@@ -796,31 +796,27 @@ remove_temp_files() {
     echo -e "${DIVIDER}"
 }
 generate_password() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Secure password generator${RESET}"
-    echo
+    echo -e "${DIVIDER}"
 
-    if ! command -v openssl >/dev/null 2>&1; then
-        echo
-        echo -e "\a"
-        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
-        return 1
+    if ! command -v openssl &> /dev/null; then # Check if openssl is installed
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install openssl"
+        exit 1
     fi
 
-    read -rp "Password length (default: 16, max: 128): " length
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+
+   read -rp "Password length (default: 16, max: 128): " length
 
     length=${length:-16}
 
     if ! [[ "$length" =~ ^[0-9]+$ ]] || (( length < 8 || length > 128 )); then
-        echo
-        echo -e "\a"
-        echo -e "${RED}[!] Invalid length '$length' — must be a number between 8 and 128.${RESET}"
+        echo -e "${RED}[!]${RESET} Invalid length '$length' — must be a number between 8 and 128."
         return 1
     fi
 
-    echo
+ echo
     echo -e "${CYAN}── Passwords ────────────────────────────────────────────────${RESET}"
 
     local pass_alnum
@@ -840,7 +836,9 @@ generate_password() {
     entropy_alnum=$(awk "BEGIN { printf \"%d\", $length * 5.954 }")
     entropy_full=$(awk  "BEGIN { printf \"%d\", $length * 6.554 }")
     echo -e "${CYAN}[i] Estimated entropy — alphanumeric: ~${entropy_alnum} bits  |  with symbols: ~${entropy_full} bits${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
+    
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
 secure_delete() {
     echo "───────────────────────────────────────────────────────────────"
