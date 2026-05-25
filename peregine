@@ -43,7 +43,7 @@ local_server() {
     if ! command -v python3 >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install python3"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -86,7 +86,7 @@ whois_lookup() {
     if ! command -v whois >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install whois"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -113,7 +113,7 @@ whois_lookup() {
         if ! command -v torsocks >/dev/null 2>&1; then
             echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
             echo "Install with: sudo apt install torsocks"
-            exit 1
+            return 1
         fi
 
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
@@ -148,7 +148,7 @@ ping() {
     if ! command -v ping >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install iputils-ping"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -170,7 +170,7 @@ ping() {
         if ! command -v torsocks >/dev/null 2>&1; then
             echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
             echo "Install with: sudo apt install torsocks"
-            exit 1
+            return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
         torsocks "$(command -v ping)" -c 6 "$target"    
@@ -197,7 +197,7 @@ traceroute() {
     if ! command -v traceroute >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install traceroute"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -224,7 +224,7 @@ traceroute() {
         if ! command -v torsocks >/dev/null 2>&1; then
             echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
             echo "Install with: sudo apt install torsocks"
-            exit 1
+            return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
         output=$(torsocks "$(command -v traceroute)" "$target" 2>&1)  
@@ -253,7 +253,7 @@ dns_info() {
     if ! command -v dig >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install dnsutils"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -280,7 +280,7 @@ dns_info() {
         if ! command -v torsocks >/dev/null 2>&1; then
             echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
             echo "Install with: sudo apt install torsocks"
-            exit 1
+            return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
         output=$(torsocks dig "$domain" ANY +noall +answer 2>&1)
@@ -309,7 +309,7 @@ get_ip() {
     if ! command -v curl >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install curl"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -335,7 +335,7 @@ ip_osint() {
     if ! command -v curl >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install curl"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -369,7 +369,7 @@ ip_osint() {
         if ! command -v torsocks >/dev/null 2>&1; then
             echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
             echo "Install with: sudo apt install torsocks"
-            exit 1
+            return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
         output=$(torsocks curl -s --max-time 10 "https://ipinfo.io/$target/json" 2>&1)
@@ -397,7 +397,7 @@ maigret_search () {
     if ! command -v maigret >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: pipx install maigret"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -425,7 +425,7 @@ maigret_search () {
         if ! command -v torsocks >/dev/null 2>&1; then
             echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
             echo "Install with: sudo apt install torsocks"
-            exit 1
+            return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
         output=$(torsocks maigret "$username" 2>&1)
@@ -483,7 +483,7 @@ secure_shred_dir() {
     if ! command -v shred >/dev/null 2>&1; then # Check if shred is installed 
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install coreutils"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -596,7 +596,7 @@ secure_empty_trash() {
     if ! command -v srm >/dev/null 2>&1; then # Check if srm is installed 
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install srm"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -646,7 +646,7 @@ secure_overwrite_free_space() {
     if ! command -v sfill &> /dev/null; then # Check if sfill is installed
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install secure-delete"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -687,7 +687,7 @@ system_audit() {
     if ! command -v lynis &> /dev/null; then # Check if lynis is installed
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install lynis"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -738,7 +738,7 @@ rootkit_hunt() {
     if ! command -v chkrootkit  &> /dev/null; then # Check if chkrootkit is installed
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install chkrootkit"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -801,7 +801,7 @@ generate_password() {
     if ! command -v openssl &> /dev/null; then # Check if openssl is installed
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install openssl"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -846,7 +846,7 @@ secure_delete() {
     if ! command -v shred &> /dev/null; then # Check if shred is installed
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install shred"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -904,7 +904,7 @@ clean_metadata() {
     if ! command -v exiftool &> /dev/null; then # Check if exiftool is installed
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install exiftool"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -970,7 +970,7 @@ generate_key () {
     if ! command -v openssl >/dev/null 2>&1; then  # Check if openssl is installed 
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install openssl"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -1019,7 +1019,7 @@ encrypt_file_aes256() {
     if ! command -v openssl >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install openssl"
-        exit 1
+        return 1
     fi
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
@@ -1061,7 +1061,7 @@ encrypt_file_aes128() {
     if ! command -v openssl >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install openssl"
-        exit 1
+        return 1
     fi
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
@@ -1103,7 +1103,7 @@ decrypt_file_aes256() {
     if ! command -v openssl >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install openssl"
-        exit 1
+        return 1
     fi
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
@@ -1134,7 +1134,7 @@ decrypt_file_aes128() {
     if ! command -v openssl >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install openssl"
-        exit 1
+        return 1
     fi
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
@@ -1165,7 +1165,7 @@ encrypt_file_chacha20() {
     if ! command -v openssl >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install openssl"
-        exit 1
+        return 1
     fi
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
@@ -1196,7 +1196,7 @@ decrypt_file_chacha20() {
     if ! command -v openssl >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install openssl"
-        exit 1
+        return 1
     fi
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
@@ -1227,7 +1227,7 @@ encrypt_file_twofish() {
     if ! command -v gpg >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install gnupg"
-        exit 1
+          return 1
     fi
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
@@ -1258,7 +1258,7 @@ decrypt_file_twofish() {
     if ! command -v gpg >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install gnupg"
-        exit 1
+        return 1
     fi
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
@@ -1289,7 +1289,7 @@ encrypt_file_serpent() {
     if ! command -v gpg >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install gnupg"
-        exit 1
+        return 1
     fi
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
@@ -1320,7 +1320,7 @@ decrypt_file_serpent() {
     if ! command -v gpg >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install gnupg"
-        exit 1
+        return 1
     fi
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
@@ -1351,7 +1351,7 @@ encrypt_text_aes256() {
     if ! command -v openssl >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install openssl"
-        exit 1
+        return 1
     fi
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
@@ -1378,7 +1378,7 @@ encrypt_text_aes128() {
     if ! command -v openssl >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install openssl"
-        exit 1
+        return 1
     fi
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
@@ -1405,7 +1405,7 @@ decrypt_text_aes256() {
     if ! command -v openssl >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install openssl"
-        exit 1
+        return 1
     fi
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
@@ -1432,7 +1432,7 @@ decrypt_text_aes128() {
     if ! command -v openssl >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install openssl"
-        exit 1
+            return 1
     fi
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
@@ -1459,7 +1459,7 @@ encrypt_text_chacha20() {
     if ! command -v openssl >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install openssl"
-        exit 1
+        return 1
     fi
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
@@ -1486,7 +1486,7 @@ decrypt_text_chacha20() {
     if ! command -v openssl >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install openssl"
-        exit 1
+          return 1
     fi
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
@@ -1912,7 +1912,7 @@ clone_source() {
     if ! command -v git >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: apt install git"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
@@ -2476,7 +2476,7 @@ EOF
     else
     echo -e "${RED}[!] Unknown command: $1${RESET}"
     echo -e "    Run ${CYAN}peregine${RESET} without arguments to list all commands."   
-    exit 1
+    return 1
     fi
 
 # Creators note: if you are reading this, thank you for checking out my script! Love you all <3
