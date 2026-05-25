@@ -6,7 +6,7 @@
 
 **A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface.**
 
-![Version](https://img.shields.io/badge/Version-2.3-00008b?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-3-00008b?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-GPL_V3-00008b?style=for-the-badge)
 ![Shell](https://img.shields.io/badge/Shell-Bash-black?style=for-the-badge&logo=gnubash&logoColor=black)
 ![Platform](https://img.shields.io/badge/Platform-Linux-black?style=for-the-badge&logo=linux&logoColor=black)
