@@ -841,19 +841,22 @@ generate_password() {
     echo -e "${DIVIDER}"
 }
 secure_delete() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -n "Enter file or directory to securely delete: "
-    read -r target
-    echo
+    echo -e "${DIVIDER}"
 
-    if [[ -z "$target" ]]; then
-        echo -e "${YELLOW}[!] No target entered.${RESET}"
-        return 1
+    if ! command -v shred &> /dev/null; then # Check if shred is installed
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install shred"
+        exit 1
     fi
 
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+
+    echo -n "Enter file or directory to securely delete: "
+    read -r target
+
     if [[ ! -e "$target" ]]; then
-        echo -e "\a"
-        echo -e "${RED}[!] Target does not exist: '$target'${RESET}"
+        echo -e "${RED}[!]${RESET} Target does not exist: '$target'"
         return 1
     fi
 
@@ -867,10 +870,9 @@ secure_delete() {
         rm -rf "$target"
 
         if [[ ! -e "$target" ]]; then
-            echo -e "${GREEN}[+] Directory securely deleted.${RESET}"
+            echo -e "${GREEN}[+]${RESET} Directory securely deleted."
         else
-            echo -e "\a"
-            echo -e "${RED}[!] Directory may not have been fully removed.${RESET}"
+            echo -e "${RED}[!]${RESET} Directory may not have been fully removed."
             return 1
         fi
 
@@ -878,26 +880,22 @@ secure_delete() {
         read -rp "Securely delete '$target'? (y/n): " confirm
         [[ "$confirm" != "y" ]] && return 0
 
-        echo -e "${GREEN}[➜] Shredding '$target'...${RESET}"
+        echo -e "${GREEN}[➜]${RESET} Shredding '$target'..."
         shred -u -v -n 5 "$target"
 
         if [[ ! -e "$target" ]]; then
-            echo
-            echo -e "${GREEN}[+] File securely deleted.${RESET}"
+            echo -e "${GREEN}[+]${RESET} File securely deleted."
         else
-            echo -e "\a"
-            echo
-            echo -e "${RED}[!] File may still exist — check manually.${RESET}"
+            echo -e "${RED}[!]${RESET} File may still exist — check manually."
             return 1
         fi
     else
-        echo -e "\a"
-        echo
-        echo -e "${RED}[!] Target is not a regular file or directory (symlink, device, etc.).${RESET}"
+        echo -e "${RED}[!]${RESET} Target is not a regular file or directory (symlink, device, etc.)."
         return 1
     fi
 
-    echo "───────────────────────────────────────────────────────────────"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
 clean_metadata() {
     echo "───────────────────────────────────────────────────────────────"
