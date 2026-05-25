@@ -763,7 +763,7 @@ rootkit_hunt() {
     echo -e "  INFECTED  : $(  [[ $infected   -gt 0 ]] && echo -e "${RED}${infected}${RESET}"   || echo -e "${GREEN}${infected}${RESET}")"
     echo -e "  Warnings  : $(  [[ $warnings   -gt 0 ]] && echo -e "${RED}${warnings}${RESET}"   || echo -e "${GREEN}${warnings}${RESET}")"
     echo -e "  Suspicious: $([[ $suspicious -gt 0 ]] && echo -e "${YELLOW}${suspicious}${RESET}" || echo -e "${GREEN}${suspicious}${RESET}")"
-    echo "---------------------------------------------------------------"
+    echo -e "${DIVIDER}"
 
     if [[ $infected -gt 0 || $warnings -gt 0 ]]; then
         echo -e "\a"
@@ -782,19 +782,18 @@ rootkit_hunt() {
     echo -e "${DIVIDER}"
 }
 remove_temp_files() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Removing temporary files...${RESET}"
-    sleep 0.5
+    echo -e "${DIVIDER}"
 
     if rm -rf /tmp/* 2>/dev/null; then
         echo -e "${GREEN}[+] Temporary files removed.${RESET}"
     else
         echo -e "\a"
-        echo
         echo -e "${RED}[!] Failed to remove some temporary files (permissions or in-use files).${RESET}"
         return 1
     fi
-    echo "───────────────────────────────────────────────────────────────"
+
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
 generate_password() {
     echo "───────────────────────────────────────────────────────────────"
