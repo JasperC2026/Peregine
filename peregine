@@ -897,163 +897,70 @@ secure_delete() {
     echo "[->] Command executed"
     echo -e "${DIVIDER}"
 }
-clean_metadata() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "ExifTool by Phil Harvey https://exiftool.org/"
-    echo -e "${GREEN}[➜] Remove metadata from a file${RESET}"
-    echo
 
-    if ! command -v exiftool >/dev/null 2>&1; then
-        echo -e "\a"
-        echo -e "${RED}[!] exiftool is not installed.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install libimage-exiftool-perl${RESET}"
-        return 1
+clean_metadata() {
+    echo -e "${DIVIDER}"
+
+    if ! command -v exiftool &> /dev/null; then # Check if exiftool is installed
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install exiftool"
+        exit 1
     fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
 
     read -rp "Enter input file: " file
 
     if [[ ! -f "$file" ]]; then
-        echo -e "\a"
-        echo -e "${RED}[!] File not found: '$file'${RESET}"
+        echo -e "${RED}[!]${RESET} File not found: '$file'"
         return 1
     fi
 
     local mimetype
-    mimetype=$(file --mime-type -b "$file")
-    case "$mimetype" in
-        image/*|video/*|audio/*|application/pdf)
-            ;;
-        *)
-            echo -e "\a"
-            echo -e "${RED}[!] Unsupported file type: $mimetype${RESET}"
-            echo -e "${YELLOW}[i] exiftool supports images, video, audio, and PDF.${RESET}"
-            return 1
-            ;;
-    esac
-
+        mimetype=$(file --mime-type -b "$file")
+        case "$mimetype" in
+            image/*|video/*|audio/*|application/pdf)
+                ;;
+            *)
+                echo -e "${RED}[!]${RESET} Unsupported file type: $mimetype"
+                echo -e "${YELLOW}[i${RESET} exiftool supports images, video, audio, and PDF"
+                return 1
+                ;;
+        esac
     local meta_count
-    meta_count=$(exiftool "$file" 2>/dev/null | grep -v "^File\|^Directory\|^MIME\|^ExifTool" | wc -l)
-    echo -e "${CYAN}[i] Found $meta_count metadata fields in '$file'.${RESET}"
-    echo
+        meta_count=$(exiftool "$file" 2>/dev/null | grep -v "^File\|^Directory\|^MIME\|^ExifTool" | wc -l)
+        echo -e "${CYAN}[i] Found $meta_count metadata fields in '$file'.${RESET}"
+        echo
 
-    read -rp "Output file (leave blank to overwrite original): " outfile
+        read -rp "Output file (leave blank to overwrite original): " outfile
 
-    if [[ -z "$outfile" ]]; then
-        echo -e "${YELLOW}[!] This will overwrite the original file.${RESET}"
-        read -rp "Confirm? (y/n): " confirm
-        [[ "$confirm" != "y" ]] && return 0
+        if [[ -z "$outfile" ]]; then
+            echo -e "[!] This will overwrite the original file."
+            read -rp "Confirm? (y/n): " confirm
+            [[ "$confirm" != "y" ]] && return 0
 
-        exiftool -all= -overwrite_original "$file" >/dev/null 2>&1
-        status=$?
-        outfile="$file"
-    else
-        exiftool -all= -overwrite_original -o "$outfile" "$file" >/dev/null 2>&1
-        status=$?
-    fi
+            exiftool -all= -overwrite_original "$file" >/dev/null 2>&1
+            status=$?
+            outfile="$file"
+        else
+            exiftool -all= -overwrite_original -o "$outfile" "$file" >/dev/null 2>&1
+            status=$?
+        fi
 
-    if [[ $status -ne 0 ]]; then
-        echo -e "\a"
-        echo -e "${RED}[!] Failed to remove metadata.${RESET}"
-        return 1
-    fi
+        if [[ $status -ne 0 ]]; then
+            echo -e "${RED}[!]${RESET} Failed to remove metadata"
+            return 1
+        fi
 
     local remaining
     remaining=$(exiftool "$outfile" 2>/dev/null | grep -v "^File\|^Directory\|^MIME\|^ExifTool" | wc -l)
-    echo -e "${GREEN}[+] Metadata removed → $outfile${RESET}"
+    echo -e "${GREEN}[+]${RESET} Metadata removed → $outfile"
     echo -e "${CYAN}[i] Remaining metadata fields: $remaining (filesystem/format fields only).${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-}
-strip_metadata_mat2() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "MAT2 by the Tails Project https://0xacab.org/jvoisin/mat2"
-    echo -e "${GREEN}[➜] Strip metadata from files (PDF, Office, images, audio, video)${RESET}"
-    echo -e "${YELLOW}[i] MAT2 supports a wider range of formats than exiftool.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-    echo
 
-    if ! command -v mat2 >/dev/null 2>&1; then
-        echo -e "\a${RED}[!] mat2 is not installed.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install mat2${RESET}"
-        return 1
-    fi
 
-    read -rp "Enter file or directory to process: " target
-    [[ -z "$target" ]] && { echo -e "${YELLOW}[!] No target entered.${RESET}"; return 1; }
-    [[ ! -e "$target" ]] && { echo -e "\a${RED}[!] Not found: '$target'${RESET}"; return 1; }
-
-    local files=()
-    if [[ -f "$target" ]]; then
-        files=("$target")
-    elif [[ -d "$target" ]]; then
-        while IFS= read -r -d '' f; do files+=("$f")
-        done < <(find "$target" -type f -print0)
-        echo -e "${CYAN}[i] Found ${#files[@]} file(s) in '$target'.${RESET}"
-    fi
-
-    [[ ${#files[@]} -eq 0 ]] && { echo -e "${YELLOW}[!] No files found.${RESET}"; return 1; }
-
-    echo
-    echo -e "${BOLD}Action:${RESET}"
-    echo "  1) Preview only    (show metadata without modifying)"
-    echo "  2) Clean files     (saves as filename.cleaned.ext)"
-    echo "  3) Clean in-place  (overwrites originals — use with caution)"
-    echo
-    read -rp "Choice [1-3]: " choice
-
-    local ok=0 skipped=0 errors=0
-
-    _mat2_process() {
-        local flag="$1" f="$2" result
-        result=$(mat2 $flag "$f" 2>&1)
-        if [[ $? -eq 0 ]]; then
-            echo -e "  ${GREEN}[+]${RESET} $f"; (( ok++ ))
-        elif echo "$result" | grep -qi "unsupported\|unknown"; then
-            echo -e "  ${YELLOW}[~]${RESET} $f — unsupported, skipped"; (( skipped++ ))
-        else
-            echo -e "  ${RED}[!]${RESET} $f — $result"; (( errors++ ))
-        fi
-    }
-
-    case "$choice" in
-        1)
-            echo -e "${CYAN}── Metadata preview ─────────────────────────────────────────${RESET}"
-            for f in "${files[@]}"; do
-                echo -e "${BOLD}▶ $f${RESET}"
-                mat2 --show "$f" 2>/dev/null || echo -e "  ${YELLOW}[!] Unsupported or no metadata.${RESET}"
-                echo
-            done
-            echo -e "${YELLOW}[i] No files were modified.${RESET}"
-            echo "───────────────────────────────────────────────────────────────"
-            return 0
-            ;;
-        2)
-            echo -e "${GREEN}[➜] Cleaning ${#files[@]} file(s)...${RESET}"
-            for f in "${files[@]}"; do _mat2_process "" "$f"; done ;;
-        3)
-            echo -e "${YELLOW}[!] In-place mode overwrites originals. This cannot be undone.${RESET}"
-            read -rp "Confirm? (y/n): " confirm
-            [[ "$confirm" != "y" ]] && return 0
-            echo -e "${GREEN}[➜] Cleaning ${#files[@]} file(s) in-place...${RESET}"
-            for f in "${files[@]}"; do _mat2_process "--inplace" "$f"; done ;;
-        *)
-            echo -e "\a${RED}[!] Invalid choice. Enter 1–3.${RESET}"; return 1 ;;
-    esac
-
-    echo
-    echo -e "${CYAN}── Summary ──────────────────────────────────────────────────${RESET}"
-    echo -e "  ${GREEN}Cleaned  : $ok${RESET}"
-    echo -e "  ${YELLOW}Skipped  : $skipped${RESET}"
-    [[ $errors -gt 0 ]] && echo -e "  ${RED}Errors   : $errors${RESET}"
-    echo
-
-    if [[ $errors -gt 0 ]]; then
-        echo -e "\a${RED}[!] Some files could not be processed.${RESET}"
-        echo "───────────────────────────────────────────────────────────────"
-        return 1
-    fi
-
-    echo -e "${GREEN}[+] Metadata stripping complete.${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
 # Encryption
 generate_key () {
@@ -2213,19 +2120,6 @@ help() {
             echo -e "${CYAN}remove_temp_files / rm_tmp${RESET}"
             echo "  Deletes all files in /tmp/*."
             ;;
-        clean_system)
-            echo -e "${CYAN}clean_system${RESET}"
-            echo "  Clean system junk using BleachBit."
-            echo -e "  ${GREEN}Requires:${RESET} bleachbit  (sudo apt install bleachbit)"
-            ;;
-        strip_metadata_mat2)
-            echo -e "${CYAN}strip_metadata_mat2${RESET}"
-            echo "  Strip metadata from files using MAT2."
-            echo "  Supports preview, clean (saves as .cleaned), and in-place modes."
-            echo "  Accepts individual files or entire directories."
-            echo -e "  ${GREEN}Requires:${RESET} mat2  (sudo apt install mat2)"
-            ;;
-
         # ── Security ─────────────────────────────────────────────────────────
         system_audit|audit)
             echo -e "${CYAN}system_audit / audit${RESET}"
@@ -2514,7 +2408,6 @@ _PEREGINE_COMMANDS=(
     encrypt_file_aes128
     decrypt_file_aes128
     clean_system    
-    strip_metadata_mat2   
     ghosttrash
     stalkip
     encryption
@@ -2561,7 +2454,6 @@ EOF
     printf "  %-36s %s\n" "update_apps/update"             "Update APT / Flatpak / Snap"
     printf "  %-36s %s\n" "remove_temp_files/rm_tmp"       "Delete /tmp/*"
     printf "  %-36s %s\n" "clean_system"                   "Clean system with BleachBit"    
-    printf "  %-36s %s\n" "strip_metadata_mat2"            "Strip metadata with mat2"      
     echo
     echo -e "${YELLOW}Security & Hardening${RESET}"
     echo "───────────────────────────────────────────────────────────────"
