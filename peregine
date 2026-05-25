@@ -1014,173 +1014,536 @@ generate_key () {
     echo -e "${DIVIDER}"
 }
 encrypt_file_aes256() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Encrypting file (AES-256-CBC)...${RESET}"
-    echo
-
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
     if ! command -v openssl >/dev/null 2>&1; then
-        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
-        return 1
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install openssl"
+        exit 1
     fi
-
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+    echo -e "${GREEN}[➜]${RESET} Encrypting file (AES-256-CBC)..."
+    echo
     read -rp "Enter file to encrypt: " file
-
     if [[ ! -f "$file" ]]; then
         echo -e "\a"
-        echo -e "${RED}[!] File not found.${RESET}"
+        echo -e "${RED}[!]${RESET} File not found."
         return 1
     fi
-
     read -rp "Output file (e.g. file.enc): " outfile
-
     openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$outfile"
     status=$?
-
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] File encrypted → $outfile${RESET}"
-
-        read -rp "Remove original file? (y/n): " remove_original
-        if [[ "$remove_original" == "y" ]]; then
-            if command -v shred >/dev/null 2>&1; then
-                shred -u -- "$file"
-                echo -e "${GREEN}[+] Original securely removed (shred).${RESET}"
-            else
-                rm -- "$file"
-                echo -e "${YELLOW}[i] shred not found, file removed normally.${RESET}"
-            fi
-        fi
-    else
+    if [[ $status -ne 0 ]]; then
         echo -e "\a"
-        echo -e "${RED}[!] Encryption failed.${RESET}"
+        echo -e "${RED}[!]${RESET} Encryption failed."
         return 1
     fi
-    echo "───────────────────────────────────────────────────────────────"
-}
-encrypt_file_aes128() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Encrypting file (AES-128-CBC)...${RESET}"
+    echo -e "${GREEN}[+]${RESET} File encrypted → $outfile"
     echo
-
-    if ! command -v openssl >/dev/null 2>&1; then
-        echo -e "\a"
-        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
-        return 1
+    read -rp "Remove original file? (y/n): " remove_original
+    if [[ "$remove_original" == "y" ]]; then
+        if command -v shred >/dev/null 2>&1; then
+            shred -u -- "$file"
+            echo -e "${GREEN}[+]${RESET} Original securely removed (shred)."
+        else
+            rm -- "$file"
+            echo -e "${YELLOW}[i]${RESET} shred not found, file removed normally."
+        fi
     fi
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
 
+encrypt_file_aes128() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install openssl"
+        exit 1
+    fi
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+    echo -e "${GREEN}[➜]${RESET} Encrypting file (AES-128-CBC)..."
+    echo
     read -rp "Enter file to encrypt: " file
-
     if [[ ! -f "$file" ]]; then
         echo -e "\a"
-        echo -e "${RED}[!] File not found.${RESET}"
+        echo -e "${RED}[!]${RESET} File not found."
         return 1
     fi
-
     read -rp "Output file (e.g. file.enc): " outfile
-
     openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$outfile"
     status=$?
-
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] File encrypted → $outfile${RESET}"
-
-        read -rp "Remove original file? (y/n): " remove_original
-        if [[ "$remove_original" == "y" ]]; then
-            if command -v shred >/dev/null 2>&1; then
-                shred -u -- "$file"
-                echo -e "${GREEN}[+] Original securely removed (shred).${RESET}"
-            else
-                rm -- "$file"
-                echo -e "${YELLOW}[i] shred not found, file removed normally.${RESET}"
-            fi
-        fi
-    else
+    if [[ $status -ne 0 ]]; then
         echo -e "\a"
-        echo -e "${RED}[!] Encryption failed.${RESET}"
+        echo -e "${RED}[!]${RESET} Encryption failed."
         return 1
     fi
-    echo "───────────────────────────────────────────────────────────────"
-}
-decrypt_file_aes256() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Decrypting file (AES-256-CBC)...${RESET}"
+    echo -e "${GREEN}[+]${RESET} File encrypted → $outfile"
     echo
-
-    if ! command -v openssl >/dev/null 2>&1; then
-        echo -e "\a"
-        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-        return 1
+    read -rp "Remove original file? (y/n): " remove_original
+    if [[ "$remove_original" == "y" ]]; then
+        if command -v shred >/dev/null 2>&1; then
+            shred -u -- "$file"
+            echo -e "${GREEN}[+]${RESET} Original securely removed (shred)."
+        else
+            rm -- "$file"
+            echo -e "${YELLOW}[i]${RESET} shred not found, file removed normally."
+        fi
     fi
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
 
+decrypt_file_aes256() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install openssl"
+        exit 1
+    fi
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+    echo -e "${GREEN}[➜]${RESET} Decrypting file (AES-256-CBC)..."
+    echo
     read -rp "Enter encrypted file: " file
-
     if [[ ! -f "$file" ]]; then
         echo -e "\a"
-        echo -e "${RED}[!] File not found.${RESET}"
+        echo -e "${RED}[!]${RESET} File not found."
         return 1
     fi
-
     read -rp "Output file: " outfile
-
     openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -in "$file" -out "$outfile"
     status=$?
-
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] File decrypted → $outfile${RESET}"
-    else
+    if [[ $status -ne 0 ]]; then
         echo -e "\a"
-        echo -e "${RED}[!] Decryption failed (wrong password or corrupted file).${RESET}"
+        echo -e "${RED}[!]${RESET} Decryption failed (wrong password or corrupted file)."
         return 1
     fi
-    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${GREEN}[+]${RESET} File decrypted → $outfile"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
+
 decrypt_file_aes128() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Decrypting file (AES-128-CBC)...${RESET}"
-    echo
-
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
     if ! command -v openssl >/dev/null 2>&1; then
-        echo -e "\a"
-        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-        return 1
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install openssl"
+        exit 1
     fi
-
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+    echo -e "${GREEN}[➜]${RESET} Decrypting file (AES-128-CBC)..."
+    echo
     read -rp "Enter encrypted file: " file
-
     if [[ ! -f "$file" ]]; then
         echo -e "\a"
-        echo -e "${RED}[!] File not found.${RESET}"
+        echo -e "${RED}[!]${RESET} File not found."
         return 1
     fi
-
     read -rp "Output file: " outfile
-
     openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -in "$file" -out "$outfile"
     status=$?
-
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] File decrypted → $outfile${RESET}"
-    else
+    if [[ $status -ne 0 ]]; then
         echo -e "\a"
-        echo -e "${RED}[!] Decryption failed (wrong password or corrupted file).${RESET}"
+        echo -e "${RED}[!]${RESET} Decryption failed (wrong password or corrupted file)."
         return 1
     fi
-    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${GREEN}[+]${RESET} File decrypted → $outfile"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
-encrypt_text_ceasar() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Caesar Cipher${RESET}"
-    echo
 
+encrypt_file_chacha20() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install openssl"
+        exit 1
+    fi
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+    echo -e "${GREEN}[➜]${RESET} Encrypting file (ChaCha20)..."
+    echo
+    read -rp "Enter file to encrypt: " file
+    if [[ ! -f "$file" ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} File not found."
+        return 1
+    fi
+    read -rp "Output file (e.g. file.enc): " outfile
+    openssl enc -chacha20 -pbkdf2 -iter 100000 -salt -in "$file" -out "$outfile"
+    status=$?
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} Encryption failed."
+        return 1
+    fi
+    echo -e "${GREEN}[+]${RESET} File encrypted → $outfile"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+
+decrypt_file_chacha20() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install openssl"
+        exit 1
+    fi
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+    echo -e "${GREEN}[➜]${RESET} Decrypting file (ChaCha20)..."
+    echo
+    read -rp "Enter encrypted file: " file
+    if [[ ! -f "$file" ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} File not found."
+        return 1
+    fi
+    read -rp "Output file: " outfile
+    openssl enc -chacha20 -d -pbkdf2 -iter 100000 -in "$file" -out "$outfile"
+    status=$?
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} Decryption failed (wrong password or corrupted file)."
+        return 1
+    fi
+    echo -e "${GREEN}[+]${RESET} File decrypted → $outfile"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+
+encrypt_file_twofish() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+    if ! command -v gpg >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install gnupg"
+        exit 1
+    fi
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+    echo -e "${GREEN}[➜]${RESET} Encrypting file (Twofish)..."
+    echo
+    read -rp "Enter file to encrypt: " file
+    if [[ ! -f "$file" ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} File not found."
+        return 1
+    fi
+    read -rp "Output file: " outfile
+    gpg --symmetric --cipher-algo TWOFISH --s2k-cipher-algo TWOFISH --s2k-digest-algo SHA512 --compress-algo none -o "$outfile" "$file"
+    status=$?
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} Encryption failed."
+        return 1
+    fi
+    echo -e "${GREEN}[+]${RESET} File encrypted → $outfile"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+
+decrypt_file_twofish() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+    if ! command -v gpg >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install gnupg"
+        exit 1
+    fi
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+    echo -e "${GREEN}[➜]${RESET} Decrypting file (Twofish)..."
+    echo
+    read -rp "Enter encrypted file: " file
+    if [[ ! -f "$file" ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} File not found."
+        return 1
+    fi
+    read -rp "Output file: " outfile
+    gpg -o "$outfile" -d "$file"
+    status=$?
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} Decryption failed."
+        return 1
+    fi
+    echo -e "${GREEN}[+]${RESET} File decrypted → $outfile"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+
+encrypt_file_serpent() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+    if ! command -v gpg >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install gnupg"
+        exit 1
+    fi
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+    echo -e "${GREEN}[➜]${RESET} Encrypting file (Serpent)..."
+    echo
+    read -rp "Enter file to encrypt: " file
+    if [[ ! -f "$file" ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} File not found."
+        return 1
+    fi
+    read -rp "Output file: " outfile
+    gpg --symmetric --cipher-algo SERPENT256 --s2k-digest-algo SHA512 --compress-algo none -o "$outfile" "$file"
+    status=$?
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} Encryption failed."
+        return 1
+    fi
+    echo -e "${GREEN}[+]${RESET} File encrypted → $outfile"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+
+decrypt_file_serpent() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+    if ! command -v gpg >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install gnupg"
+        exit 1
+    fi
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+    echo -e "${GREEN}[➜]${RESET} Decrypting file (Serpent)..."
+    echo
+    read -rp "Enter encrypted file: " file
+    if [[ ! -f "$file" ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} File not found."
+        return 1
+    fi
+    read -rp "Output file: " outfile
+    gpg -o "$outfile" -d "$file"
+    status=$?
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} Decryption failed."
+        return 1
+    fi
+    echo -e "${GREEN}[+]${RESET} File decrypted → $outfile"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+
+encrypt_text_aes256() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install openssl"
+        exit 1
+    fi
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+    echo -e "${GREEN}[➜]${RESET} Encrypting text (AES-256-CBC)..."
+    echo
+    read -rp "Enter text: " text
+    echo
+    printf "%s" "$text" | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -a
+    status=$?
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} Encryption failed."
+        return 1
+    fi
+    echo
+    echo -e "${GREEN}[+]${RESET} Text encrypted."
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+
+encrypt_text_aes128() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install openssl"
+        exit 1
+    fi
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+    echo -e "${GREEN}[➜]${RESET} Encrypting text (AES-128-CBC)..."
+    echo
+    read -rp "Enter text: " text
+    echo
+    printf "%s" "$text" | openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -a
+    status=$?
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} Encryption failed."
+        return 1
+    fi
+    echo
+    echo -e "${GREEN}[+]${RESET} Text encrypted."
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+
+decrypt_text_aes256() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install openssl"
+        exit 1
+    fi
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+    echo -e "${GREEN}[➜]${RESET} Decrypting text (AES-256-CBC)..."
+    echo
+    read -rp "Enter encrypted text: " text
+    echo
+    printf "%s" "$text" | openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -a
+    status=$?
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} Decryption failed."
+        return 1
+    fi
+    echo
+    echo -e "${GREEN}[+]${RESET} Text decrypted."
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+
+decrypt_text_aes128() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install openssl"
+        exit 1
+    fi
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+    echo -e "${GREEN}[➜]${RESET} Decrypting text (AES-128-CBC)..."
+    echo
+    read -rp "Enter encrypted text: " text
+    echo
+    printf "%s" "$text" | openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -a
+    status=$?
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} Decryption failed."
+        return 1
+    fi
+    echo
+    echo -e "${GREEN}[+]${RESET} Text decrypted."
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+
+encrypt_text_chacha20() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install openssl"
+        exit 1
+    fi
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+    echo -e "${GREEN}[➜]${RESET} Encrypting text (ChaCha20)..."
+    echo
+    read -rp "Enter text: " text
+    echo
+    printf "%s" "$text" | openssl enc -chacha20 -pbkdf2 -iter 100000 -salt -a
+    status=$?
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} Encryption failed."
+        return 1
+    fi
+    echo
+    echo -e "${GREEN}[+]${RESET} Text encrypted."
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+
+decrypt_text_chacha20() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install openssl"
+        exit 1
+    fi
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+    echo -e "${GREEN}[➜]${RESET} Decrypting text (ChaCha20)..."
+    echo
+    echo "Paste encrypted Base64 text below:"
+    read -rp "> " encrypted_text
+    echo
+    printf "%s" "$encrypted_text" | openssl enc -chacha20 -d -pbkdf2 -iter 100000 -a
+    status=$?
+    if [[ $status -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} Decryption failed."
+        return 1
+    fi
+    echo
+    echo -e "${GREEN}[+]${RESET} Text decrypted."
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+
+encrypt_text_base64() {
+    echo -e "${DIVIDER}"
+    echo -e "${GREEN}[➜]${RESET} Base64 Encode"
+    echo
+    read -rp "Enter text: " text
+    result=$(printf "%s" "$text" | base64)
+    echo
+    echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+
+decrypt_text_base64() {
+    echo -e "${DIVIDER}"
+    echo -e "${GREEN}[➜]${RESET} Base64 Decode"
+    echo
+    read -rp "Enter Base64 text: " text
+    result=$(printf "%s" "$text" | base64 -d 2>/dev/null)
+    if [[ $? -ne 0 ]]; then
+        echo -e "\a"
+        echo -e "${RED}[!]${RESET} Invalid Base64 input."
+        return 1
+    fi
+    echo
+    echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+
+encrypt_text_ceasar() {
+    echo -e "${DIVIDER}"
+    echo -e "${GREEN}[➜]${RESET} Caesar Cipher"
+    echo
     read -rp "Enter text: " text
     read -rp "Enter shift (e.g. 3 or -3): " shift
-
-    echo -e "${CYAN}"
+    echo
     result=$(printf "%s" "$text" | awk -v shift="$shift" '
     BEGIN {
         alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
@@ -1197,33 +1560,57 @@ encrypt_text_ceasar() {
             printf "%s", (c in map)?map[c]:c
         }
     }')
-
-    echo -e "${RESET}"
-    echo -e "${GREEN}[+] Result: $result ${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
-encrypt_text_vigenere() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Vigenère Cipher${RESET}"
-    echo
 
+decrypt_text_ceasar() {
+    echo -e "${DIVIDER}"
+    echo -e "${GREEN}[➜]${RESET} Caesar Decipher"
+    echo
+    read -rp "Enter text: " text
+    read -rp "Enter shift (e.g. 3): " shift
+    shift=$(( -shift ))
+    echo
+    result=$(printf "%s" "$text" | awk -v shift="$shift" '
+    BEGIN {
+        alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+        len=length(alphabet)
+        for (i=1;i<=len;i++) {
+            c=substr(alphabet,i,1)
+            new=substr(alphabet,((i-1+shift)%len+len)%len+1,1)
+            map[c]=new
+        }
+    }
+    {
+        for (i=1;i<=length($0);i++) {
+            c=substr($0,i,1)
+            printf "%s", (c in map)?map[c]:c
+        }
+    }')
+    echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+
+encrypt_text_vigenere() {
+    echo -e "${DIVIDER}"
+    echo -e "${GREEN}[➜]${RESET} Vigenère Cipher"
+    echo
     read -rp "Enter text: " text
     read -rp "Enter key: " key
-
-    echo -e "${CYAN}"
+    echo
     result=$(awk -v text="$text" -v key="$key" '
     function ord(c) { return index("ABCDEFGHIJKLMNOPQRSTUVWXYZ", c) }
     function chr(n) { return substr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", n, 1) }
-
     BEGIN {
         key = toupper(key)
         text = toupper(text)
         keylen = length(key)
         j = 1
-
         for (i = 1; i <= length(text); i++) {
             c = substr(text, i, 1)
-
             if (c ~ /[A-Z]/) {
                 shift = ord(substr(key, j, 1)) - 1
                 new = (ord(c) + shift - 1) % 26 + 1
@@ -1234,221 +1621,32 @@ encrypt_text_vigenere() {
             }
         }
     }')
-
-    echo -e "${RESET}"
-    echo -e "${GREEN}[+] Result: $result${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
-encrypt_text_aes256() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Encrypting text (AES-256-CBC)...${RESET}"
 
-    if ! command -v openssl >/dev/null 2>&1; then
-        echo -e "\a"
-        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-        return 1
-    fi
-
-    echo -e "${CYAN}"
-    read -rp "Enter text: " text
-    echo
-    printf "%s" "$text" | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -a
-    status=$?
-    echo -e "${RESET}"
-
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] Text encrypted.${RESET}"
-    else
-        echo -e "\a"
-        echo -e "${RED}[!] Encryption failed.${RESET}"
-        return 1
-    fi
-    echo "───────────────────────────────────────────────────────────────"
-}
-encrypt_text_base64() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Base64 Encode${RESET}"
-
-    echo -e "${CYAN}"
-    read -rp "Enter text: " text
-    result=$(printf "%s" "$text" | base64)
-    echo -e "${RESET}"
-
-    echo
-    echo -e "${GREEN}[+] Result:${RESET} $result"
-    echo "───────────────────────────────────────────────────────────────"
-}
-encrypt_text_aes128() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Encrypting text (AES-128-CBC)...${RESET}"
-
-    if ! command -v openssl >/dev/null 2>&1; then
-        echo -e "\a"
-        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-        return 1
-    fi
-
-    echo -e "${CYAN}"
-    read -rp "Enter text: " text
-    printf "%s" "$text" | openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -a
-    status=$?
-    echo -e "${RESET}"
-
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] Text encrypted.${RESET}"
-    else
-        echo -e "\a"
-        echo -e "${RED}[!] Encryption failed.${RESET}"
-        return 1
-    fi
-    echo "───────────────────────────────────────────────────────────────"
-}
-rot13_cipher() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] ROT13 Cipher${RESET}"
-
-    echo -e "${CYAN}"
-    read -rp "Enter text: " text
-    result=$(printf "%s" "$text" | tr 'A-Za-z' 'N-ZA-Mn-za-m')
-    echo -e "${RESET}"
-
-    echo -e "${GREEN}[+] Result:${RESET} $result"
-    echo "───────────────────────────────────────────────────────────────"
-}
-decrypt_text_base64() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Base64 Decode${RESET}"
-
-    echo -e "${CYAN}"
-    read -rp "Enter Base64 text: " text
-    result=$(printf "%s" "$text" | base64 -d 2>/dev/null)
-    echo -e "${RESET}"
-
-    if [[ $? -ne 0 ]]; then
-        echo -e "\a"
-        echo -e "${RED}[!] Invalid Base64 input.${RESET}"
-        return 1
-    fi
-
-    echo -e "${GREEN}[+] Result:${RESET} $result"
-    echo "───────────────────────────────────────────────────────────────"
-}
-decrypt_text_aes256() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Decrypting text (AES-256-CBC)...${RESET}"
-    echo
-
-    if ! command -v openssl >/dev/null 2>&1; then
-        echo -e "\a"
-        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-        return 1
-    fi
-
-    read -rp "Enter encrypted text: " text
-    echo -e "${CYAN}"
-    printf "%s" "$text" | openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -a
-    status=$?
-    echo -e "${RESET}"
-
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] Text decrypted.${RESET}"
-    else
-        echo -e "\a"
-        echo -e "${RED}[!] Decryption failed.${RESET}"
-        return 1
-    fi
-    echo "───────────────────────────────────────────────────────────────"
-}
-decrypt_text_aes128() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Decrypting text (AES-128-CBC)...${RESET}"
-    echo
-
-    if ! command -v openssl >/dev/null 2>&1; then
-        echo -e "\a"
-        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-        return 1
-    fi
-
-    read -rp "Enter encrypted text: " text
-
-    echo -e "${CYAN}"
-    printf "%s" "$text" | openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -a
-    status=$?
-    echo -e "${RESET}"
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] Text decrypted.${RESET}"
-    else
-        echo -e "\a"
-        echo -e "${RED}[!] Decryption failed.${RESET}"
-        return 1
-    fi
-    echo "───────────────────────────────────────────────────────────────"
-}
-decrypt_text_ceasar() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Caesar Decipher${RESET}"
-
-    read -rp "Enter text: " text
-    read -rp "Enter shift (e.g. 3): " shift
-
-    shift=$(( -shift ))
-
-    echo -e "${CYAN}"
-    result=$(printf "%s" "$text" | awk -v shift="$shift" '
-    BEGIN {
-        alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-        len=length(alphabet)
-
-        for (i=1;i<=len;i++) {
-            c=substr(alphabet,i,1)
-            new=substr(alphabet,((i-1+shift)%len+len)%len+1,1)
-            map[c]=new
-        }
-    }
-    {
-        for (i=1;i<=length($0);i++) {
-            c=substr($0,i,1)
-            printf "%s", (c in map)?map[c]:c
-        }
-    }')
-
-    echo -e "${RESET}"
-    echo -e "${GREEN}[+] Result: $result${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-}
 decrypt_text_vigenere() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Vigenère Decipher${RESET}"
+    echo -e "${DIVIDER}"
+    echo -e "${GREEN}[➜]${RESET} Vigenère Decipher"
     echo
-
     read -rp "Enter text: " text
     read -rp "Enter key: " key
-
-    echo -e "${CYAN}"
+    echo
     result=$(awk -v text="$text" -v key="$key" '
     function ord(c) { return index("ABCDEFGHIJKLMNOPQRSTUVWXYZ", c) }
     function chr(n) { return substr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", n, 1) }
-
     BEGIN {
         key = toupper(key)
         text = toupper(text)
         keylen = length(key)
         j = 1
-
         for (i = 1; i <= length(text); i++) {
             c = substr(text, i, 1)
-
             if (c ~ /[A-Z]/) {
                 shift = ord(substr(key, j, 1)) - 1
-
                 new = (ord(c) - shift - 1)
                 new = (new % 26 + 26) % 26 + 1
-
                 printf "%s", chr(new)
                 j = (j % keylen) + 1
             } else {
@@ -1456,259 +1654,21 @@ decrypt_text_vigenere() {
             }
         }
     }')
-
-    echo -e "${RESET}"
-    echo -e "${GREEN}[+] Result: $result${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
-encrypt_file_chacha20() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Encrypting file (ChaCha20)...${RESET}"
+
+rot13_cipher() {
+    echo -e "${DIVIDER}"
+    echo -e "${GREEN}[➜]${RESET} ROT13 Cipher"
     echo
-
-    if ! command -v openssl >/dev/null 2>&1; then
-        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install openssl${RESET}"
-        return 1
-    fi
-
-    read -rp "Enter file to encrypt: " file
-
-    if [[ ! -f "$file" ]]; then
-        echo -e "${RED}[!] File not found.${RESET}"
-        return 1
-    fi
-
-    read -rp "Output file (example.enc): " outfile
-
-    openssl enc -chacha20 -pbkdf2 -iter 100000 -salt -in "$file" -out "$outfile"
-    status=$?
-
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] File encrypted → $outfile${RESET}"
-    else
-        echo -e "${RED}[!] Encryption failed.${RESET}"
-        return 1
-    fi
-
-    echo "───────────────────────────────────────────────────────────────"
-}
-decrypt_file_chacha20() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Decrypting file (ChaCha20)...${RESET}"
-    echo
-
-    if ! command -v openssl >/dev/null 2>&1; then
-        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-        return 1
-    fi
-
-    read -rp "Enter encrypted file: " file
-
-    if [[ ! -f "$file" ]]; then
-        echo -e "${RED}[!] File not found.${RESET}"
-        return 1
-    fi
-
-    read -rp "Output file: " outfile
-
-    openssl enc -chacha20 -d -pbkdf2 -iter 100000 -in "$file" -out "$outfile"
-    status=$?
-
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] File decrypted → $outfile${RESET}"
-    else
-        echo -e "${RED}[!] Decryption failed.${RESET}"
-        return 1
-    fi
-
-    echo "───────────────────────────────────────────────────────────────"
-}
-encrypt_text_chacha20() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Encrypting text (ChaCha20)...${RESET}"
-
-    if ! command -v openssl >/dev/null 2>&1; then
-        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-        return 1
-    fi
-
     read -rp "Enter text: " text
-
+    result=$(printf "%s" "$text" | tr 'A-Za-z' 'N-ZA-Mn-za-m')
     echo
-    printf "%s" "$text" | openssl enc -chacha20 -pbkdf2 -iter 100000 -salt -a
-    status=$?  
-
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] Text encrypted.${RESET}"
-    else
-        echo -e "\a"
-        echo -e "${RED}[!] Encryption failed.${RESET}"
-        return 1
-    fi
-
-    echo "───────────────────────────────────────────────────────────────"
-}
-decrypt_text_chacha20() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo "OpenSSL by the OpenSSL Project https://openssl.org/"
-    echo -e "${GREEN}[➜] Decrypting text (ChaCha20)...${RESET}"
-
-    if ! command -v openssl >/dev/null 2>&1; then
-        echo -e "${RED}[!] OpenSSL is not installed.${RESET}"
-        return 1
-    fi
-
-    echo
-    echo "Paste encrypted Base64 text below:"
-    read -rp "> " encrypted_text
-
-    echo
-    printf "%s" "$encrypted_text" | openssl enc -chacha20 -d -pbkdf2 -iter 100000 -a
-
-    status=$?
-
-    echo
-
-    if [[ $status -ne 0 ]]; then
-        echo -e "${RED}[!] Decryption failed.${RESET}"
-        return 1
-    fi
-
-    echo "───────────────────────────────────────────────────────────────"
-}
-encrypt_file_twofish() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Encrypting file (Twofish)...${RESET}"
-    echo
-
-    if ! command -v gpg >/dev/null 2>&1; then
-        echo -e "${RED}[!] GPG is not installed.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install gnupg${RESET}"
-        return 1
-    fi
-
-    read -rp "Enter file to encrypt: " file
-
-    if [[ ! -f "$file" ]]; then
-        echo -e "${RED}[!] File not found.${RESET}"
-        return 1
-    fi
-
-    read -rp "Output file: " outfile
-
-    gpg --symmetric --cipher-algo TWOFISH --s2k-cipher-algo TWOFISH --s2k-digest-algo SHA512 --compress-algo none -o "$outfile" "$file"
-
-    status=$?
-
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] File encrypted → $outfile${RESET}"
-    else
-        echo -e "${RED}[!] Encryption failed.${RESET}"
-        return 1
-    fi
-
-    echo "───────────────────────────────────────────────────────────────"
-}
-decrypt_file_twofish() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Decrypting file (Twofish)...${RESET}"
-    echo
-
-    if ! command -v gpg >/dev/null 2>&1; then
-        echo -e "${RED}[!] GPG is not installed.${RESET}"
-        return 1
-    fi
-
-    read -rp "Enter encrypted file: " file
-
-    if [[ ! -f "$file" ]]; then
-        echo -e "${RED}[!] File not found.${RESET}"
-        return 1
-    fi
-
-    read -rp "Output file: " outfile
-
-    gpg -o "$outfile" -d "$file"
-
-    status=$?
-
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] File decrypted → $outfile${RESET}"
-    else
-        echo -e "${RED}[!] Decryption failed.${RESET}"
-        return 1
-    fi
-
-    echo "───────────────────────────────────────────────────────────────"
-}
-encrypt_file_serpent() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Encrypting file (Serpent)...${RESET}"
-    echo
-
-    if ! command -v gpg >/dev/null 2>&1; then
-        echo -e "${RED}[!] GPG is not installed.${RESET}"
-        echo -e "${YELLOW}[i] Install with: sudo apt install gnupg${RESET}"
-        return 1
-    fi
-
-    read -rp "Enter file to encrypt: " file
-
-    if [[ ! -f "$file" ]]; then
-        echo -e "${RED}[!] File not found.${RESET}"
-        return 1
-    fi
-
-    read -rp "Output file: " outfile
-
-    gpg --symmetric --cipher-algo SERPENT256 --s2k-digest-algo SHA512 --compress-algo none -o "$outfile" "$file"
-
-    status=$?
-
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] File encrypted → $outfile${RESET}"
-    else
-        echo -e "${RED}[!] Encryption failed.${RESET}"
-        return 1
-    fi
-
-    echo "───────────────────────────────────────────────────────────────"
-}
-decrypt_file_serpent() {
-    echo "───────────────────────────────────────────────────────────────"
-    echo -e "${GREEN}[➜] Decrypting file (Serpent)...${RESET}"
-    echo
-
-    if ! command -v gpg >/dev/null 2>&1; then
-        echo -e "${RED}[!] GPG is not installed.${RESET}"
-        return 1
-    fi
-
-    read -rp "Enter encrypted file: " file
-
-    if [[ ! -f "$file" ]]; then
-        echo -e "${RED}[!] File not found.${RESET}"
-        return 1
-    fi
-
-    read -rp "Output file: " outfile
-
-    gpg -o "$outfile" -d "$file"
-
-    status=$?
-
-    if [[ $status -eq 0 ]]; then
-        echo -e "${GREEN}[+] File decrypted → $outfile${RESET}"
-    else
-        echo -e "${RED}[!] Decryption failed.${RESET}"
-        return 1
-    fi
-
-    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
 # Other
 license() {
