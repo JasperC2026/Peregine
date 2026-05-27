@@ -6,10 +6,10 @@
 
 **A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface.**
 
-![Version](https://img.shields.io/badge/Version-3-00008b?style=for-the-badge)
-![License](https://img.shields.io/badge/License-GPL_V3-00008b?style=for-the-badge)
-![Shell](https://img.shields.io/badge/Shell-Bash-black?style=for-the-badge&logo=gnubash&logoColor=black)
-![Platform](https://img.shields.io/badge/Platform-Linux-black?style=for-the-badge&logo=linux&logoColor=black)
+![Version](https://img.shields.io/badge/v3.0-000000?style=for-the-badge)
+[![GPL v3](https://img.shields.io/badge/GPL_v3.0-000000?style=for-the-badge&logo=gnu&logoColor=white)](./LICENSE)
+![BASH](https://img.shields.io/badge/Bash-000000?style=for-the-badge&logo=gnubash&logoColor=white)
+![Platform](https://img.shields.io/badge/Linux-000000?style=for-the-badge&logo=linux&logoColor=white)
 
 </div>
 
@@ -39,21 +39,29 @@ Built for speed, simplicity, and control — privacy-first by design.
 
 | Distro family | Status |
 |---|---|
-| Ubuntu / Debian-based | Fully tested |
-| Other Linux distros |  Should work, minor issues possible |
-| macOS / Windows |  Not supported |
+| ![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white) ![Debian](https://img.shields.io/badge/Debian-A81D33?style=for-the-badge&logo=debian&logoColor=white) | ✅ Fully tested |
+| ![Linux](https://img.shields.io/badge/Other_Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) | ⚠️ Should work, minor issues possible |
+| ![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white) ![Windows](https://img.shields.io/badge/Windows-0078D4?style=for-the-badge&logo=windows11&logoColor=white) | ❌ Not supported |
 
 > This project is actively developed. Fast iteration may occasionally introduce bugs — bug reports and PRs are welcome.
 
 ---
 
-
 ## Dependencies
- 
+
 All dependencies are optional — only install what you need for the tools you use. Nothing is required just to run Peregine itself.
- 
+
 **Networking & OSINT**
- 
+
+![curl](https://img.shields.io/badge/curl-073551?style=for-the-badge&logo=curl&logoColor=white)
+![whois](https://img.shields.io/badge/whois-00008b?style=for-the-badge)
+![dig](https://img.shields.io/badge/dig_(dnsutils)-00008b?style=for-the-badge)
+![ping](https://img.shields.io/badge/ping-00008b?style=for-the-badge)
+![traceroute](https://img.shields.io/badge/traceroute-00008b?style=for-the-badge)
+![python3](https://img.shields.io/badge/python3-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![maigret](https://img.shields.io/badge/maigret-181717?style=for-the-badge)
+![torsocks](https://img.shields.io/badge/torsocks-7D4698?style=for-the-badge&logo=torproject&logoColor=white)
+
 | Tool | Package | Used by |
 |---|---|---|
 | `curl` | `sudo apt install curl` | `get_ip`, `ip_osint` |
@@ -64,9 +72,15 @@ All dependencies are optional — only install what you need for the tools you u
 | `python3` | `sudo apt install python3` | `local_server` |
 | `maigret` | `pipx install maigret` | `maigret_search` |
 | `torsocks` | `sudo apt install torsocks` | Tor routing (all network tools) |
- 
+
 **Security & System**
- 
+
+![lynis](https://img.shields.io/badge/lynis-00008b?style=for-the-badge)
+![chkrootkit](https://img.shields.io/badge/chkrootkit-00008b?style=for-the-badge)
+![shred](https://img.shields.io/badge/shred_(coreutils)-A42E2B?style=for-the-badge&logo=gnu&logoColor=white)
+![srm](https://img.shields.io/badge/srm-00008b?style=for-the-badge)
+![sfill](https://img.shields.io/badge/sfill-00008b?style=for-the-badge)
+
 | Tool | Package | Used by |
 |---|---|---|
 | `lynis` | `sudo apt install lynis` | `system_audit` |
@@ -74,22 +88,27 @@ All dependencies are optional — only install what you need for the tools you u
 | `shred` | `sudo apt install coreutils` | `secure_shred_dir`, `secure_delete` |
 | `srm` | `sudo apt install secure-delete` | `secure_empty_trash` |
 | `sfill` | `sudo apt install secure-delete` | `secure_overwrite_free_space` |
- 
+
 **Privacy & Metadata**
- 
+
+![exiftool](https://img.shields.io/badge/exiftool-00008b?style=for-the-badge)
+
 | Tool | Package | Used by |
 |---|---|---|
 | `exiftool` | `sudo apt install libimage-exiftool-perl` | `clean_metadata` |
- 
+
 **Encryption**
- 
+
+![openssl](https://img.shields.io/badge/openssl-721412?style=for-the-badge&logo=openssl&logoColor=white)
+![gpg](https://img.shields.io/badge/gpg-0093DD?style=for-the-badge&logo=gnuprivacyguard&logoColor=white)
+
 | Tool | Package | Used by |
 |---|---|---|
 | `openssl` | `sudo apt install openssl` | All AES/ChaCha20 encrypt/decrypt, `generate_password`, `generate_key` |
 | `gpg` | `sudo apt install gnupg` | `encrypt_file_twofish`, `encrypt_file_serpent` and their decrypt counterparts |
- 
+
 **Install everything at once (Debian/Ubuntu):**
- 
+
 ```bash
 sudo apt install curl whois dnsutils iputils-ping traceroute python3 torsocks \
   lynis chkrootkit coreutils secure-delete \
@@ -97,12 +116,12 @@ sudo apt install curl whois dnsutils iputils-ping traceroute python3 torsocks \
   openssl gnupg git
 pipx install maigret
 ```
- 
+
 ---
 
 ## Getting Started
 
-Use the install.sh file or just clone the repo. 
+Use the install.sh file or just clone the repo.
 
 ---
 
@@ -137,7 +156,7 @@ Found a bug or have a feature request? [Open an issue](https://codeberg.org/pere
 
 | Component | License |
 |---|---|
-| Source code | [GNU General Public License v3.0](./LICENSE) |
-| Logos & assets | [CC0 Public Domain Dedication](./LICENSE) |
+| Source code | [![GPL v3](https://img.shields.io/badge/GPL_v3.0-A42E2B?style=for-the-badge&logo=gnu&logoColor=white)](./LICENSE) |
+| Logos & assets | [![CC0](https://img.shields.io/badge/CC0_1.0-EF9421?style=for-the-badge&logo=creativecommons&logoColor=white)](./LICENSE) |
 
 Copyright © 2026 [Peregine](https://codeberg.org/peregine)
