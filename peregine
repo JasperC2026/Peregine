@@ -2220,7 +2220,10 @@ help() {
             echo "  With a command name: show details and dependencies for that command."
             echo -e "  Example: ${GREEN}peregine help whois${RESET}"
             ;;
-
+        check_dependencies|cd)
+            echo -e "${CYAN}check_dependencies / cd ${RESET}"
+            echo "  Check the dependencies of the toolkit"
+            ;;  
         *)
             echo -e "${RED}[!] No help entry for '$1'.${RESET}"
             echo -e "    Run ${CYAN}peregine help${RESET} to list all commands."
@@ -2230,6 +2233,9 @@ help() {
     esac
 
     echo -e "${DIVIDER}"
+}
+check_dependencies () {
+    echo "Under construction"
 }
 # Development / Testing
 test_colors() {
@@ -2322,6 +2328,9 @@ ghosttrash() {
 stalkip() {
     ip_osint
 }
+cd () {
+    check_dependencies
+}
 # ─── Command dispatcher ───────────────────────────────────────────────────────
 
 _PEREGINE_COMMANDS=(
@@ -2378,6 +2387,7 @@ _PEREGINE_COMMANDS=(
     clone_source c
     version v V    
     help h
+    check_dependencies cd
 )
 
 _peregine_list_commands() { 
@@ -2464,6 +2474,7 @@ EOF
     printf "  %-36s %s\n" "license"                     "Show license"
     printf "  %-36s %s\n" "clone_source"                "Clone source from Codeberg"   
     printf "  %-36s %s\n" "version/v/V"                 "Show version"  
+    printf "  %-36s %s\n" "check_dependencies/cd"       "Check dependencies for the toolkit"
     echo
 }
 
