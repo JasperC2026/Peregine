@@ -80,7 +80,6 @@ All dependencies are optional — only install what you need for the tools you u
 | Tool | Package | Used by |
 |---|---|---|
 | `exiftool` | `sudo apt install libimage-exiftool-perl` | `clean_metadata` |
-| `mat2` | `sudo apt install mat2` | `strip_metadata_mat2` |
  
 **Encryption**
  

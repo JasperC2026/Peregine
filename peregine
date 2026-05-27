@@ -2235,7 +2235,107 @@ help() {
     echo -e "${DIVIDER}"
 }
 check_dependencies () {
-    echo "Under construction"
+    if ! command -v git >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Git not installed"
+    else
+        echo "${GREEN}[+]${RESET} Git installed"
+    fi
+
+    if ! command -v curl >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Curl not installed"
+    else
+        echo "${GREEN}[+]${RESET} Curl installed"
+    fi 
+
+    if ! command -v whois >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Whois not installed"
+    else
+        echo "${GREEN}[+]${RESET} Whois installed"
+    fi  
+
+    if ! command -v dig >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Dig not installed"
+    else
+        echo "${GREEN}[+]${RESET} Dig installed"
+    fi  
+
+    if ! command -v ping >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Ping not installed"
+    else
+        echo "${GREEN}[+]${RESET} Ping installed"
+    fi  
+
+    if ! command -v traceroute >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Traceroute not installed"
+    else
+        echo "${GREEN}[+]${RESET} Traceroute installed"
+    fi  
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Python3 not installed"
+    else
+        echo "${GREEN}[+]${RESET} Python3 installed"
+    fi  
+
+    if ! command -v maigret >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Maigret not installed"
+    else
+        echo "${GREEN}[+]${RESET} Maigret installed"
+    fi  
+
+    if ! command -v torsocks >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Torsocks not installed"
+    else
+        echo "${GREEN}[+]${RESET} Torsocks installed"
+    fi  
+
+    if ! command -v lynis >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Lynis not installed"
+    else
+        echo "${GREEN}[+]${RESET} Lynis installed"
+    fi  
+
+    if ! command -v chkrootkit >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Chkrootkit not installed"
+    else
+        echo "${GREEN}[+]${RESET} Chkrootkit installed"
+    fi  
+
+    if ! command -v shred >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Shred not installed"
+    else
+        echo "${GREEN}[+]${RESET} Shred installed"
+    fi  
+
+    if ! command -v srm >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Srm not installed"
+    else
+        echo "${GREEN}[+]${RESET} Srm installed"
+    fi      
+
+    if ! command -v sfill >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Sfill not installed"
+    else
+        echo "${GREEN}[+]${RESET} Sfill installed"
+    fi    
+
+    if ! command -v exiftool >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Exiftool not installed"
+    else
+        echo "${GREEN}[+]${RESET} Exiftool installed"
+    fi  
+
+    if ! command -v openssl >dev/null 2>&1; then
+        echo "${RED}[!]${RESET} OpenSSL not installed"
+    else
+        echo "${GREEN}[+]${RESET} OpenSSL installed"
+    fi  
+
+    if ! command -v gpg >dev/null 2>&1; then
+        echo "${RED}[!]${RESET} GPG not installed"
+    else
+        echo "${GREEN}[+]${RESET} GPG installed"
+    fi   
 }
 # Development / Testing
 test_colors() {
