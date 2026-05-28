@@ -2491,91 +2491,40 @@ _PEREGINE_COMMANDS=(
 )
 
 _peregine_list_commands() { 
-    echo "───────────────────────────────────────────────────────────────"
+    echo -e "${CYAN}"
+    echo "──────────────────────────────────────────────────────────────────────────────────"
     cat <<EOF
-                                                  $$\                     
-                                                  \__|                    
- $$$$$$\   $$$$$$\   $$$$$$\   $$$$$$\   $$$$$$\  $$\ $$$$$$$\   $$$$$$\  
-$$  __$$\ $$  __$$\ $$  __$$\ $$  __$$\ $$  __$$\ $$ |$$  __$$\ $$  __$$\ 
-$$ /  $$ |$$$$$$$$ |$$ |  \__|$$$$$$$$ |$$ /  $$ |$$ |$$ |  $$ |$$$$$$$$ |
-$$ |  $$ |$$   ____|$$ |      $$   ____|$$ |  $$ |$$ |$$ |  $$ |$$   ____|
-$$$$$$$  |\$$$$$$$\ $$ |      \$$$$$$$\ \$$$$$$$ |$$ |$$ |  $$ |\$$$$$$$\ 
-$$  ____/  \_______|\__|       \_______| \____$$ |\__|\__|  \__| \_______|
-$$ |                                    $$\   $$ |                        
-$$ |                                    \$$$$$$  |                        
-\__|                                     \______/                         
-                                                          
+'########::'########:'########::'########::'######:::'####:'##::: ##:'########:
+ ##.... ##: ##.....:: ##.... ##: ##.....::'##... ##::. ##:: ###:: ##: ##.....::
+ ##:::: ##: ##::::::: ##:::: ##: ##::::::: ##:::..:::: ##:: ####: ##: ##:::::::
+ ########:: ######::: ########:: ######::: ##::'####:: ##:: ## ## ##: ######:::
+ ##.....::: ##...:::: ##.. ##::: ##...:::: ##::: ##::: ##:: ##. ####: ##...::::
+ ##:::::::: ##::::::: ##::. ##:: ##::::::: ##::: ##::: ##:: ##:. ###: ##:::::::
+ ##:::::::: ########: ##:::. ##: ########:. ######:::'####: ##::. ##: ########:
+..:::::::::........::..:::::..::........:::......::::....::..::::..::........::
+                                                        
 EOF
-    echo "───────────────────────────────────────────────────────────────"
+    echo "──────────────────────────────────────────────────────────────────────────────────"
+    echo -e "${RESET}"
     echo -e "${CYAN}Usage:${RESET}  peregine <command>"   
-    echo -e "${YELLOW}Networking / OSINT${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-    printf "  %-36s %s\n" "local_server"                   "Spin up a local HTTP file server (Python)"
-    printf "  %-36s %s\n" "whois_lookup/whois"             "WHOIS lookup for a domain"
-    printf "  %-36s %s\n" "ping"                           "Ping a host (6 packets)"  
-    printf "  %-36s %s\n" "traceroute"                     "Traceroute to a host"
-    printf "  %-36s %s\n" "dns_info/dns"                   "DNS records via dig"
-    printf "  %-36s %s\n" "get_ip/ip"                      "Show your public IP"
-    printf "  %-36s %s\n" "ip_osint"                       "IP/domain OSINT (ipinfo.io)"
-    printf "  %-36s %s\n" "maigret_search/maigret"         "Username OSINT (Maigret)"
+
     echo
-    echo -e "${YELLOW}System${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-    printf "  %-36s %s\n" "update_apps/update"             "Update APT / Flatpak / Snap"
-    printf "  %-36s %s\n" "remove_temp_files/rm_tmp"       "Delete /tmp/*"
-    printf "  %-36s %s\n" "clean_system"                   "Clean system with BleachBit"    
+    echo "${DIVIDER}"
+    echo -e "${BOLD} Peregine: A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface."
+    echo "License GPL-v3: see LICENSE file or use peregine license to view the license"
+    
     echo
-    echo -e "${YELLOW}Security & Hardening${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-    printf "  %-36s %s\n" "system_audit/audit"                "Run Lynis security audit"
-    printf "  %-36s %s\n" "rootkit_hunt"                      "Scan for rootkits (chkrootkit)"
-    printf "  %-36s %s\n" "secure_empty_trash/SET"            "Securely wipe Trash (srm)" 
-    printf "  %-36s %s\n" "secure_overwrite_free_space/sofs"  "Wipe free disk space (sfill)"
-    printf "  %-36s %s\n" "secure_shred_dir"                  "Securely shred all files in a directory (shred)"
+    echo "Current version: $type $version"
+    echo "Release date: $release_date"
+    echo "Latest test on: $test_date"
+    echo "${DIVIDER}"
+
     echo
-    echo -e "${YELLOW}Privacy / Files${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-    printf "  %-36s %s\n" "generate_password/genpass"           "Generate a secure password"
-    printf "  %-36s %s\n" "secure_delete/sedl"                  "Securely delete a file or directory (shred)"
-    printf "  %-36s %s\n" "clean_metadata"                      "Strip image metadata (exiftool)"
-    printf "  %-36s %s\n" "generate_key/genkey"                 "Generate a 128/192/256/512-bit key"
-    echo
-    echo -e "${YELLOW}Encrypt / Decrypt Files${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-    printf "  %-36s %s\n" "encrypt_file_aes256"         "Encrypt file (AES-256-CBC)"
-    printf "  %-36s %s\n" "encrypt_file_aes128"         "Encrypt file (AES-128-CBC)"
-    printf "  %-36s %s\n" "decrypt_file_aes256"         "Decrypt file (AES-256-CBC)"
-    printf "  %-36s %s\n" "decrypt_file_aes128"         "Decrypt file (AES-128-CBC)"
-    printf "  %-36s %s\n" "encrypt_file_chacha20"       "Encrypt file (ChaCha20)"
-    printf "  %-36s %s\n" "decrypt_file_chacha20"       "Decrypt file (ChaCha20)"
-    printf "  %-36s %s\n" "encrypt_file_twofish"        "Encrypt file (Twofish)"
-    printf "  %-36s %s\n" "decrypt_file_twofish"        "Decrypt file (Twofish)"
-    printf "  %-36s %s\n" "encrypt_file_serpent"        "Encrypt file (Serpent)"
-    printf "  %-36s %s\n" "decrypt_file_serpent"        "Decrypt file (Serpent)"
-    echo
-    echo -e "${YELLOW}Encrypt / Decrypt Text${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-    printf "  %-36s %s\n" "encrypt_text_aes256"         "Encrypt text (AES-256-CBC)"
-    printf "  %-36s %s\n" "encrypt_text_aes128"         "Encrypt text (AES-128-CBC)"
-    printf "  %-36s %s\n" "decrypt_text_aes256"         "Decrypt text (AES-256-CBC)"
-    printf "  %-36s %s\n" "decrypt_text_aes128"         "Decrypt text (AES-128-CBC)"
-    printf "  %-36s %s\n" "encrypt_text_chacha20"       "Encrypt text (ChaCha20)"
-    printf "  %-36s %s\n" "decrypt_text_chacha20"       "Decrypt text (ChaCha20)"
-    printf "  %-36s %s\n" "encrypt_text_ceasar"         "Caesar cipher"
-    printf "  %-36s %s\n" "decrypt_text_ceasar"         "Caesar decipher"
-    printf "  %-36s %s\n" "encrypt_text_vigenere"       "Vigenère cipher"
-    printf "  %-36s %s\n" "decrypt_text_vigenere"       "Vigenère decipher"
-    printf "  %-36s %s\n" "encrypt_text_base64"         "Base64 encode"
-    printf "  %-36s %s\n" "decrypt_text_base64"         "Base64 decode"
-    printf "  %-36s %s\n" "rot13_cipher/rot13"          "ROT13"
-    echo
-    echo -e "${YELLOW}Misc${RESET}"
-    echo "───────────────────────────────────────────────────────────────"
-    printf "  %-36s %s\n" "license"                     "Show license"
-    printf "  %-36s %s\n" "clone_source"                "Clone source from Codeberg"   
-    printf "  %-36s %s\n" "version/v/V"                 "Show version"  
-    printf "  %-36s %s\n" "check_dependencies/cd"       "Check dependencies for the toolkit"
-    echo
+    echo "Useful commands:"
+    printf "peregine version"        "See version info of the tool"
+    printf "peregine license"        "See license of the tool"
+    printf "peregine clone_source"   "Clone source from Codeberg"
+    printf "peregine help"           "List commands and options"
 }
 
     if [[ $# -eq 0 ]]; then
