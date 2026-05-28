@@ -10,6 +10,7 @@
 [![GPL v3](https://img.shields.io/badge/GPL_v3.0-000000?style=for-the-badge&logo=gnu&logoColor=white)](./LICENSE)
 ![BASH](https://img.shields.io/badge/Bash-000000?style=for-the-badge&logo=gnubash&logoColor=white)
 ![Platform](https://img.shields.io/badge/Linux-000000?style=for-the-badge&logo=linux&logoColor=white)
+![Kind](https://img.shields.io/badge/FOSS-000000?style=for-the-badge)
 
 </div>
 
