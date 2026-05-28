@@ -12,6 +12,7 @@ type="Beta"
 version="V3.0"
 release_date="23-5-2026"
 test_date="N/A"
+total_commands="54"
 DIVIDER="───────────────────────────────────────────────────────────────"
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
@@ -1937,6 +1938,8 @@ version() {
     echo "Current version: $type $version"
     echo "Release date: $release_date"
     echo "Latest test on: $test_date"
+
+    echo "Total commands: $total_commands"
     echo "${DIVIDER}"
 }
 encryption () {
