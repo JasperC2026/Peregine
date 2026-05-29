@@ -12,7 +12,7 @@ type="Beta"
 version="V3.0"
 release_date="23-5-2026"
 test_date="N/A"
-total_commands="54"
+total_commands="55"
 DIVIDER="───────────────────────────────────────────────────────────────"
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
@@ -1919,6 +1919,7 @@ clone_source() {
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
 
     git clone https://codeberg.org/JasperC/Peregine.git
+    status=$?
 
      if [[ $? -ne 0 ]]; then
         echo -e "${RED}[!]${RESET} Failed to clone source code."
@@ -1940,6 +1941,34 @@ version() {
     echo "Latest test on: $test_date"
 
     echo "Total commands: $total_commands"
+    echo "${DIVIDER}"
+}
+update () {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v git >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: apt install git"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+
+    git clone https://codeberg.org/JasperC/Peregine.git
+
+    echo -e "${GREEN}[+]${RESET} Code fetched"
+
+    sudo cp ~/Peregine/peregine /usr/local/bin/peregine
+    status=$?
+
+    if [[ $? -ne 0 ]]; then
+        echo -e "${RED}[!]${RESET} Failed to copy code."
+        return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Copied succesfully."
+    fi
+
     echo "${DIVIDER}"
 }
 encryption () {
@@ -2204,6 +2233,10 @@ help() {
             ;;
 
         # ── Misc ─────────────────────────────────────────────────────────────
+        update)
+            echo -e "${CYAN}update ${RESET}" 
+            echo "  Update the toolbox from the codeberg repo."
+            ;;
         license|l)
             echo -e "${CYAN}license / l${RESET}"
             echo "  Display the full GPL-3.0 license text and a plain-English summary."
@@ -2491,6 +2524,7 @@ _PEREGINE_COMMANDS=(
     version v V    
     help h
     check_dependencies cd
+    update
 )
 
 _peregine_list_commands() { 
@@ -2547,5 +2581,3 @@ EOF
 # You can open an issue, discussion or pull request on the repository. I welcome all contributions and feedback.
 # Also you can contact me trough matrix: @whiteghost404:matrix.org
 # Untill version 2.2.3 you can find me on GitHub all versions after that will be codeberg: https://codeberg.org/JasperC/Peregine. 
-
-# Add updater command 
