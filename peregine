@@ -2562,6 +2562,7 @@ EOF
     printf "peregine license"        "See license of the tool"
     printf "peregine clone_source"   "Clone source from Codeberg"
     printf "peregine help"           "List commands and options"
+    echo
 }
 
     if [[ $# -eq 0 ]]; then
