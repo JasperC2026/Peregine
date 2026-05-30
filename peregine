@@ -12,7 +12,7 @@ type="Beta"
 version="V3.0"
 release_date="23-5-2026"
 test_date="N/A"
-total_commands="55"
+total_commands="54"
 DIVIDER="───────────────────────────────────────────────────────────────"
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
@@ -1943,97 +1943,6 @@ version() {
     echo "Total commands: $total_commands"
     echo "${DIVIDER}"
 }
-update () {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
-    if ! command -v git >/dev/null 2>&1; then
-        echo "${RED}[!]${RESET} Required dependencie not installed"
-        echo "Install with: apt install git"
-        return 1
-    fi
-
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-
-    git clone https://codeberg.org/JasperC/Peregine.git
-
-    echo -e "${GREEN}[+]${RESET} Code fetched"
-
-    sudo cp ~/Peregine/peregine /usr/local/bin/peregine
-    status=$?
-
-    if [[ $? -ne 0 ]]; then
-        echo -e "${RED}[!]${RESET} Failed to copy code."
-        return 1
-    else
-        echo -e "${GREEN}[+]${RESET} Copied succesfully."
-    fi
-
-    echo "${DIVIDER}"
-}
-encryption () {
-    echo -e "${DIVIDER}"
-    echo -e "${YELLOW}Encrypt / Decrypt Files${RESET}"
-    printf "  %-36s %s\n" "encrypt_file_aes256"         "Encrypt file (AES-256-CBC)"
-    printf "  %-36s %s\n" "encrypt_file_aes128"         "Encrypt file (AES-128-CBC)"
-    printf "  %-36s %s\n" "decrypt_file_aes256"         "Decrypt file (AES-256-CBC)"
-    printf "  %-36s %s\n" "decrypt_file_aes128"         "Decrypt file (AES-128-CBC)"
-    printf "  %-36s %s\n" "encrypt_file_chacha20"       "Encrypt file (ChaCha20)"
-    printf "  %-36s %s\n" "decrypt_file_chacha20"       "Decrypt file (ChaCha20)"
-    printf "  %-36s %s\n" "encrypt_file_twofish"        "Encrypt file (Twofish)"
-    printf "  %-36s %s\n" "decrypt_file_twofish"        "Decrypt file (Twofish)"
-    printf "  %-36s %s\n" "encrypt_file_serpent"        "Encrypt file (Serpent)"
-    printf "  %-36s %s\n" "decrypt_file_serpent"        "Decrypt file (Serpent)"
-    echo
-    echo -e "${YELLOW}Encrypt / Decrypt Text${RESET}"
-    printf "  %-36s %s\n" "encrypt_text_aes256"         "Encrypt text (AES-256-CBC)"
-    printf "  %-36s %s\n" "encrypt_text_aes128"         "Encrypt text (AES-128-CBC)"
-    printf "  %-36s %s\n" "decrypt_text_aes256"         "Decrypt text (AES-256-CBC)"
-    printf "  %-36s %s\n" "decrypt_text_aes128"         "Decrypt text (AES-128-CBC)"
-    printf "  %-36s %s\n" "encrypt_text_chacha20"       "Encrypt text (ChaCha20)"
-    printf "  %-36s %s\n" "decrypt_text_chacha20"       "Decrypt text (ChaCha20)"
-    printf "  %-36s %s\n" "encrypt_text_ceasar"         "Caesar cipher"
-    printf "  %-36s %s\n" "decrypt_text_ceasar"         "Caesar decipher"
-    printf "  %-36s %s\n" "encrypt_text_vigenere"       "Vigenère cipher"
-    printf "  %-36s %s\n" "decrypt_text_vigenere"       "Vigenère decipher"
-    printf "  %-36s %s\n" "encrypt_text_base64"         "Base64 encode"
-    printf "  %-36s %s\n" "decrypt_text_base64"         "Base64 decode"
-    printf "  %-36s %s\n" "rot13_cipher/rot13"          "ROT13"
-    echo -e "${DIVIDER}"
-}
-security () {
-    echo -e "${DIVIDER}"
-    printf "  %-36s %s\n" "system_audit/audit"                  "Run Lynis security audit"
-    printf "  %-36s %s\n" "rootkit_hunt"                        "Scan for rootkits (chkrootkit)"
-    printf "  %-36s %s\n" "secure_empty_trash/SET"              "Securely wipe Trash (srm)"   
-    printf "  %-36s %s\n" "secure_overwrite_free_space/sofs"    "Wipe free disk space (sfill)"
-    printf "  %-36s %s\n" "secure_shred_dir"                    "Securely shred all files in a directory (shred)"
-    echo -e "${DIVIDER}"
-}
-networking() {
-    echo -e "${DIVIDER}"
-    printf "  %-36s %s\n" "local_server"              "Spin up a local HTTP file server (Python)"
-    printf "  %-36s %s\n" "whois_lookup/whois"        "WHOIS lookup for a domain"
-    printf "  %-36s %s\n" "ping"                      "Ping a host (6 packets)"    
-    printf "  %-36s %s\n" "traceroute"                "Traceroute to a host"
-    printf "  %-36s %s\n" "dns_info/dns"              "DNS records via dig"
-    printf "  %-36s %s\n" "get_ip/ip"                 "Show your public IP"
-    printf "  %-36s %s\n" "ip_osint"                  "IP/domain OSINT (ipinfo.io)"
-    printf "  %-36s %s\n" "maigret_search/maigret"    "Username OSINT (Maigret)"
-    echo -e "${DIVIDER}"
-}
-aes() {
-    echo -e "${DIVIDER}"
-    printf "  %-36s %s\n" "encrypt_file_aes256"         "Encrypt file (AES-256-CBC)"
-    printf "  %-36s %s\n" "encrypt_file_aes128"         "Encrypt file (AES-128-CBC)"
-    printf "  %-36s %s\n" "decrypt_file_aes256"         "Decrypt file (AES-256-CBC)"
-    printf "  %-36s %s\n" "decrypt_file_aes128"         "Decrypt file (AES-128-CBC)"
-    printf "  %-36s %s\n" "encrypt_text_aes256"         "Encrypt text (AES-256-CBC)"
-    printf "  %-36s %s\n" "encrypt_text_aes128"         "Encrypt text (AES-128-CBC)"
-    printf "  %-36s %s\n" "decrypt_text_aes256"         "Decrypt text (AES-256-CBC)"
-    printf "  %-36s %s\n" "decrypt_text_aes128"         "Decrypt text (AES-128-CBC)"
-    echo -e "${DIVIDER}"
-}
 help() {
     if [[ -z "$1" ]]; then
         _peregine_list_commands
@@ -2233,10 +2142,6 @@ help() {
             ;;
 
         # ── Misc ─────────────────────────────────────────────────────────────
-        update)
-            echo -e "${CYAN}update ${RESET}" 
-            echo "  Update the toolbox from the codeberg repo."
-            ;;
         license|l)
             echo -e "${CYAN}license / l${RESET}"
             echo "  Display the full GPL-3.0 license text and a plain-English summary."

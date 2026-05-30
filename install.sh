@@ -2,8 +2,6 @@
 
 set -e
 
-INSTALL_DIR="/usr/local/bin"
-SCRIPT_NAME="Peregine"
 
 echo "[+] Installing Peregine..."
 
@@ -14,9 +12,11 @@ fi
 
 echo "[+] Downloading tool..."
 
-curl -L https://codeberg.org/JasperC/peregine -o $INSTALL_DIR/$SCRIPT_NAME
+git clone https://codeberg.org/JasperC/peregine.git 
 
-chmod +x $INSTALL_DIR/$SCRIPT_NAME
+chmod +x ~/Peregine/peregine
+
+sudo ln -sf ~/Peregine/peregine /usr/local/bin/peregine
 
 echo "[✓] Peregine installed!"
 echo "Run with: peregine"
