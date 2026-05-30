@@ -2544,7 +2544,7 @@ EOF
 
     echo
     echo "${DIVIDER}"
-    echo -e "${BOLD} Peregine: A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface."
+    echo -e "${BOLD} Peregine: A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface.${RESET} "
     echo "License GPL-v3: see LICENSE file or use peregine license to view the license"
     
     echo
