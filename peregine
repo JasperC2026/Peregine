@@ -2413,9 +2413,6 @@ maigret() {
 rm_tmp() {
     remove_temp_files
 }
-update() {
-    update_apps
-}
 audit() {
     system_audit
 }
