@@ -2395,9 +2395,6 @@ test_colors() {
 }
 
 # Alternatives
-h () {
-    help
-}
 whois () {
     whois_lookup 
 }
@@ -2508,18 +2505,13 @@ _PEREGINE_COMMANDS=(
     encrypt_file_aes256 
     decrypt_file_aes256 
     encrypt_file_aes128
-    decrypt_file_aes128
-    clean_system    
+    decrypt_file_aes128   
     ghosttrash
     stalkip
-    encryption
-    security
-    networking
-    aes
     license l
     clone_source c
     version v V    
-    help h
+    help 
     check_dependencies cd
     update
 )
@@ -2553,13 +2545,11 @@ EOF
     echo "Latest test on: $test_date"
     echo "${DIVIDER}"
 
-    echo
-    echo "Useful commands:"
-    printf "peregine version"        "See version info of the tool"
-    printf "peregine license"        "See license of the tool"
-    printf "peregine clone_source"   "Clone source from Codeberg"
-    printf "peregine help"           "List commands and options"
-    echo
+    echo "All commands:"
+    for cmd in "${_PEREGINE_COMMANDS[@]}"; do
+        printf "  %-36s %s\n" "$cmd" "$(help "$cmd" | sed -n '2p')"
+    done
+    echo -e "${DIVIDER}"
 }
 
     if [[ $# -eq 0 ]]; then
