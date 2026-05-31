@@ -1,18 +1,14 @@
-<div align="center">  
-   
-<img width="1280" height="640" alt="Peregine banner" src="https://codeberg.org/JasperC/Peregine/src/branch/main/assets/peregine_header.png" />  
-   
-# Peregine  
-   
-**A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface.**  
-   
-![Version](https://img.shields.io/badge/v3.0-000000?style=for-the-badge)  
-[![GPL v3](https://img.shields.io/badge/GPL_v3.0-000000?style=for-the-badge&logo=gnu&logoColor=white)](./LICENSE)  
-![BASH](https://img.shields.io/badge/Bash-000000?style=for-the-badge&logo=gnubash&logoColor=white)  
-![Platform](https://img.shields.io/badge/Linux-000000?style=for-the-badge&logo=linux&logoColor=white)  
-![Kind](https://img.shields.io/badge/FOSS-000000?style=for-the-badge)  
-   
-</div>  
+<div align="center">
+
+![Peregine banner](https://codeberg.org/JasperC/Peregine/raw/branch/main/assets/peregine_header.png)
+
+# Peregine
+
+**A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface.**
+
+![Version](https://img.shields.io/badge/v3.0-000000?style=for-the-badge) [![GPL v3](https://img.shields.io/badge/GPL_v3.0-000000?style=for-the-badge&logo=gnu&logoColor=white)](./LICENSE) ![BASH](https://img.shields.io/badge/Bash-000000?style=for-the-badge&logo=gnubash&logoColor=white) ![Platform](https://img.shields.io/badge/Linux-000000?style=for-the-badge&logo=linux&logoColor=white) ![Kind](https://img.shields.io/badge/FOSS-000000?style=for-the-badge)
+
+</div>
    
 ---  
    
