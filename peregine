@@ -35,6 +35,18 @@ COLORS=(
 )
 i=0
 
+osint_disclaimer () {
+    cat << EOF
+Peregine OSINT tools are intended for lawful, ethical use only. By using these tools, you agree that:  
+• You have authorization to investigate the target(s)
+• You comply with all applicable local, national, and international laws (GDPR, CFAA, Computer Misuse Act, etc.)
+• You respect privacy and do not use the tools for harassment, stalking, or any malicious activity
+• You take full responsibility for how results are used
+
+The developers of Peregine are not liable for any misuse of these tools. Always use OSINT techniques responsibly and ethically.
+Unauthorized use against systems or individuals without consent may be a criminal offense in your jurisdiction.
+EOF
+}
 # Commands
 # Networking
 local_server() {
@@ -260,6 +272,10 @@ dns_info() {
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo 
 
+    echo
+    osint_disclaimer
+    echo
+
     echo -n "Enter domain to retrieve DNS information: "
     read -r domain
 
@@ -404,11 +420,9 @@ maigret_search () {
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo 
 
-    echo -e "${DIVIDER}"   
-    echo -e "${RED}[!]${RESET} Note: Maigret is a powerful OSINT tool for username enumeration across various platforms. Use it responsibly and only on authorized systems."
-    echo -e "${RED}[!]${RESET} Always respect privacy policies and legal boundaries when"
-    echo -e "${RED}[!]${RESET} gathering OSINT data. Misuse can lead to legal consequences."
-    echo -e "${DIVIDER}"  
+    echo
+    osint_disclaimer
+    echo
 
     echo -n "Enter username to search for: "
     read -r username
