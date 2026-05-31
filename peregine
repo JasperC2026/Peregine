@@ -47,6 +47,24 @@ The developers of Peregine are not liable for any misuse of these tools. Always 
 Unauthorized use against systems or individuals without consent may be a criminal offense in your jurisdiction.
 EOF
 }
+warning_destructive_actions () {
+    cat << EOF
+WARNING: This action is irreversible. Data cannot be recovered once wiped.
+Make sure you have selected the correct target before continuing.
+Always double-check the target and understand the consequences before proceeding.
+
+The developers of Peregine are not responsible for any data loss.
+EOF
+}
+warning_privilege_escalation () {
+    cat << EOF
+WARNING: This action requires root privileges.
+Running commands as root can cause serious system damage if used incorrectly.
+Make sure you understand what this action does before continuing.
+
+The developers of Peregine are not responsible for any damage caused.
+EOF
+}
 # Commands
 # Networking
 local_server() {
@@ -464,6 +482,11 @@ maigret_search () {
 # System Maintenance
 update_apps() {
     echo -e "${DIVIDER}"
+
+    echo
+    warning_privilege_escalation 
+    echo
+
     echo -n "Name package manager (apt, pacman, snap, pipx, pip): "
     read -r package_manager
 
@@ -550,6 +573,10 @@ secure_shred_dir() {
     echo -e "${CYAN}  Passes    : $passes${RESET}"
     echo
 
+    echo
+    warning_destructive_actions
+    echo 
+
     echo -e "${RED}[!]${RESET} This will permanently destroy $total_files file(s) in:"
     echo -e "    ${BOLD}$abs_target${RESET}"
     echo
@@ -626,6 +653,10 @@ secure_empty_trash() {
         return 0
     fi
 
+    echo
+    warning_destructive_actions
+    echo 
+
     echo -e "${CYAN}[i] Found $file_count item(s) in Trash.${RESET}"
     echo
     read -rp "Securely delete all trash? (y/n): " confirm
@@ -673,6 +704,14 @@ secure_overwrite_free_space() {
     echo -e "${RED}[!]${RESET} This will securely overwrite all free space on the root partition ($root_partition) to help prevent recovery of deleted files."
     echo -e "${RED}[!]${RESET} This process can take a long time depending on the size of the partition and the amount of free space. Make sure to close other applications and save your work before proceeding."
     
+    echo
+    warning_privilege_escalation 
+    echo
+
+    echo
+    warning_destructive_actions
+    echo 
+
     echo -n "Proceed with secure free space overwrite? (y/n): "
     read -r confirm
 
@@ -705,6 +744,10 @@ system_audit() {
         return 1
     fi
 
+    echo
+    warning_privilege_escalation 
+    echo
+    
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
 
@@ -865,6 +908,10 @@ secure_delete() {
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+
+    echo
+    warning_destructive_actions
     echo
 
     echo -n "Enter file or directory to securely delete: "
