@@ -48,6 +48,9 @@ The developers of Peregine are not liable for any misuse of these tools. Always 
 Unauthorized use against systems or individuals without consent may be a criminal offense in your jurisdiction.
 EOF
     echo -e "${DIVIDER}${RESET}"
+
+    echo
+    terms_notice
 }
 warning_destructive_actions () {
     echo -e "${RED}${DIVIDER}"
@@ -59,6 +62,9 @@ Always double-check the target and understand the consequences before proceeding
 The developers of Peregine are not responsible for any data loss.
 EOF
     echo -e "${DIVIDER}${RESET}"
+
+    echo
+    risk_notice
 }
 warning_privilege_escalation () {
     echo -e "${RED}${DIVIDER}"
@@ -70,6 +76,27 @@ Make sure you understand what this action does before continuing.
 The developers of Peregine are not responsible for any damage caused.
 EOF
     echo -e "${DIVIDER}${RESET}"
+    
+    echo
+    risk_notice
+}
+risk_notice () {
+    echo "Do you understand the risks and want to proceed? (y/n): "
+    read -r confirm
+
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        echo "Aborting action."
+        return 1
+    fi
+}
+terms_notice () {
+    echo "Do you accept these terms and want to proceed? (y/n): "
+    read -r confirm
+
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        echo "Aborting action."
+        return 1
+    fi
 }
 # Commands
 # Networking
