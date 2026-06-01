@@ -50,14 +50,16 @@ All dependencies are optional — only install what you need for the tools you u
    
 **Networking & OSINT**  
    
-![curl](https://img.shields.io/badge/curl-073551?style=for-the-badge&logo=curl&logoColor=white)  
-![whois](https://img.shields.io/badge/whois-00008b?style=for-the-badge)  
-![dig](https://img.shields.io/badge/dig_(dnsutils)-00008b?style=for-the-badge)  
-![ping](https://img.shields.io/badge/ping-00008b?style=for-the-badge)  
-![traceroute](https://img.shields.io/badge/traceroute-00008b?style=for-the-badge)  
-![python3](https://img.shields.io/badge/python3-3776AB?style=for-the-badge&logo=python&logoColor=white)  
-![maigret](https://img.shields.io/badge/maigret-181717?style=for-the-badge)  
-![torsocks](https://img.shields.io/badge/torsocks-7D4698?style=for-the-badge&logo=torproject&logoColor=white)  
+![curl](https://img.shields.io/badge/curl-073551?style=for-the-badge&logo=curl&logoColor=white)
+![whois](https://img.shields.io/badge/whois-00008b?style=for-the-badge)
+![dig](https://img.shields.io/badge/dig_(dnsutils)-00008b?style=for-the-badge)
+![ping](https://img.shields.io/badge/ping-00008b?style=for-the-badge)
+![traceroute](https://img.shields.io/badge/traceroute-00008b?style=for-the-badge)
+![python3](https://img.shields.io/badge/python3-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![maigret](https://img.shields.io/badge/maigret-181717?style=for-the-badge)
+![phoneinfoga](https://img.shields.io/badge/phoneinfoga-181717?style=for-the-badge)
+![theHarvester](https://img.shields.io/badge/theHarvester-181717?style=for-the-badge)
+![torsocks](https://img.shields.io/badge/torsocks-7D4698?style=for-the-badge&logo=torproject&logoColor=white)
    
 | Tool | Package | Used by |  
 |---|---|---|  
@@ -72,11 +74,11 @@ All dependencies are optional — only install what you need for the tools you u
    
 **Security & System**  
    
-![lynis](https://img.shields.io/badge/lynis-00008b?style=for-the-badge)  
-![chkrootkit](https://img.shields.io/badge/chkrootkit-00008b?style=for-the-badge)  
-![shred](https://img.shields.io/badge/shred_(coreutils)-A42E2B?style=for-the-badge&logo=gnu&logoColor=white)  
-![srm](https://img.shields.io/badge/srm-00008b?style=for-the-badge)  
-![sfill](https://img.shields.io/badge/sfill-00008b?style=for-the-badge)  
+![lynis](https://img.shields.io/badge/lynis-00008b?style=for-the-badge)
+![chkrootkit](https://img.shields.io/badge/chkrootkit-00008b?style=for-the-badge)
+![shred](https://img.shields.io/badge/shred_(coreutils)-A42E2B?style=for-the-badge&logo=gnu&logoColor=white) 
+![srm](https://img.shields.io/badge/srm-00008b?style=for-the-badge)
+![sfill](https://img.shields.io/badge/sfill-00008b?style=for-the-badge)
    
 | Tool | Package | Used by |  
 |---|---|---|  
@@ -96,8 +98,8 @@ All dependencies are optional — only install what you need for the tools you u
    
 **Encryption**  
    
-![openssl](https://img.shields.io/badge/openssl-721412?style=for-the-badge&logo=openssl&logoColor=white)  
-![gpg](https://img.shields.io/badge/gpg-0093DD?style=for-the-badge&logo=gnuprivacyguard&logoColor=white)  
+![openssl](https://img.shields.io/badge/openssl-721412?style=for-the-badge&logo=openssl&logoColor=white)
+![gpg](https://img.shields.io/badge/gpg-0093DD?style=for-the-badge&logo=gnuprivacyguard&logoColor=white) 
    
 | Tool | Package | Used by |  
 |---|---|---|  
