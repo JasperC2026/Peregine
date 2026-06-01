@@ -36,6 +36,7 @@ COLORS=(
 i=0
 
 osint_disclaimer () {
+    echo -e "${RED}${DIVIDER}"
     cat << EOF
 Peregine OSINT tools are intended for lawful, ethical use only. By using these tools, you agree that:  
 • You have authorization to investigate the target(s)
@@ -46,8 +47,10 @@ Peregine OSINT tools are intended for lawful, ethical use only. By using these t
 The developers of Peregine are not liable for any misuse of these tools. Always use OSINT techniques responsibly and ethically.
 Unauthorized use against systems or individuals without consent may be a criminal offense in your jurisdiction.
 EOF
+    echo -e "${DIVIDER}${RESET}"
 }
 warning_destructive_actions () {
+    echo -e "${RED}${DIVIDER}"
     cat << EOF
 WARNING: This action is irreversible. Data cannot be recovered once wiped.
 Make sure you have selected the correct target before continuing.
@@ -55,8 +58,10 @@ Always double-check the target and understand the consequences before proceeding
 
 The developers of Peregine are not responsible for any data loss.
 EOF
+    echo -e "${DIVIDER}${RESET}"
 }
 warning_privilege_escalation () {
+    echo -e "${RED}${DIVIDER}"
     cat << EOF
 WARNING: This action requires root privileges.
 Running commands as root can cause serious system damage if used incorrectly.
@@ -64,6 +69,7 @@ Make sure you understand what this action does before continuing.
 
 The developers of Peregine are not responsible for any damage caused.
 EOF
+    echo -e "${DIVIDER}${RESET}"
 }
 # Commands
 # Networking
