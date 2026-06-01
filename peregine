@@ -5,14 +5,14 @@
 # You are free to use, copy, modify, and distribute this software for any purpose.
 # With the requirements of: keeping the source code open and availible, license any modified or derived versions under GPL-3.0 as well and keeping all copyright and license notices intact.
 # You cannot distribute it as closed-source / proprietary, add restrictions that prevent others from exercising these rights, hold the author (JasperC) liable for anything — the software comes with no warranty.
-# Version: 3.0 
+# Version: 3.1
 
 # Variables
-type="Beta"
-version="V3.0"
-release_date="23-5-2026"
-test_date="N/A"
-total_commands="54"
+type="Stable"
+version="V3.1"
+release_date="1-6-2026"
+test_date="1-6-2026"
+total_commands="57"
 DIVIDER="───────────────────────────────────────────────────────────────"
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
@@ -482,6 +482,190 @@ maigret_search () {
         echo -e "${CYAN}Maigret results for $username:${RESET}"
         echo -e "${CYAN}$output${RESET}"
     fi
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+phone_lookup () {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v phoneinfoga >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: bash <( curl -sSL https://raw.githubusercontent.com/sundowndev/phoneinfoga/master/support/scripts/install )"
+        echo "sudo install ./phoneinfoga /usr/local/bin/phoneinfoga"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+
+    echo
+    osint_disclaimer
+    echo
+
+    echo -n "Enter phone number (with country code, e.g. +1234567890): "
+    read -r phone
+
+    if [[ -z "$phone" ]]; then
+        echo -e "${RED}[!]${RESET} No phone number entered. Exiting."
+        return 1
+    fi
+
+    if ! echo "$phone" | grep -qE '^\+\d{10,15}$'; then
+        echo -e "${RED}[!] Invalid phone number format: '$phone'${RESET}"
+        return 1
+    fi
+
+    if [[ "$phone" == "+1234567890" ]]; then
+        echo -e "${RED}[!]${RESET} Example phone number entered. Please enter a valid phone number with country code."
+        return 1
+    fi
+
+    echo -e "${PURPLE}"
+    read -p "Route through Tor? (y/n): " USE_TOR
+    echo -e "${RESET}"
+
+    if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+        if ! command -v torsocks >/dev/null 2>&1; then
+            echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+            echo "Install with: sudo apt install torsocks"
+            return 1
+        fi
+        echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        output=$(torsocks phoneinfoga "$phone" 2>&1)
+        status=$?
+    else 
+        output=$(phoneinfoga "$phone" 2>&1)
+        status=$?
+    fi
+
+    if [[ $status -ne 0 ]]; then
+        echo -e "${RED}[!]${RESET} Phone lookup failed: $output"
+        return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Phone lookup successful for $phone"
+        echo -e "${CYAN}PhoneInfoga results for $phone:${RESET}"
+        echo -e "${CYAN}$output${RESET}"
+    fi
+    
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+web_phone_lookup () {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v phoneinfoga >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: bash <( curl -sSL https://raw.githubusercontent.com/sundowndev/phoneinfoga/master/support/scripts/install )"
+        echo "sudo install ./phoneinfoga /usr/local/bin/phoneinfoga"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+
+    echo
+    osint_disclaimer
+    echo
+
+    echo -n "Enter port to host web interface on (default 8080): "
+    read -r port
+
+    if [[ -z "$port" ]]; then
+        port=8080
+    fi
+
+    if ! [[ "$port" =~ ^[0-9]+$ ]] || (( port < 1 || port > 65535 )); then
+        echo -e "${RED}[!]${RESET} Invalid port number: '$port'. Please enter a number between 1 and 65535."
+        return 1
+    fi
+
+    if lsof -i :"$port" >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Port $port is already in use. Please choose a different port."
+        return 1
+    fi
+
+    echo -n "Confirm hosting PhoneInfoga web interface on port $port? (y/n): "
+    read -r confirm
+
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        echo -e "${GREEN}[+]${RESET} Starting PhoneInfoga web interface on port $port..."
+        phoneinfoga serve -p "$port"
+        status=$?
+    else
+        echo -e "${YELLOW}[i]${RESET} Web interface setup cancelled."
+        return 1
+    fi
+
+    if [[ $status -ne 0 ]]; then
+        echo -e "${RED}[!]${RESET} Failed to start web interface: $output"
+        return 1
+    else
+        echo -e "${GREEN}[+]${RESET} PhoneInfoga web interface started successfully on port $port"
+        echo -e "Access it at: ${CYAN}http://localhost:$port${RESET}"
+    fi
+
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+email_lookup () {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v theharvester >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "git clone https://github.com/laramies/theHarvester.git ~/tools/theHarvester cd ~/tools/theHarvester pip3 install -r requirements.txt --break-system-packages"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+
+    echo
+    osint_disclaimer
+    echo
+
+    echo -n "Enter email address to search for: "
+    read -r email
+
+    if [[ -z "$email" ]]; then
+        echo -e "${RED}[!]${RESET} No email address entered. Exiting."
+        return 1
+    fi
+
+    if ! echo "$email" | grep -qE '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'; then
+        echo -e "${RED}[!] Invalid email address format: '$email'${RESET}"
+        return 1
+    fi
+
+    echo -e "${PURPLE}"
+    read -p "Route through Tor? (y/n): " USE_TOR
+    echo -e "${RESET}"
+
+    if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+        if ! command -v torsocks >/dev/null 2>&1; then
+            echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+            echo "Install with: sudo apt install torsocks"
+            return 1
+        fi
+        echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        output=$(torsocks theharvester -d "$email" -b all 2>&1)
+        status=$?
+    else 
+        output=$(theharvester -d "$email" -b all 2>&1)
+        status=$?
+    fi
+
+    if [[ $status -ne 0 ]]; then
+        echo -e "${RED}[!]${RESET} Email lookup failed: $output"
+        return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Email lookup successful for $email"
+        echo -e "${CYAN}TheHarvester results for $email:${RESET}"
+        echo -e "${CYAN}$output${RESET}"
+    fi
+
     echo "[->] Command executed"
     echo -e "${DIVIDER}"
 }
@@ -2077,7 +2261,23 @@ help() {
             echo -e "  ${GREEN}Requires:${RESET} maigret  (pipx install maigret)"
             echo -e "  ${GREEN}Optional:${RESET} torsocks  (sudo apt install torsocks)"
             ;;
-
+        phone_lookup|phone)
+            echo -e "${CYAN}phone_lookup / phone${RESET}"
+            echo "  Phone number OSINT — queries phoneinfoga for carrier and location data."
+            echo -e "  ${YELLOW}[!] Use responsibly. Misuse may be illegal.${RESET}"
+            echo "  Supports optional Tor routing via torsocks."
+            ;;
+        web_phone_lookup)
+            echo -e "${CYAN}web_phone_lookup${RESET}"
+            echo "  Web-based phone lookup using phoneinfoga's web API for carrier and location data."
+            echo -e "  ${YELLOW}[!] Use responsibly. Misuse may be illegal.${RESET}"
+            ;;
+        email_lookup|email)
+            echo -e "${CYAN}email_lookup / email${RESET}"
+            echo "  Email OSINT — queries theharverster for associated domains and breach data."
+            echo -e "  ${YELLOW}[!] Use responsibly. Misuse may be illegal.${RESET}"
+            echo "  Supports optional Tor routing via torsocks."
+            ;;
         # ── System ───────────────────────────────────────────────────────────
         update_apps|update)
             echo -e "${CYAN}update_apps / update${RESET}"
@@ -2344,6 +2544,18 @@ check_dependencies () {
     else
         echo "${GREEN}[+]${RESET} GPG installed"
     fi   
+
+    if ! command -v phoneinfoga >dev/null 2>&1; then
+        echo "${RED}[!]${RESET} PhoneInfoga not installed"
+    else
+        echo "${GREEN}[+]${RESET} PhoneInfoga installed"
+    fi
+
+    if ! command -v theharvester >dev/null 2>&1; then
+        echo "${RED}[!]${RESET} TheHarvester not installed"
+    else
+        echo "${GREEN}[+]${RESET} TheHarvester installed"
+    fi
 }
 # Development / Testing
 test_colors() {
@@ -2486,6 +2698,9 @@ _PEREGINE_COMMANDS=(
     help 
     check_dependencies cd
     update
+    phone_lookup
+    web_phone_lookup
+    email_lookup
 )
 
 _peregine_list_commands() { 
@@ -2541,5 +2756,3 @@ EOF
 # You can open an issue, discussion or pull request on the repository. I welcome all contributions and feedback.
 # Also you can contact me trough matrix: @whiteghost404:matrix.org
 # Untill version 2.2.3 you can find me on GitHub all versions after that will be codeberg: https://codeberg.org/JasperC/Peregine. 
-
-# Add Forensics tool and osint tool for phone numbers ( PhoneInfoga) + email (the haverster)
