@@ -5,11 +5,11 @@
 # You are free to use, copy, modify, and distribute this software for any purpose.
 # With the requirements of: keeping the source code open and availible, license any modified or derived versions under GPL-3.0 as well and keeping all copyright and license notices intact.
 # You cannot distribute it as closed-source / proprietary, add restrictions that prevent others from exercising these rights, hold the author (JasperC) liable for anything — the software comes with no warranty.
-# Version: 3.1
+# Version: 3.2
 
 # Variables
 type="Stable"
-version="V3.1"
+version="V3.2"
 release_date="1-6-2026"
 test_date="1-6-2026"
 total_commands="57"
