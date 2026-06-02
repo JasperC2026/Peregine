@@ -5,14 +5,14 @@
 # You are free to use, copy, modify, and distribute this software for any purpose.
 # With the requirements of: keeping the source code open and availible, license any modified or derived versions under GPL-3.0 as well and keeping all copyright and license notices intact.
 # You cannot distribute it as closed-source / proprietary, add restrictions that prevent others from exercising these rights, hold the author (JasperC) liable for anything — the software comes with no warranty.
-# Version: 3.2
+# Version: 3.3
 
 # Variables
-type="Stable"
-version="V3.2"
-release_date="1-6-2026"
-test_date="1-6-2026"
-total_commands="58"
+type="Beta"
+version="V3.3"
+release_date="2-6-2026"
+test_date="N/A"
+total_commands="59"
 DIVIDER="───────────────────────────────────────────────────────────────"
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
@@ -483,22 +483,72 @@ maigret_search () {
         return 1
     fi
 
-    echo -e "${PURPLE}"
-    read -p "Route through Tor? (y/n): " USE_TOR
-    echo -e "${RESET}"
+    echo "Output to: ternimal/pdf/html? (t/p/h, default: t): "
+    read -r output_choice
 
-    if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
-        if ! command -v torsocks >/dev/null 2>&1; then
-            echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
-            echo "Install with: sudo apt install torsocks"
-            return 1
+    if [[ -z "$output_choice" ]]; then
+        output_choice="t"
+    fi
+
+    if [[ ! "$output_choice" =~ ^[TtPpHh]$ ]]; then
+        echo -e "${RED}[!]${RESET} Invalid output choice: '$output_choice'. Please enter 't' for terminal, 'p' for PDF, or 'h' for HTML."
+        return 1
+    fi
+
+    if [[ "$output_choice" =~ ^[Pp]$ ]]; then
+        echo -e "${PURPLE}"
+        read -p "Route through Tor? (y/n): " USE_TOR
+        echo -e "${RESET}"
+
+        if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+            if ! command -v torsocks >/dev/null 2>&1; then
+                echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+                echo "Install with: sudo apt install torsocks"
+                return 1
+            fi
+            echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+            output=$(torsocks maigret -a -pdf --tor "$username" 2>&1)
+            status=$?
+        else 
+            output=$(maigret -a -pdf "$username" 2>&1)
+            status=$?
         fi
-        echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-        output=$(torsocks maigret "$username" 2>&1)
-        status=$?
-    else 
-        output=$(maigret "$username" 2>&1)
-        status=$?
+    elif [[ "$output_choice" =~ ^[Hh]$ ]]; then
+        echo -e "${PURPLE}"
+        read -p "Route through Tor? (y/n): " USE_TOR
+        echo -e "${RESET}"
+
+        if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+            if ! command -v torsocks >/dev/null 2>&1; then
+                echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+                echo "Install with: sudo apt install torsocks"
+                return 1
+            fi
+            echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+            output=$(torsocks maigret -a -html --tor "$username" 2>&1)
+            status=$?
+        else 
+            output=$(maigret -a -html "$username" 2>&1)
+            status=$?
+        fi
+    elif [[ "$output_choice" =~ ^[Tt]$ ]]; then
+        echo -e "${PURPLE}"
+        read -p "Route through Tor? (y/n): " USE_TOR
+        echo -e "${RESET}"
+
+        if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+            if ! command -v torsocks >/dev/null 2>&1; then
+                echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+                echo "Install with: sudo apt install torsocks"
+                return 1
+            fi
+            echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+            output=$(torsocks maigret -a --tor "$username" 2>&1)
+            status=$?
+        else 
+            output=$(maigret -a "$username" 2>&1)
+            status=$?
+        fi
     fi
 
     if [[ $status -ne 0 ]]; then
@@ -702,7 +752,7 @@ site_history () {
 
     if ! command -v waybackurls >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
-        echo "Install with: sudo apt install waybackurls"
+        echo "Install with: go install github.com/tomnomnom/waybackurls@latest"
         return 1
     fi
 
@@ -746,6 +796,77 @@ site_history () {
         echo -e "${GREEN}[+]${RESET} Site lookup successful for $target"
         echo -e "${CYAN}Waybackurls results for $target:${RESET}"
         echo -e "${CYAN}$output${RESET}"
+    fi
+
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+site_screenshot () {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v theharvester >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "git clone https://github.com/laramies/theHarvester.git ~/tools/theHarvester cd ~/tools/theHarvester pip3 install -r requirements.txt --break-system-packages"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+
+    echo
+    osint_disclaimer
+    echo
+
+    echo "Enter target website (include http:// or https://):"
+    read -r target
+
+    echo "Enter directory to save screenshots (default: current directory):"
+    read -r save_dir
+
+    if [[ -z "$target" ]]; then
+        echo -e "${RED}[!]${RESET} No target entered. Exiting."
+        return 1
+    fi
+
+    if ! echo "$target" | grep -qE '^https?://'; then
+        echo -e "${RED}[!] Invalid URL format: '$target'. Please include http:// or https://."
+        return 1
+    fi
+
+    if [[ -z "$save_dir" ]]; then
+        save_dir="."
+    fi
+
+    if [[ ! -d "$save_dir" ]]; then
+        echo -e "${RED}[!]${RESET} Save directory is not valid: '$save_dir'"
+        return 1
+    fi
+
+    echo -e "${PURPLE}"
+    read -p "Route through Tor? (y/n): " USE_TOR
+    echo -e "${RESET}"
+
+    if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+        if ! command -v torsocks >/dev/null 2>&1; then
+            echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+            echo "Install with: sudo apt install torsocks"
+            return 1
+        fi
+        echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        output=$(torsocks theharvester -d "$target" -b --screenshot 2>&1)
+        status=$?
+    else 
+        output=$(theharvester -d "$target" -b --screenshot 2>&1)
+        status=$?
+    fi
+   
+   if [[ $status -ne 0 ]]; then
+        echo -e "${RED}[!]${RESET} Site screenshot failed for $target: $output"
+        return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Site screenshot successful for $target"
+        echo -e "${CYAN}Screenshots saved to $save_dir${RESET}"
     fi
 
     echo "[->] Command executed"
@@ -2276,6 +2397,30 @@ version() {
     echo "Total commands: $total_commands"
     echo "${DIVIDER}"
 }
+install_dependencies() {
+    echo -e "${DIVIDER}"
+    echo "[->] Installing dependencies"
+
+    echo
+    warning_privilege_escalation
+    echo
+
+    if [[ $EUID -ne 0 ]]; then
+        echo -e "${RED}[!]${RESET} Some dependencies may require root privileges to install. Please run this command with sudo or as root."
+        return 1
+    fi
+
+    # APT
+    sudo apt install curl whois dnsutils iputils-ping traceroute python3 \
+  torsocks lynis chkrootkit coreutils secure-delete \
+  libimage-exiftool-perl openssl gnupg git golang
+    # PIPX
+    pipx install maigret
+    # Git clone or other installation steps for dependencies that require it
+    go install github.com/tomnomnom/waybackurls@latest
+    sudo cp ~/go/bin/waybackurls /usr/local/bin/
+    bash <( curl -sSL https://raw.githubusercontent.com/sundowndev/phoneinfoga/master/support/scripts/install )
+}
 help() {
     if [[ -z "$1" ]]; then
         _peregine_list_commands
@@ -2366,6 +2511,11 @@ help() {
             echo -e "  ${YELLOW}[!] Use responsibly. Misuse may be illegal.${RESET}"
             echo "  Supports optional Tor routing via torsocks."  
         ;;
+        site_screenshot)
+            echo -e "${CYAN}site_screenshot${RESET}"
+            echo "  Capture a screenshot of all websites of a domain using theharvester."
+            echo -e "  ${YELLOW}[!] Use responsibly. Misuse may be illegal.${RESET}"
+            ;;
         # ── System ───────────────────────────────────────────────────────────
         update_apps|update)
             echo -e "${CYAN}update_apps / update${RESET}"
@@ -2519,6 +2669,14 @@ help() {
         check_dependencies|cd)
             echo -e "${CYAN}check_dependencies / cd ${RESET}"
             echo "  Check the dependencies of the toolkit"
+            ;;  
+        install_dependencies|id)
+            echo -e "${CYAN}install_dependencies / id ${RESET}"
+            echo "  Install the dependencies of the toolkit"
+            ;;  
+         test_colors|tc)
+            echo -e "${CYAN}test_colors / tc ${RESET}"
+            echo "  Test the color output of the terminal"
             ;;  
         *)
             echo -e "${RED}[!] No help entry for '$1'.${RESET}"
@@ -2796,6 +2954,8 @@ _PEREGINE_COMMANDS=(
     web_phone_lookup
     email_lookup
     site_history
+    site_screenshot
+    install_dependencies
 )
 
 _peregine_list_commands() { 
@@ -2851,6 +3011,3 @@ EOF
 # You can open an issue, discussion or pull request on the repository. I welcome all contributions and feedback.
 # Also you can contact me trough matrix: @whiteghost404:matrix.org
 # Untill version 2.2.3 you can find me on GitHub all versions after that will be codeberg: https://codeberg.org/JasperC/Peregine. 
-
-# Add waybackurls for OSINT. 
-# Add extra options for theharvester and maigret
