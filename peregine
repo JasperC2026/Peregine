@@ -2583,6 +2583,12 @@ check_dependencies () {
     else
         echo "${GREEN}[+]${RESET} TheHarvester installed"
     fi
+
+    if ! command -v waybackurls >dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Waybackurls not installed"
+    else
+        echo "${RED}[!]${RESET} Waybackurls not installed"
+    fi
 }
 # Development / Testing
 test_colors() {
