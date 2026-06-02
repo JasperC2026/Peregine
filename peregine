@@ -732,10 +732,10 @@ site_history () {
             return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-        output=$(torsocks echo "$target" | waybackurls)
+        output=$(torsocks echo "$target" | waybackurls -dates)
         status=$?
     else 
-        output=$(echo "$target" | waybackurls)
+        output=$(echo "$target" | waybackurls -dates)
         status=$?
     fi
 
