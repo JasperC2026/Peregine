@@ -12,7 +12,7 @@ type="Stable"
 version="V3.2"
 release_date="1-6-2026"
 test_date="1-6-2026"
-total_commands="57"
+total_commands="58"
 DIVIDER="───────────────────────────────────────────────────────────────"
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
@@ -690,6 +690,61 @@ email_lookup () {
     else
         echo -e "${GREEN}[+]${RESET} Email lookup successful for $email"
         echo -e "${CYAN}TheHarvester results for $email:${RESET}"
+        echo -e "${CYAN}$output${RESET}"
+    fi
+
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+site_history () {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v waybackurls >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install waybackurls"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo
+
+    echo
+    osint_disclaimer
+    echo
+
+    echo "Enter target website:"
+    read -r target
+
+    if [[ -z "$target" ]]; then
+        echo -e "${RED}[!]${RESET} No target entered. Exiting."
+        return 1
+    fi
+
+    echo -e "${PURPLE}"
+    read -p "Route through Tor? (y/n): " USE_TOR
+    echo -e "${RESET}"
+
+    if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+        if ! command -v torsocks >/dev/null 2>&1; then
+            echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+            echo "Install with: sudo apt install torsocks"
+            return 1
+        fi
+        echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        output=$(torsocks echo "$target" | waybackurls)
+        status=$?
+    else 
+        output=$(echo "$target" | waybackurls)
+        status=$?
+    fi
+
+    if [[ $status -ne 0 ]]; then
+        echo -e "${RED}[!]${RESET} Looking at site failed for: $output"
+        return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Site lookup successful for $target"
+        echo -e "${CYAN}Waybackurls results for $target:${RESET}"
         echo -e "${CYAN}$output${RESET}"
     fi
 
@@ -2305,6 +2360,12 @@ help() {
             echo -e "  ${YELLOW}[!] Use responsibly. Misuse may be illegal.${RESET}"
             echo "  Supports optional Tor routing via torsocks."
             ;;
+        site_history)
+            echo  -e "${CYAN}site_history ${RESET}"
+            echo "  Site OSINT — queries the wayback machine for site history data."
+            echo -e "  ${YELLOW}[!] Use responsibly. Misuse may be illegal.${RESET}"
+            echo "  Supports optional Tor routing via torsocks."  
+        ;;
         # ── System ───────────────────────────────────────────────────────────
         update_apps|update)
             echo -e "${CYAN}update_apps / update${RESET}"
@@ -2734,6 +2795,7 @@ _PEREGINE_COMMANDS=(
     phone_lookup
     web_phone_lookup
     email_lookup
+    site_history
 )
 
 _peregine_list_commands() { 
