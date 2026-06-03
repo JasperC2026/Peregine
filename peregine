@@ -35,6 +35,7 @@ COLORS=(
 )
 i=0
 
+# Internal commands
 osint_disclaimer () {
     echo -e "${RED}${DIVIDER}"
     cat << EOF
@@ -98,6 +99,7 @@ terms_notice () {
         return 1
     fi
 }
+
 # Commands
 # Networking
 local_server() {
@@ -310,6 +312,33 @@ traceroute() {
     echo "[->] Command executed"
     echo -e "${DIVIDER}"
 }
+get_ip() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v curl >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install curl"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo 
+
+    output=$(curl -s --max-time 5 ifconfig.me 2>&1)
+    status=$?
+
+    if [[ $status -ne 0 ]]; then
+        echo -e "${RED}[!]${RESET} Failed to retrieve IP address: $output"
+        return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Your public IP address is: ${CYAN}$output${RESET}"
+    fi
+
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+# Osint
 dns_info() {
     echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
@@ -365,32 +394,6 @@ dns_info() {
         echo -e "${GREEN}[+]${RESET} DNS information retrieved successfully for $domain"
         echo -e "${CYAN}DNS Information for $domain:${RESET}"
         echo -e "${CYAN}$output${RESET}"
-    fi
-
-    echo "[->] Command executed"
-    echo -e "${DIVIDER}"
-}
-get_ip() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
-    if ! command -v curl >/dev/null 2>&1; then
-        echo "${RED}[!]${RESET} Required dependencie not installed"
-        echo "Install with: sudo apt install curl"
-        return 1
-    fi
-
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo 
-
-    output=$(curl -s --max-time 5 ifconfig.me 2>&1)
-    status=$?
-
-    if [[ $status -ne 0 ]]; then
-        echo -e "${RED}[!]${RESET} Failed to retrieve IP address: $output"
-        return 1
-    else
-        echo -e "${GREEN}[+]${RESET} Your public IP address is: ${CYAN}$output${RESET}"
     fi
 
     echo "[->] Command executed"
