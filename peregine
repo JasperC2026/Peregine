@@ -876,7 +876,138 @@ site_screenshot () {
     echo -e "${DIVIDER}"
 }
 network_explorer () {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
 
+    if ! command -v nmap >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install nmap"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo 
+
+    echo
+    osint_disclaimer
+    echo
+
+    echo
+    warning_privilege_escalation
+    echo
+
+    if [[ $EUID -ne 0 ]]; then
+        echo -e "${RED}[!]${RESET}Command requires root."
+        return 1
+    fi
+
+    echo "Enter host ip or network range: "
+    read -r target
+
+    if [[ -z "$target" ]]; then
+        echo -e "${RED}[!]${RESET} No target entered. Exiting."
+        return 1
+    fi
+
+    if ! echo "$target" | grep -qE '^(([0-9]{1,3}\.){3}[0-9]{1,3})$'; then
+        echo -e "${RED}[!] Invalid IP address format: '$target'${RESET}"
+        return 1
+    fi
+
+    echo "Select option: OS-detection/Agressive/Stealth/UDP-scan/All-ports (O/A/S/U/P)"
+    read -r output_choice
+
+    if [[ "$output_choice" =~ ^[Oo]$ ]]; then
+        echo -e "${PURPLE}"
+        read -p "Route through Tor? (y/n): " USE_TOR
+        echo -e "${RESET}"
+
+        if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+            if ! command -v torsocks >/dev/null 2>&1; then
+                echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+                echo "Install with: sudo apt install torsocks"
+                return 1
+            fi
+            echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+            output=$(sudo torsocks nmap -O "$target" 2>&1)
+            status=$?
+        else 
+            output=$(sudo nmap -O "$target" 2>&1)
+            status=$?
+        fi
+    elif [[ "$output_choice" =~ ^[Aa]$ ]]; then
+        echo -e "${PURPLE}"
+        read -p "Route through Tor? (y/n): " USE_TOR
+        echo -e "${RESET}"
+
+        if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+            if ! command -v torsocks >/dev/null 2>&1; then
+                echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+                echo "Install with: sudo apt install torsocks"
+                return 1
+            fi
+            echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+            output=$(sudo torsocks nmap -A "$target" 2>&1)
+            status=$?
+        else 
+            output=$(sudo nmap -A "$target" 2>&1)
+            status=$?
+        fi 
+    elif [[ "$output_choice" =~ ^[Ss]$ ]]; then
+        echo -e "${PURPLE}"
+        read -p "Route through Tor? (y/n): " USE_TOR
+        echo -e "${RESET}"
+
+        if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+            if ! command -v torsocks >/dev/null 2>&1; then
+                echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+                echo "Install with: sudo apt install torsocks"
+                return 1
+            fi
+            echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+            output=$(sudo torsocks nmap -sS "$target" 2>&1)
+            status=$?
+        else 
+            output=$(sudo nmap -sS "$target" 2>&1)
+            status=$?
+        fi 
+    elif [[ "$output_choice" =~ ^[Uu]$ ]]; then
+        echo -e "${PURPLE}"
+        read -p "Route through Tor? (y/n): " USE_TOR
+        echo -e "${RESET}"
+
+        if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+            if ! command -v torsocks >/dev/null 2>&1; then
+                echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+                echo "Install with: sudo apt install torsocks"
+                return 1
+            fi
+            echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+            output=$(sudo torsocks nmap -sU "$target" 2>&1)
+            status=$?
+        else 
+            output=$(sudo nmap -sU "$target" 2>&1)
+            status=$?
+        fi 
+    elif [[ "$output_choice" =~ ^[Pp]$ ]]; then
+        echo -e "${PURPLE}"
+        read -p "Route through Tor? (y/n): " USE_TOR
+        echo -e "${RESET}"
+
+        if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+            if ! command -v torsocks >/dev/null 2>&1; then
+                echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+                echo "Install with: sudo apt install torsocks"
+                return 1
+            fi
+            echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+            output=$(sudo torsocks nmap -p- "$target" 2>&1)
+            status=$?
+        else 
+            output=$(sudo nmap -p- "$target" 2>&1)
+            status=$?
+        fi 
+    fi
 }
 # System Maintenance
 update_apps() {
@@ -2825,7 +2956,7 @@ check_dependencies () {
     else
         echo "${GREEN}[+]${RESET} Nmap installed"
     fi
-    
+
 }
 # Development / Testing
 test_colors() {
@@ -3030,3 +3161,5 @@ EOF
 # You can open an issue, discussion or pull request on the repository. I welcome all contributions and feedback.
 # Also you can contact me trough matrix: @whiteghost404:matrix.org
 # Untill version 2.2.3 you can find me on GitHub all versions after that will be codeberg: https://codeberg.org/JasperC/Peregine. 
+
+# Add nmap to osint tools
