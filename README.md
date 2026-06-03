@@ -71,6 +71,9 @@ All dependencies are optional — only install what you need for the tools you u
 | `traceroute` | `sudo apt install traceroute` | `traceroute` |  
 | `python3` | `sudo apt install python3` | `local_server` |  
 | `maigret` | `pipx install maigret` | `maigret_search` |  
+| `waybackurls` | `go install github.com/tomnomnom/waybackurls@latest` | `site_history` |
+| `iphoneinfoga` | `bash <( curl -sSL https://raw.githubusercontent.com/sundowndev/phoneinfoga/master/support/scripts/install )` | `phone_lookup` |
+| `theHarvester` | `sudo apt install theharvester` | `email_lookup` and `site_screenshot` |
 | `torsocks` | `sudo apt install torsocks` | Tor routing (all network tools) |  
    
 **Security & System**  
