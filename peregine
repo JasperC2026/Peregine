@@ -875,6 +875,9 @@ site_screenshot () {
     echo "[->] Command executed"
     echo -e "${DIVIDER}"
 }
+network_explorer () {
+
+}
 # System Maintenance
 update_apps() {
     echo -e "${DIVIDER}"
@@ -2519,6 +2522,11 @@ help() {
             echo "  Capture a screenshot of all websites of a domain using theharvester."
             echo -e "  ${YELLOW}[!] Use responsibly. Misuse may be illegal.${RESET}"
             ;;
+        network_explorer)
+            echo -e "${CYAN}network_explorer${RESET}"
+            echo "Explore a network with NMAP."
+            echo -e "  ${YELLOW}[!] Use responsibly. Misuse may be illegal.${RESET}"
+            ;;
         # ── System ───────────────────────────────────────────────────────────
         update_apps|update)
             echo -e "${CYAN}update_apps / update${RESET}"
@@ -2809,8 +2817,15 @@ check_dependencies () {
     if ! command -v waybackurls >dev/null 2>&1; then
         echo "${RED}[!]${RESET} Waybackurls not installed"
     else
-        echo "${RED}[!]${RESET} Waybackurls not installed"
+        echo "${GREEN}[+]${RESET} Waybackurls installed"
     fi
+
+    if ! command -v nmap >dev/null 2>81; then
+        echo "${RED}[!]${RESET} Nmap not installed"
+    else
+        echo "${GREEN}[+]${RESET} Nmap installed"
+    fi
+    
 }
 # Development / Testing
 test_colors() {
@@ -2959,6 +2974,7 @@ _PEREGINE_COMMANDS=(
     site_history
     site_screenshot
     install_dependencies
+    network_explorer
 )
 
 _peregine_list_commands() { 
