@@ -5,15 +5,27 @@
 # You are free to use, copy, modify, and distribute this software for any purpose.
 # With the requirements of: keeping the source code open and availible, license any modified or derived versions under GPL-3.0 as well and keeping all copyright and license notices intact.
 # You cannot distribute it as closed-source / proprietary, add restrictions that prevent others from exercising these rights, hold the author (JasperC) liable for anything — the software comes with no warranty.
-# Version: 3.3
+# Version: 3.4
 
 # Variables
-type="Beta"
-version="V3.3"
-release_date="2-6-2026"
-test_date="N/A"
+
+# General info
+written_in="Bash"
 total_commands="59"
+created_on="March 18, 2026"
+contributors="JasperC (Developer, Maintainer), JVisio (Community Contributor) and Open Source Community"
+license="GPL-3.0"
+# Release only
+type="Stable"
+version="V3.4"
+release_date="3-6-2026"
+test_date="3-6-2026"
+previous_versions="Stable: V3.2 Beta: V3.3"
+total_commits_in_release="221"
+lines_of_code="3150"
+# Extra
 DIVIDER="───────────────────────────────────────────────────────────────"
+
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
 GREEN="\e[32m"
@@ -26,15 +38,6 @@ WHITE="\e[97m"
 BLACK="\e[30m"   
 BOLD="\e[1m"
 RESET="\e[0m"
-COLORS=(
-"0;0;180" 
-"0;0;255" 
-"0;102;255"
-"0;153;255" 
-"0;204;255" 
-)
-i=0
-
 # Internal commands
 osint_disclaimer () {
     echo -e "${RED}${DIVIDER}"
@@ -487,7 +490,7 @@ maigret_search () {
     fi
 
     echo "Output to: ternimal/pdf/html? (t/p/h, default: t): "
-    read -r output_choice
+    read -p "Output to: ternimal/pdf/html? (t/p/h, default: t): " output_choice
 
     if [[ -z "$output_choice" ]]; then
         output_choice="t"
@@ -612,10 +615,10 @@ phone_lookup () {
             return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-        output=$(torsocks phoneinfoga "$phone" 2>&1)
+        output=$(torsocks phoneinfoga scan -n "$phone" 2>&1)
         status=$?
     else 
-        output=$(phoneinfoga "$phone" 2>&1)
+        output=$(phoneinfoga scan -n "$phone" 2>&1)
         status=$?
     fi
 
@@ -694,15 +697,17 @@ email_lookup () {
     echo "[->] Checking dependencies"
 
     if ! command -v theharvester >/dev/null 2>&1; then
-        echo "${RED}[!]${RESET} Required dependencie not installed"
-        echo "git clone https://github.com/laramies/theHarvester.git ~/tools/theHarvester cd ~/tools/theHarvester pip3 install -r requirements.txt --break-system-packages"
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with:"
+        echo "  git clone https://github.com/laramies/theHarvester.git ~/tools/theHarvester"
+        echo "  cd ~/tools/theHarvester"
+        echo "  pip3 install -r requirements.txt --break-system-packages"
         return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
 
-    echo
     osint_disclaimer
     echo
 
@@ -715,9 +720,11 @@ email_lookup () {
     fi
 
     if ! echo "$email" | grep -qE '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'; then
-        echo -e "${RED}[!] Invalid email address format: '$email'${RESET}"
+        echo -e "${RED}[!]${RESET} Invalid email address format: '$email'"
         return 1
     fi
+
+    domain="${email#*@}"
 
     echo -e "${PURPLE}"
     read -p "Route through Tor? (y/n): " USE_TOR
@@ -725,15 +732,15 @@ email_lookup () {
 
     if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
         if ! command -v torsocks >/dev/null 2>&1; then
-            echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+            echo -e "${RED}[!]${RESET} Torsocks is not installed."
             echo "Install with: sudo apt install torsocks"
             return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-        output=$(torsocks theharvester -d "$email" -b all 2>&1)
+        output=$(torsocks theharvester -d "$domain" -b google,bing,dnsdumpster,crtsh 2>&1)
         status=$?
-    else 
-        output=$(theharvester -d "$email" -b all 2>&1)
+    else
+        output=$(theharvester -d "$domain" -b google,bing,dnsdumpster,crtsh 2>&1)
         status=$?
     fi
 
@@ -741,8 +748,8 @@ email_lookup () {
         echo -e "${RED}[!]${RESET} Email lookup failed: $output"
         return 1
     else
-        echo -e "${GREEN}[+]${RESET} Email lookup successful for $email"
-        echo -e "${CYAN}TheHarvester results for $email:${RESET}"
+        echo -e "${GREEN}[+]${RESET} Domain recon successful for $domain (from $email)"
+        echo -e "${CYAN}TheHarvester results for $domain:${RESET}"
         echo -e "${CYAN}$output${RESET}"
     fi
 
@@ -754,7 +761,7 @@ site_history () {
     echo "[->] Checking dependencies"
 
     if ! command -v waybackurls >/dev/null 2>&1; then
-        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: go install github.com/tomnomnom/waybackurls@latest"
         return 1
     fi
@@ -762,11 +769,10 @@ site_history () {
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
 
-    echo
     osint_disclaimer
     echo
 
-    echo "Enter target website:"
+    echo -n "Enter target website: "
     read -r target
 
     if [[ -z "$target" ]]; then
@@ -780,23 +786,24 @@ site_history () {
 
     if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
         if ! command -v torsocks >/dev/null 2>&1; then
-            echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+            echo -e "${RED}[!]${RESET} Torsocks is not installed."
             echo "Install with: sudo apt install torsocks"
             return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-        output=$(torsocks echo "$target" | waybackurls -dates)
+        output=$(echo "$target" | torsocks waybackurls -dates 2>&1)
         status=$?
-    else 
-        output=$(echo "$target" | waybackurls -dates)
+    else
+        output=$(echo "$target" | waybackurls -dates 2>&1)
         status=$?
     fi
 
     if [[ $status -ne 0 ]]; then
-        echo -e "${RED}[!]${RESET} Looking at site failed for: $output"
+        echo -e "${RED}[!]${RESET} Site history lookup failed for: $target"
+        echo -e "${RED}$output${RESET}"
         return 1
     else
-        echo -e "${GREEN}[+]${RESET} Site lookup successful for $target"
+        echo -e "${GREEN}[+]${RESET} Site history lookup successful for $target"
         echo -e "${CYAN}Waybackurls results for $target:${RESET}"
         echo -e "${CYAN}$output${RESET}"
     fi
@@ -808,24 +815,20 @@ site_screenshot () {
     echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
-    if ! command -v theharvester >/dev/null 2>&1; then
-        echo "${RED}[!]${RESET} Required dependencie not installed"
-        echo "git clone https://github.com/laramies/theHarvester.git ~/tools/theHarvester cd ~/tools/theHarvester pip3 install -r requirements.txt --break-system-packages"
+    if ! command -v gowitness >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: go install github.com/sensepost/gowitness@latest"
         return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
 
-    echo
     osint_disclaimer
     echo
 
-    echo "Enter target website (include http:// or https://):"
+    echo -n "Enter target website (include http:// or https://): "
     read -r target
-
-    echo "Enter directory to save screenshots (default: current directory):"
-    read -r save_dir
 
     if [[ -z "$target" ]]; then
         echo -e "${RED}[!]${RESET} No target entered. Exiting."
@@ -833,16 +836,19 @@ site_screenshot () {
     fi
 
     if ! echo "$target" | grep -qE '^https?://'; then
-        echo -e "${RED}[!] Invalid URL format: '$target'. Please include http:// or https://."
+        echo -e "${RED}[!]${RESET} Invalid URL format: '$target'. Please include http:// or https://"
         return 1
     fi
+
+    echo -n "Enter directory to save screenshots (default: current directory): "
+    read -r save_dir
 
     if [[ -z "$save_dir" ]]; then
         save_dir="."
     fi
 
     if [[ ! -d "$save_dir" ]]; then
-        echo -e "${RED}[!]${RESET} Save directory is not valid: '$save_dir'"
+        echo -e "${RED}[!]${RESET} Save directory does not exist: '$save_dir'"
         return 1
     fi
 
@@ -852,24 +858,25 @@ site_screenshot () {
 
     if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
         if ! command -v torsocks >/dev/null 2>&1; then
-            echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
+            echo -e "${RED}[!]${RESET} Torsocks is not installed."
             echo "Install with: sudo apt install torsocks"
             return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-        output=$(torsocks theharvester -d "$target" -b --screenshot 2>&1)
+        output=$(torsocks gowitness single --url "$target" --screenshot-path "$save_dir" 2>&1)
         status=$?
-    else 
-        output=$(theharvester -d "$target" -b --screenshot 2>&1)
+    else
+        output=$(gowitness single --url "$target" --screenshot-path "$save_dir" 2>&1)
         status=$?
     fi
-   
-   if [[ $status -ne 0 ]]; then
-        echo -e "${RED}[!]${RESET} Site screenshot failed for $target: $output"
+
+    if [[ $status -ne 0 ]]; then
+        echo -e "${RED}[!]${RESET} Screenshot failed for $target"
+        echo -e "${RED}$output${RESET}"
         return 1
     else
-        echo -e "${GREEN}[+]${RESET} Site screenshot successful for $target"
-        echo -e "${CYAN}Screenshots saved to $save_dir${RESET}"
+        echo -e "${GREEN}[+]${RESET} Screenshot successful for $target"
+        echo -e "${CYAN}Screenshot saved to: $save_dir${RESET}"
     fi
 
     echo "[->] Command executed"
@@ -880,28 +887,26 @@ network_explorer () {
     echo "[->] Checking dependencies"
 
     if ! command -v nmap >/dev/null 2>&1; then
-        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install nmap"
         return 1
     fi
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo 
-
     echo
+
     osint_disclaimer
     echo
 
-    echo
     warning_privilege_escalation
     echo
 
     if [[ $EUID -ne 0 ]]; then
-        echo -e "${RED}[!]${RESET}Command requires root."
+        echo -e "${RED}[!]${RESET} Command requires root."
         return 1
     fi
 
-    echo "Enter host ip or network range: "
+    echo -n "Enter host IP or network range (e.g. 192.168.1.1 or 192.168.1.0/24): "
     read -r target
 
     if [[ -z "$target" ]]; then
@@ -909,105 +914,58 @@ network_explorer () {
         return 1
     fi
 
-    if ! echo "$target" | grep -qE '^(([0-9]{1,3}\.){3}[0-9]{1,3})$'; then
-        echo -e "${RED}[!] Invalid IP address format: '$target'${RESET}"
+    if ! echo "$target" | grep -qE '^([0-9]{1,3}\.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))?$'; then
+        echo -e "${RED}[!]${RESET} Invalid IP/range format: '$target'"
         return 1
     fi
 
-    echo "Select option: OS-detection/Agressive/Stealth/UDP-scan/All-ports (O/A/S/U/P)"
+    echo -n "Select option - OS-detection/Aggressive/Stealth/UDP-scan/All-ports (O/A/S/U/P): "
     read -r output_choice
 
-    if [[ "$output_choice" =~ ^[Oo]$ ]]; then
-        echo -e "${PURPLE}"
-        read -p "Route through Tor? (y/n): " USE_TOR
-        echo -e "${RESET}"
-
-        if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
-            if ! command -v torsocks >/dev/null 2>&1; then
-                echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
-                echo "Install with: sudo apt install torsocks"
-                return 1
-            fi
-            echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-            output=$(sudo torsocks nmap -O "$target" 2>&1)
-            status=$?
-        else 
-            output=$(sudo nmap -O "$target" 2>&1)
-            status=$?
-        fi
-    elif [[ "$output_choice" =~ ^[Aa]$ ]]; then
-        echo -e "${PURPLE}"
-        read -p "Route through Tor? (y/n): " USE_TOR
-        echo -e "${RESET}"
-
-        if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
-            if ! command -v torsocks >/dev/null 2>&1; then
-                echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
-                echo "Install with: sudo apt install torsocks"
-                return 1
-            fi
-            echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-            output=$(sudo torsocks nmap -A "$target" 2>&1)
-            status=$?
-        else 
-            output=$(sudo nmap -A "$target" 2>&1)
-            status=$?
-        fi 
-    elif [[ "$output_choice" =~ ^[Ss]$ ]]; then
-        echo -e "${PURPLE}"
-        read -p "Route through Tor? (y/n): " USE_TOR
-        echo -e "${RESET}"
-
-        if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
-            if ! command -v torsocks >/dev/null 2>&1; then
-                echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
-                echo "Install with: sudo apt install torsocks"
-                return 1
-            fi
-            echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-            output=$(sudo torsocks nmap -sS "$target" 2>&1)
-            status=$?
-        else 
-            output=$(sudo nmap -sS "$target" 2>&1)
-            status=$?
-        fi 
-    elif [[ "$output_choice" =~ ^[Uu]$ ]]; then
-        echo -e "${PURPLE}"
-        read -p "Route through Tor? (y/n): " USE_TOR
-        echo -e "${RESET}"
-
-        if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
-            if ! command -v torsocks >/dev/null 2>&1; then
-                echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
-                echo "Install with: sudo apt install torsocks"
-                return 1
-            fi
-            echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-            output=$(sudo torsocks nmap -sU "$target" 2>&1)
-            status=$?
-        else 
-            output=$(sudo nmap -sU "$target" 2>&1)
-            status=$?
-        fi 
-    elif [[ "$output_choice" =~ ^[Pp]$ ]]; then
-        echo -e "${PURPLE}"
-        read -p "Route through Tor? (y/n): " USE_TOR
-        echo -e "${RESET}"
-
-        if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
-            if ! command -v torsocks >/dev/null 2>&1; then
-                echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
-                echo "Install with: sudo apt install torsocks"
-                return 1
-            fi
-            echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-            output=$(sudo torsocks nmap -p- "$target" 2>&1)
-            status=$?
-        else 
-            output=$(sudo nmap -p- "$target" 2>&1)
-            status=$?
-        fi 
+    if [[ ! "$output_choice" =~ ^[OoAaSsUuPp]$ ]]; then
+        echo -e "${RED}[!]${RESET} Invalid option: '$output_choice'"
+        return 1
     fi
+
+    echo -e "${PURPLE}"
+    read -p "Route through Tor? (y/n): " USE_TOR
+    echo -e "${RESET}"
+
+    if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
+        if ! command -v torsocks >/dev/null 2>&1; then
+            echo -e "${RED}[!]${RESET} Torsocks is not installed."
+            echo "Install with: sudo apt install torsocks"
+            return 1
+        fi
+        echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        tor_prefix="torsocks"
+    else
+        tor_prefix=""
+    fi
+
+    case "$output_choice" in
+        [Oo]) nmap_flags="-O" ;;
+        [Aa]) nmap_flags="-A" ;;
+        [Ss]) nmap_flags="-sS" ;;
+        [Uu]) nmap_flags="-sU" ;;
+        [Pp]) nmap_flags="-p-" ;;
+    esac
+
+    output=$(sudo $tor_prefix nmap $nmap_flags "$target" 2>&1)
+    status=$?
+
+    if [[ $status -ne 0 ]]; then
+        echo -e "${RED}[!]${RESET} Nmap scan failed for $target"
+        echo -e "${RED}$output${RESET}"
+        return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Nmap scan successful for $target"
+        echo -e "${CYAN}Nmap results for $target:${RESET}"
+        echo -e "${CYAN}$output${RESET}"
+    fi
+
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
 # System Maintenance
 update_apps() {
@@ -2550,11 +2508,12 @@ install_dependencies() {
     # APT
     sudo apt install curl whois dnsutils iputils-ping traceroute python3 \
   torsocks lynis chkrootkit coreutils secure-delete \
-  libimage-exiftool-perl openssl gnupg git golang
+  libimage-exiftool-perl openssl gnupg git golang nmap
     # PIPX
     pipx install maigret
     # Git clone or other installation steps for dependencies that require it
     go install github.com/tomnomnom/waybackurls@latest
+    go install github.com/sensepost/gowitness@latest
     sudo cp ~/go/bin/waybackurls /usr/local/bin/
     bash <( curl -sSL https://raw.githubusercontent.com/sundowndev/phoneinfoga/master/support/scripts/install )
 }
@@ -2957,6 +2916,18 @@ check_dependencies () {
         echo "${GREEN}[+]${RESET} Nmap installed"
     fi
 
+    if ! command -v gowitness >dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Gowitness not installed"
+    else
+        echo "${GREEN}[+]${RESET} Gowitness installed"
+    fi
+
+     if ! command -v pipx >dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Pipx not installed"
+    else
+        echo "${GREEN}[+]${RESET} Pipx installed"
+    fi
+
 }
 # Development / Testing
 test_colors() {
@@ -3132,9 +3103,26 @@ EOF
     echo "License GPL-v3: see LICENSE file or use peregine license to view the license"
     
     echo
-    echo "Current version: $type $version"
+    echo "This release: $version"
+    echo "Release type: $type"
     echo "Release date: $release_date"
     echo "Latest test on: $test_date"
+    echo "Previous versions: $previous_versions"
+    
+    echo
+    echo "Total commands: $total_commands"
+
+    echo
+    echo "Nerd stats: "
+    echo "Lines of code: $lines_of_code"
+    echo "Commits untill this verion: $total_commits_in_release"
+    echo "Created on: $created_on"
+
+    echo
+    echo "Thanks to the contributors: $contributors"
+    echo "And to all the users who support the project! <3"
+    echo "Written in: $written_in"
+    echo 
     echo "${DIVIDER}"
 
     echo "All commands:"
@@ -3160,6 +3148,3 @@ EOF
 # If you have any suggestions, improvements, or just want to say hi, feel free to reach out.
 # You can open an issue, discussion or pull request on the repository. I welcome all contributions and feedback.
 # Also you can contact me trough matrix: @whiteghost404:matrix.org
-# Untill version 2.2.3 you can find me on GitHub all versions after that will be codeberg: https://codeberg.org/JasperC/Peregine. 
-
-# Add nmap to osint tools
