@@ -823,7 +823,8 @@ site_screenshot () {
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
-
+    
+    echo
     osint_disclaimer
     echo
 
@@ -863,10 +864,10 @@ site_screenshot () {
             return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-        output=$(torsocks gowitness single --url "$target" --screenshot-path "$save_dir" 2>&1)
+        output=$(torsocks gowitness scan single --url "$target" --screenshot-path "$save_dir" 2>&1)
         status=$?
     else
-        output=$(gowitness single --url "$target" --screenshot-path "$save_dir" 2>&1)
+        output=$(gowitness scan single --url "$target" --screenshot-path "$save_dir" 2>&1)
         status=$?
     fi
 
