@@ -2972,6 +2972,9 @@ audit() {
 rootkit() {
     rootkit_hunt
 }
+set() {
+    secure_empty_trash
+}
 SET() {
     secure_empty_trash
 }
@@ -3008,14 +3011,23 @@ v() {
 V() {  
     version
 }
-ghosttrash() {
-    secure_empty_trash
-}
-stalkip() {
-    ip_osint
+id() {
+    install_dependencies
 }
 cd () {
     check_dependencies
+}
+ne() {
+    network_explorer
+}
+phone() {
+    phone_lookup
+}
+email() {
+    email_lookup
+}
+site() {
+    site_history
 }
 # ─── Command dispatcher ───────────────────────────────────────────────────────
 
@@ -3032,7 +3044,7 @@ _PEREGINE_COMMANDS=(
     remove_temp_files rm_tmp
     system_audit audit
     rootkit_hunt rootkit
-    secure_empty_trash SET
+    secure_empty_trash SET set
     secure_overwrite_free_space sofs
     secure_shred_dir ssd
     generate_password genpass
@@ -3062,21 +3074,19 @@ _PEREGINE_COMMANDS=(
     decrypt_file_aes256 
     encrypt_file_aes128
     decrypt_file_aes128   
-    ghosttrash
-    stalkip
     license l
     clone_source c
     version v V    
     help 
     check_dependencies cd
     update
-    phone_lookup
+    phone_lookup phone
     web_phone_lookup
-    email_lookup
-    site_history
+    email_lookup email
+    site_history site 
     site_screenshot
-    install_dependencies
-    network_explorer
+    install_dependencies id
+    network_explorer ne
 )
 
 _peregine_list_commands() { 
