@@ -3040,7 +3040,7 @@ _PEREGINE_COMMANDS=(
     get_ip ip
     ip_osint
     maigret_search maigret
-    update_apps update
+    update_apps 
     remove_temp_files rm_tmp
     system_audit audit
     rootkit_hunt rootkit

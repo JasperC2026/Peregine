@@ -113,11 +113,7 @@ All dependencies are optional — only install what you need for the tools you u
 **Install everything at once (Debian/Ubuntu):**  
    
 ```bash  
-sudo apt install curl whois dnsutils iputils-ping traceroute python3 torsocks \  
-  lynis chkrootkit coreutils secure-delete \  
-  libimage-exiftool-perl mat2 \  
-  openssl gnupg git  
-pipx install maigret  
+peregine install_dependencies
 ```  
    
 ---  
