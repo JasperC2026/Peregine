@@ -22,7 +22,7 @@ release_date="3-6-2026"
 test_date="3-6-2026"
 previous_versions="Stable: V3.2 Beta: V3.3"
 total_commits_in_release="221"
-lines_of_code="3150"
+lines_of_code="3161"
 # Extra
 DIVIDER="───────────────────────────────────────────────────────────────"
 
