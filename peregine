@@ -1030,8 +1030,28 @@ show_weather() {
     echo -e "${DIVIDER}"
 }
 count_lines_file() {
-    # Placeholder
-    echo "Under construction"
+    echo -e "${DIVIDER}"
+
+    echo "Enter file to count lines in: "
+    read -r file
+
+    if [[ -z "$file" ]]; then 
+        echo -e "${RED}[!]${RESET} No file entered. Exiting."
+        return 1
+    fi    
+
+    output=$( wc -l $file)
+    status=$?
+
+    if [[ $status -ne 0 ]]; then
+        echo -e "${RED}[!]${RESET} Failed to count lines in file: $output"
+        return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Total lines: ${CYAN}$output${RESET}"
+    fi 
+
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
 view_cpu_processes() {
     # Placeholder
@@ -2672,6 +2692,8 @@ help() {
             echo "  Show fancy weather in your ternimal using curl"
         ;;
         count_lines_file)
+            echo -e "${CYAN}count_lines_file${RESET}"
+            echo "  Count lines in a file"
         ;;
         view_cpu_processes)
         ;;
