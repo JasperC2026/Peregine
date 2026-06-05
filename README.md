@@ -36,9 +36,9 @@ Built for speed, simplicity, and control — privacy-first by design.
    
 | Distro family | Status |  
 |---|---|  
-| ![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white) ![Debian](https://img.shields.io/badge/Debian-A81D33?style=for-the-badge&logo=debian&logoColor=white) | ✅ Fully tested |  
-| ![Linux](https://img.shields.io/badge/Other_Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) | ⚠️ Should work, minor issues possible |  
-| ![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white) ![Windows](https://img.shields.io/badge/Windows-0078D4?style=for-the-badge&logo=windows11&logoColor=white) | ❌ Not supported |  
+| ![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white) ![Debian](https://img.shields.io/badge/Debian-A81D33?style=for-the-badge&logo=debian&logoColor=white) | ✔ Fully tested |  
+| ![Linux](https://img.shields.io/badge/Other_Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) | ⚠︎ Should work, minor issues possible |  
+| ![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white) ![Windows](https://img.shields.io/badge/Windows-0078D4?style=for-the-badge&logo=windows11&logoColor=white) | ✗ Not supported |  
    
 > This project is actively developed. Fast iteration may occasionally introduce bugs — bug reports and PRs are welcome.  
    
