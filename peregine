@@ -11,7 +11,7 @@
 
 # General info
 written_in="Bash"
-total_commands="59"
+total_commands="64"
 created_on="March 18, 2026"
 contributors="JasperC (Developer, Maintainer), JVisio (Community Contributor) and Open Source Community"
 license="GPL-3.0"
@@ -1003,6 +1003,26 @@ update_apps() {
     echo -e "${DIVIDER}"
 }
 # Todo: add more system apps
+show_weather() {
+    # Placeholder
+    echo "Under construction"
+}
+count_lines_file() {
+    # Placeholder
+    echo "Under construction"
+}
+view_cpu_processes() {
+    # Placeholder
+    echo "Under construction"
+}
+show_disk_usage() {
+    # Placeholder
+    echo "Under construction" 
+}
+find_largest_files() {
+    # Placeholder
+    echo "Under construction" 
+}
 # Security
 secure_shred_dir() {
     echo -e "${DIVIDER}"
@@ -2570,7 +2590,7 @@ help() {
             echo "  Fetch and display your current public IP address (via ifconfig.me)."
             echo -e "  ${GREEN}Requires:${RESET} curl  (sudo apt install curl)"
             ;;
-        ip_osint|stalkip)
+        ip_osint)
             echo -e "${CYAN}ip_osint / stalkip${RESET}"
             echo "  Query ipinfo.io for geolocation, ISP, and ASN data on a given IP."
             echo -e "  ${YELLOW}[!] Only use on systems you are authorised to investigate.${RESET}"
@@ -2625,11 +2645,20 @@ help() {
             echo "  Update packages via apt, pacman, snap, pipx, or pip."
             echo "  You will be prompted to choose your package manager."
             ;;
+            show_weather
+        count_lines_file)
+        ;;
+        view_cpu_processes)
+        ;;
+        show_disk_usage)
+        ;;
+        find_largest_files)
+        ;;
+        # ── Security ─────────────────────────────────────────────────────────
         remove_temp_files|rm_tmp)
             echo -e "${CYAN}remove_temp_files / rm_tmp${RESET}"
             echo "  Deletes all files in /tmp/*."
             ;;
-        # ── Security ─────────────────────────────────────────────────────────
         system_audit|audit)
             echo -e "${CYAN}system_audit / audit${RESET}"
             echo "  Run a full Lynis security audit on the system."
@@ -2645,7 +2674,7 @@ help() {
             echo -e "  ${YELLOW}[!] chkrootkit can produce false positives — verify findings manually.${RESET}"
             echo -e "  ${GREEN}Requires:${RESET} chkrootkit  (sudo apt install chkrootkit)"
             ;;
-        secure_empty_trash|SET|ghosttrash)
+        secure_empty_trash|SET|set)
             echo -e "${CYAN}secure_empty_trash / SET / ghosttrash${RESET}"
             echo "  Securely wipe all files in the system Trash using srm (3 passes)."
             echo "  Also removes the corresponding .trashinfo metadata files."
@@ -3089,6 +3118,11 @@ _PEREGINE_COMMANDS=(
     site_screenshot
     install_dependencies id
     network_explorer ne
+    show_weather
+    count_lines_file
+    view_cpu_processes
+    show_disk_usage
+    find_largest_files
 )
 
 _peregine_list_commands() { 
