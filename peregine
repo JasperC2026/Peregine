@@ -22,7 +22,7 @@ release_date="4-6-2026"
 test_date="4-6-2026"
 previous_versions="Stable: V3.4 Beta: V3.3"
 total_commits_in_release="7"
-lines_of_code="3164"
+lines_of_code="3450"
 # Extra
 DIVIDER="───────────────────────────────────────────────────────────────"
 
@@ -3447,4 +3447,3 @@ EOF
 # Also you can contact me trough matrix: @whiteghost404:matrix.org
 
 # Special thanks to all contributors and all creators of the tools used in this program. 
-
