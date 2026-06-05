@@ -64,7 +64,7 @@ All dependencies are optional — only install what you need for the tools you u
 ![torsocks](https://img.shields.io/badge/torsocks-7D4698?style=for-the-badge&logo=torproject&logoColor=white)
 | Tool | Package | Used by |  
 |---|---|---|  
-| `curl` | `sudo apt install curl` | `get_ip`, `ip_osint` |  
+| `curl` | `sudo apt install curl` | `get_ip`, `ip_osint`, `show_weather` |  
 | `whois` | `sudo apt install whois` | `whois_lookup` |  
 | `dig` | `sudo apt install dnsutils` | `dns_info` |  
 | `ping` | `sudo apt install iputils-ping` | `ping` |  
