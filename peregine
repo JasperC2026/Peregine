@@ -1001,6 +1001,7 @@ update_apps() {
     echo "[->] Command executed"
     echo -e "${DIVIDER}"
 }
+# Todo: add more system apps
 # Security
 secure_shred_dir() {
     echo -e "${DIVIDER}"
@@ -1362,7 +1363,7 @@ generate_password() {
         return 1
     fi
 
- echo
+    echo
     echo -e "${CYAN}── Passwords ────────────────────────────────────────────────${RESET}"
 
     local pass_alnum
