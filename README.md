@@ -60,8 +60,8 @@ All dependencies are optional — only install what you need for the tools you u
 ![phoneinfoga](https://img.shields.io/badge/phoneinfoga-181717?style=for-the-badge)
 ![theHarvester](https://img.shields.io/badge/theHarvester-181717?style=for-the-badge)
 ![waybackurls](https://img.shields.io/badge/waybackurls-181717?style=for-the-badge)
+![gowithness](https://img.shields.io/badge/gowithness-181717?style=for-the-badge)
 ![torsocks](https://img.shields.io/badge/torsocks-7D4698?style=for-the-badge&logo=torproject&logoColor=white)
-![gowitness](https://img.shields.io/badge/gowitness-7D4698?style=for-the-badge&logo=torproject&logoColor=white)
 | Tool | Package | Used by |  
 |---|---|---|  
 | `curl` | `sudo apt install curl` | `get_ip`, `ip_osint` |  

@@ -5,7 +5,7 @@
 # You are free to use, copy, modify, and distribute this software for any purpose.
 # With the requirements of: keeping the source code open and availible, license any modified or derived versions under GPL-3.0 as well and keeping all copyright and license notices intact.
 # You cannot distribute it as closed-source / proprietary, add restrictions that prevent others from exercising these rights, hold the author (JasperC) liable for anything — the software comes with no warranty.
-# Version: 3.4
+# Version: 3.5
 
 # Variables
 
@@ -17,12 +17,12 @@ contributors="JasperC (Developer, Maintainer), JVisio (Community Contributor) an
 license="GPL-3.0"
 # Release only
 type="Stable"
-version="V3.4"
-release_date="3-6-2026"
-test_date="3-6-2026"
-previous_versions="Stable: V3.2 Beta: V3.3"
-total_commits_in_release="221"
-lines_of_code="3161"
+version="V3.5"
+release_date="4-6-2026"
+test_date="4-6-2026"
+previous_versions="Stable: V3.4 Beta: V3.3"
+total_commits_in_release="7"
+lines_of_code="3164"
 # Extra
 DIVIDER="───────────────────────────────────────────────────────────────"
 
@@ -823,7 +823,8 @@ site_screenshot () {
 
     echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
-
+    
+    echo
     osint_disclaimer
     echo
 
@@ -863,10 +864,10 @@ site_screenshot () {
             return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-        output=$(torsocks gowitness single --url "$target" --screenshot-path "$save_dir" 2>&1)
+        output=$(torsocks gowitness scan single --url "$target" --screenshot-path "$save_dir" 2>&1)
         status=$?
     else
-        output=$(gowitness single --url "$target" --screenshot-path "$save_dir" 2>&1)
+        output=$(gowitness scan single --url "$target" --screenshot-path "$save_dir" 2>&1)
         status=$?
     fi
 
@@ -3161,3 +3162,4 @@ EOF
 # Also you can contact me trough matrix: @whiteghost404:matrix.org
 
 # Special thanks to all contributors and all creators of the tools used in this program. 
+
