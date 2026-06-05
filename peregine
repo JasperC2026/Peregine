@@ -5,7 +5,7 @@
 # You are free to use, copy, modify, and distribute this software for any purpose.
 # With the requirements of: keeping the source code open and availible, license any modified or derived versions under GPL-3.0 as well and keeping all copyright and license notices intact.
 # You cannot distribute it as closed-source / proprietary, add restrictions that prevent others from exercising these rights, hold the author (JasperC) liable for anything — the software comes with no warranty.
-# Version: 3.5
+# Version: 3.6
 
 # Variables
 
@@ -16,13 +16,13 @@ created_on="March 18, 2026"
 contributors="JasperC (Developer, Maintainer), JVisio (Community Contributor) and Open Source Community"
 license="GPL-3.0"
 # Release only
-type="Stable"
-version="V3.5"
-release_date="4-6-2026"
-test_date="4-6-2026"
-previous_versions="Stable: V3.4 Beta: V3.3"
-total_commits_in_release="7"
-lines_of_code="3450"
+type="Beta"
+version="V3.6"
+release_date="5-6-2026"
+test_date="N/A"
+previous_versions="Stable: V3.5 Stable: V3.4"
+total_commits_in_release="11"
+lines_of_code="3524"
 # Extra
 DIVIDER="───────────────────────────────────────────────────────────────"
 
@@ -1054,16 +1054,69 @@ count_lines_file() {
     echo -e "${DIVIDER}"
 }
 view_cpu_processes() {
-    # Placeholder
-    echo "Under construction"
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v top >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install procps"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo 
+
+    top
+
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
 show_disk_usage() {
-    # Placeholder
-    echo "Under construction" 
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v df >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install coreutils"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo 
+
+    df -h
+
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
 find_largest_files() {
-    # Placeholder
-    echo "Under construction" 
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v find >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install findutils"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo 
+
+    read -rp "Enter directory to search for largest files (default: current directory): " target
+
+    if [[ -z "$target" ]]; then
+        target="."
+    fi
+
+    if [[ ! -d "$target" ]]; then
+        echo -e "${RED}[!]${RESET} Target is not a valid directory: '$target'"
+        return 1
+    fi
+
+    find "$target" -type f -exec du -h {} + | sort -rh | head -n 10
+
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
 }
 # Security
 secure_shred_dir() {
@@ -2776,7 +2829,7 @@ install_dependencies() {
     # APT
     sudo apt install curl whois dnsutils iputils-ping traceroute python3 \
   torsocks lynis chkrootkit coreutils secure-delete \
-  libimage-exiftool-perl openssl gnupg git golang nmap
+  libimage-exiftool-perl openssl gnupg git golang nmap top
     # PIPX
     pipx install maigret
     # Git clone or other installation steps for dependencies that require it
@@ -2900,10 +2953,16 @@ help() {
             echo "  Count lines in a file"
         ;;
         view_cpu_processes)
+            echo -e "${CYAN}view_cpu_processes${RESET}"
+            echo "  View top CPU-consuming processes using top."
         ;;
         show_disk_usage)
+            echo -e "${CYAN}show_disk_usage${RESET}"
+            echo "  Show disk usage of files and directories using du."
         ;;
         find_largest_files)
+            echo -e "${CYAN}find_largest_files${RESET}"
+            echo "  Find the 10 largest files in a directory using du and sort."
         ;;
         # ── Security ─────────────────────────────────────────────────────────
         remove_temp_files|rm_tmp)
@@ -3072,6 +3131,9 @@ help() {
     echo -e "${DIVIDER}"
 }
 check_dependencies () {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+
     if ! command -v git >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Git not installed"
     else
@@ -3210,6 +3272,19 @@ check_dependencies () {
         echo "${GREEN}[+]${RESET} Pipx installed"
     fi
 
+     if ! command -v golang >dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Golang not installed"
+    else
+        echo "${GREEN}[+]${RESET} Golang installed"
+    fi
+
+     if ! command -v top >dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Top not installed"
+    else
+        echo "${GREEN}[+]${RESET} Top installed"
+    fi
+
+    echo -e "${DIVIDER}"
 }
 # Development / Testing
 test_colors() {
