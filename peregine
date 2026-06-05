@@ -2645,7 +2645,8 @@ help() {
             echo "  Update packages via apt, pacman, snap, pipx, or pip."
             echo "  You will be prompted to choose your package manager."
             ;;
-            show_weather
+        show_weather)
+        ;;
         count_lines_file)
         ;;
         view_cpu_processes)
