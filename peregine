@@ -11,7 +11,7 @@
 
 # General info
 written_in="Bash"
-total_commands="64"
+total_commands="65"
 created_on="March 18, 2026"
 contributors="JasperC (Developer, Maintainer), JVisio (Community Contributor) and Open Source Community"
 license="GPL-3.0"
@@ -1002,7 +1002,24 @@ update_apps() {
     echo "[->] Command executed"
     echo -e "${DIVIDER}"
 }
-# Todo: add more system apps
+show_edited_files() {
+    echo -e "${DIVIDER}"
+
+    output=$(ls -lt --time-style=long-iso 2>&1)
+    status=$?
+
+    if [[ $status -ne 0 ]]; then
+        echo -e "${RED}[!]${RESET} Failed to list files: $output"
+        return 1
+    else
+        echo -e "${GREEN}[+]${RESET} Files listed successfully"
+        echo -e "${CYAN}Files in current directory sorted by last edited:${RESET}"
+        echo -e "${CYAN}$output${RESET}"
+    fi
+
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
 show_weather() {
     echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
@@ -2964,6 +2981,10 @@ help() {
             echo -e "${CYAN}find_largest_files${RESET}"
             echo "  Find the 10 largest files in a directory using du and sort."
         ;;
+        show_edited_files)
+            echo -e "${CYAN}show_edited_files${RESET}"
+            echo "  Show files edited in the last 24 hours using find."
+        ;;
         # ── Security ─────────────────────────────────────────────────────────
         remove_temp_files|rm_tmp)
             echo -e "${CYAN}remove_temp_files / rm_tmp${RESET}"
@@ -3449,6 +3470,7 @@ _PEREGINE_COMMANDS=(
     view_cpu_processes
     show_disk_usage
     find_largest_files
+    show_edited_files
 )
 
 _peregine_list_commands() { 
@@ -3459,7 +3481,7 @@ _peregine_list_commands() {
  ##.... ##: ##.....:: ##.... ##: ##.....::'##... ##::. ##:: ###:: ##: ##.....::
  ##:::: ##: ##::::::: ##:::: ##: ##::::::: ##:::..:::: ##:: ####: ##: ##:::::::
  ########:: ######::: ########:: ######::: ##::'####:: ##:: ## ## ##: ######:::
- ##.....::: ##...:::: ##.. ##::: ##...:::: ##::: ##::: ##:: ##. ####: ##...::::
+ ##.....::: ##...:: :: ##.. ##::: ##...:::: ##::: ##::: ##:: ##. ####: ##...::::
  ##:::::::: ##::::::: ##::. ##:: ##::::::: ##::: ##::: ##:: ##:. ###: ##:::::::
  ##:::::::: ########: ##:::. ##: ########:. ######:::'####: ##::. ##: ########:
 ..:::::::::........::..:::::..::........:::......::::....::..::::..::........::
