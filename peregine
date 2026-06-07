@@ -3235,12 +3235,6 @@ check_dependencies () {
         echo "${GREEN}[+]${RESET} Shred installed"
     fi  
 
-    if ! command -v srm >/dev/null 2>&1; then
-        echo "${RED}[!]${RESET} Srm not installed"
-    else
-        echo "${GREEN}[+]${RESET} Srm installed"
-    fi      
-
     if ! command -v sfill >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Sfill not installed"
     else
