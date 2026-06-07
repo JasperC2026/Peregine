@@ -25,6 +25,8 @@ total_commits_in_release="11"
 lines_of_code="3546"
 # Extra
 DIVIDER="───────────────────────────────────────────────────────────────"
+TRASH_FILES="$HOME/.local/share/Trash/files"
+TRASH_INFO="$HOME/.local/share/Trash/info"
 
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
@@ -1257,9 +1259,9 @@ secure_empty_trash() {
     echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
-    if ! command -v srm >/dev/null 2>&1; then # Check if srm is installed 
-        echo "${RED}[!]${RESET} Required dependencie not installed"
-        echo "Install with: sudo apt install srm"
+    if ! command -v shred >/dev/null 2>&1; then
+        echo -e "${RED}[!]${RESET} Required dependency not installed"
+        echo "Install with: sudo apt install coreutils"
         return 1
     fi
 
@@ -1267,17 +1269,15 @@ secure_empty_trash() {
     echo
 
     local file_count
-    file_count=$(find "$TRASH_FILES" -mindepth 1 2>/dev/null | wc -l) # Count the number of files in the trash to provide feedback
+    file_count=$(find "$TRASH_FILES" -mindepth 1 2>/dev/null | wc -l)
 
     if [[ $file_count -eq 0 ]]; then
-        echo
         echo -e "${GREEN}[i] Trash is already empty.${RESET}"
         return 0
     fi
 
-    echo
     warning_destructive_actions
-    echo 
+    echo
 
     echo -e "${CYAN}[i] Found $file_count item(s) in Trash.${RESET}"
     echo
@@ -1285,9 +1285,17 @@ secure_empty_trash() {
 
     if [[ "$confirm" =~ ^[Yy]$ ]]; then
         echo -e "${GREEN}[+]${RESET} Emptying Trash securely..."
-        find "$TRASH_FILES" -type f -print0 2>/dev/null | xargs -0 srm -z -n 3 2>/dev/null # Use srm to securely delete files in the trash with 3 passes and zero out the file after shredding
-        find "$TRASH_INFO" -type f -print0 2>/dev/null | xargs -0 srm -z -n 3 2>/dev/null # Also securely delete the corresponding info files in the trash
-        echo -e "${GREEN}[+]${RESET} Trash emptied securely."
+
+        # Shred files: 3 passes, zero out on final pass, then remove
+        find "$TRASH_FILES" -type f -print0 2>/dev/null \
+            | xargs -0 -r shred -z -n 3 --remove 2>/dev/null
+
+        # Remove leftover empty directories
+        find "$TRASH_FILES" -mindepth 1 -depth -type d -empty -delete 2>/dev/null
+
+        # Shred and remove the corresponding .trashinfo metadata files
+        find "$TRASH_INFO" -type f -print0 2>/dev/null \
+            | xargs -0 -r shred -z -n 3 --remove 2>/dev/null
     else
         echo -e "${YELLOW}[i]${RESET} Trash emptying cancelled."
         return 1
@@ -1305,7 +1313,7 @@ secure_empty_trash() {
     fi
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}" 
+    echo -e "${DIVIDER}"
 }
 secure_overwrite_free_space() {
     echo -e "${DIVIDER}"
