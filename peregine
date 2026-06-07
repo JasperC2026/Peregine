@@ -11,10 +11,11 @@
 
 # General info
 written_in="Bash"
-total_commands="66"
+total_commands="67"
 created_on="March 18, 2026"
 contributors="JasperC (Developer, Maintainer), JVisio (Community Contributor) and Open Source Community"
 license="GPL-3.0"
+lines_of_code="3581"
 # Release only
 type="Beta"
 version="V3.6"
@@ -22,7 +23,6 @@ release_date="5-6-2026"
 test_date="N/A"
 previous_versions="Stable: V3.5 Stable: V3.4"
 total_commits_in_release="11"
-lines_of_code="3581"
 # Extra
 DIVIDER="───────────────────────────────────────────────────────────────"
 TRASH_FILES="$HOME/.local/share/Trash/files"
@@ -1160,6 +1160,35 @@ record_terminal() {
 
     echo -e "${GREEN}[+]${RESET} Terminal recording is being saved to: ${CYAN}$filename${RESET}"
     echo -e "${YELLOW}[i]${RESET} Type 'exit' or press Ctrl+D to stop recording."
+
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+find_broken_symlinks() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v find >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install findutils"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo 
+
+    read -rp "Enter directory to search for broken symlinks (default: current directory): " target
+
+    if [[ -z "$target" ]]; then
+        target="."
+    fi
+
+    if [[ ! -d "$target" ]]; then
+        echo -e "${RED}[!]${RESET} Target is not a valid directory: '$target'"
+        return 1
+    fi
+
+    find "$target" -xtype l
 
     echo "[->] Command executed"
     echo -e "${DIVIDER}"
@@ -3025,6 +3054,11 @@ help() {
             echo "  Record your terminal session to a file using script."
             echo "  Saves a typescript file with a timestamped name in the current directory."
             ;;
+        find_broken_symlinks)
+            echo -e "${CYAN}find_broken_symlinks${RESET}"
+            echo "  Find broken symbolic links in a directory using find."
+            echo "  Lists the path of each broken symlink found."
+            ;;
         # ── Security ─────────────────────────────────────────────────────────
         remove_temp_files|rm_tmp)
             echo -e "${CYAN}remove_temp_files / rm_tmp${RESET}"
@@ -3506,6 +3540,7 @@ _PEREGINE_COMMANDS=(
     find_largest_files
     show_edited_files
     record_terminal
+    find_broken_symlinks
 )
 
 _peregine_list_commands() { 
