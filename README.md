@@ -81,7 +81,7 @@ All dependencies are optional — only install what you need for the tools you u
 ![lynis](https://img.shields.io/badge/lynis-00008b?style=for-the-badge)
 ![chkrootkit](https://img.shields.io/badge/chkrootkit-00008b?style=for-the-badge)
 ![shred](https://img.shields.io/badge/shred_(coreutils)-A42E2B?style=for-the-badge&logo=gnu&logoColor=white) 
-![srm](https://img.shields.io/badge/srm-00008b?style=for-the-badge)
+![shred](https://img.shields.io/badge/shred-00008b?style=for-the-badge)
 ![sfill](https://img.shields.io/badge/sfill-00008b?style=for-the-badge)
 ![top](https://img.shields.io/badge/top-00008b?style=for-the-badge)
    
@@ -89,8 +89,7 @@ All dependencies are optional — only install what you need for the tools you u
 |---|---|---|  
 | `lynis` | `sudo apt install lynis` | `system_audit` |  
 | `chkrootkit` | `sudo apt install chkrootkit` | `rootkit_hunt` |  
-| `shred` | `sudo apt install coreutils` | `secure_shred_dir`, `secure_delete` |  
-| `srm` | `sudo apt install secure-delete` | `secure_empty_trash` |  
+| `shred` | `sudo apt install coreutils` | `secure_shred_dir`, `secure_delete` `secure_empty_trash` |  
 | `sfill` | `sudo apt install secure-delete` | `secure_overwrite_free_space` |  
 | `top` | `sudo apt install procps` | `process_monitor` |
    
