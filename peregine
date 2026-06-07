@@ -11,11 +11,11 @@
 
 # General info
 written_in="Bash"
-total_commands="67"
+total_commands="68"
 created_on="March 18, 2026"
 contributors="JasperC (Developer, Maintainer), JVisio (Community Contributor) and Open Source Community"
 license="GPL-3.0"
-lines_of_code="3616"
+lines_of_code="3651"
 # Release only
 type="Beta"
 version="V3.6"
@@ -1160,6 +1160,35 @@ record_terminal() {
 
     echo -e "${GREEN}[+]${RESET} Terminal recording is being saved to: ${CYAN}$filename${RESET}"
     echo -e "${YELLOW}[i]${RESET} Type 'exit' or press Ctrl+D to stop recording."
+
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+find_empty() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v find >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install findutils"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo 
+
+    read -rp "Enter directory to search for empty files/directories (default: current directory): " target
+
+    if [[ -z "$target" ]]; then
+        target="."
+    fi
+
+    if [[ ! -d "$target" ]]; then
+        echo -e "${RED}[!]${RESET} Target is not a valid directory: '$target'"
+        return 1
+    fi
+
+    find "$target" -empty
 
     echo "[->] Command executed"
     echo -e "${DIVIDER}"
@@ -3059,6 +3088,11 @@ help() {
             echo "  Find broken symbolic links in a directory using find."
             echo "  Lists the path of each broken symlink found."
             ;;
+        find_empty)
+            echo -e "${CYAN}find_empty${RESET}"
+            echo "  Find empty files and directories using find."
+            echo "  Lists the path of each empty file or directory found."
+            ;;
         # ── Security ─────────────────────────────────────────────────────────
         remove_temp_files|rm_tmp)
             echo -e "${CYAN}remove_temp_files / rm_tmp${RESET}"
@@ -3541,6 +3575,7 @@ _PEREGINE_COMMANDS=(
     show_edited_files
     record_terminal
     find_broken_symlinks
+    find_empty
 )
 
 _peregine_list_commands() { 
