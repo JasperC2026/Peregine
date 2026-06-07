@@ -11,7 +11,7 @@
 
 # General info
 written_in="Bash"
-total_commands="65"
+total_commands="66"
 created_on="March 18, 2026"
 contributors="JasperC (Developer, Maintainer), JVisio (Community Contributor) and Open Source Community"
 license="GPL-3.0"
@@ -22,7 +22,7 @@ release_date="5-6-2026"
 test_date="N/A"
 previous_versions="Stable: V3.5 Stable: V3.4"
 total_commits_in_release="11"
-lines_of_code="3546"
+lines_of_code="3581"
 # Extra
 DIVIDER="───────────────────────────────────────────────────────────────"
 TRASH_FILES="$HOME/.local/share/Trash/files"
@@ -1133,6 +1133,33 @@ find_largest_files() {
     fi
 
     find "$target" -type f -exec du -h {} + | sort -rh | head -n 10
+
+    echo "[->] Command executed"
+    echo -e "${DIVIDER}"
+}
+record_terminal() {
+    echo -e "${DIVIDER}"
+    echo "[->] Checking dependencies"
+
+    if ! command -v script >/dev/null 2>&1; then
+        echo "${RED}[!]${RESET} Required dependencie not installed"
+        echo "Install with: sudo apt install bsdutils"
+        return 1
+    fi
+
+    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    echo 
+
+    read -rp "Enter filename to save terminal recording (default: terminal_recording.txt): " filename
+
+    if [[ -z "$filename" ]]; then
+        filename="terminal_recording.txt"
+    fi
+
+    script -q "$filename"
+
+    echo -e "${GREEN}[+]${RESET} Terminal recording is being saved to: ${CYAN}$filename${RESET}"
+    echo -e "${YELLOW}[i]${RESET} Type 'exit' or press Ctrl+D to stop recording."
 
     echo "[->] Command executed"
     echo -e "${DIVIDER}"
@@ -2993,6 +3020,11 @@ help() {
             echo -e "${CYAN}show_edited_files${RESET}"
             echo "  Show files edited in the last 24 hours using find."
         ;;
+        record_terminal)
+            echo -e "${CYAN}record_terminal${RESET}"
+            echo "  Record your terminal session to a file using script."
+            echo "  Saves a typescript file with a timestamped name in the current directory."
+            ;;
         # ── Security ─────────────────────────────────────────────────────────
         remove_temp_files|rm_tmp)
             echo -e "${CYAN}remove_temp_files / rm_tmp${RESET}"
@@ -3473,6 +3505,7 @@ _PEREGINE_COMMANDS=(
     show_disk_usage
     find_largest_files
     show_edited_files
+    record_terminal
 )
 
 _peregine_list_commands() { 
