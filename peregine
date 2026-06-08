@@ -3659,6 +3659,10 @@ help() {
             echo -e "${CYAN}test_colors / tc ${RESET}"
             echo "  Test the color output of the terminal"
             ;;  
+        config)
+            echo -e "${CYAN}config${RESET}"
+            echo "  Configure Peregine settings and preferences."
+            ;;
         *)
             echo -e "${RED}[!] No help entry for '$1'.${RESET}"
             echo -e "    Run ${CYAN}peregine help${RESET} to list all commands."
@@ -3839,7 +3843,11 @@ test_colors() {
     echo -e "${RESET}This is DEFAULT"
     echo -e "${DIVIDER}"
 }
-
+config() {
+    echo -e "${DIVIDER}"
+    echo "Configuration options coming soon!"
+    echo -e "${DIVIDER}"
+}
 # Alternatives
 whois () {
     whois_lookup 
@@ -3990,6 +3998,7 @@ _PEREGINE_COMMANDS=(
     osint
     system/security
     networking
+    config
 )
 
 _peregine_list_commands() { 
