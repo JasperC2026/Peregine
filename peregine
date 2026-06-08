@@ -3727,3 +3727,8 @@ EOF
 # Also you can contact me trough matrix: @whiteghost404:matrix.org
 
 # Special thanks to all contributors and all creators of the tools used in this program. 
+
+# Todo for 3.7
+# - new command lists
+# - config options
+# - testing new commands
