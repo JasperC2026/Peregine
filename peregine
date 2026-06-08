@@ -11,7 +11,7 @@
 
 # Variables
 written_in="Bash/shell"
-total_commands="68"
+total_commands="72"
 created_on="March 18, 2026"
 contributors="JasperC (Developer, Maintainer), and Open Source Community"
 license="GPL-3.0"
@@ -2920,6 +2920,322 @@ clone_source() {
     echo "[->] Command executed"
     echo -e "${DIVIDER}"
 }
+encryption() {
+    # ── Colours ───────────────────────────────────────────────────────────────
+    local BOLD='\033[1m'
+    local RESET='\033[0m'
+    local DIM='\033[2m'
+    local CLOGO='\033[38;5;255m'   # white  — logo @'s
+    local CLABEL='\033[38;5;114m'  # soft green — info labels
+    local CVAL='\033[38;5;250m'    # grey   — info values
+    local CSEP='\033[38;5;240m'    # dim    — separators
+
+    # ── Logo ──────────────────────────────────────────────────────────────────
+    local -a LOGO=(
+        "                                                          "
+        "       @                                          @       "
+        "        @                                        @        "
+        "        @@@                                    @@@        "
+        "         @@@@.                              =@@@@         "
+        "           @@@@@                         .@@@@@           "
+        "           @@ *@@@@=                  %@@@@  @@           "
+        "            @@@@= @@@@@   @@@@@    @@@@@ %@@@@            "
+        "             @@@@@@@ @@@@   @@@  @@@@ @@@@@@@             "
+        "              @@@.   @@@@  @@@@@:@@@@   :@@@              "
+        "                %@@@@@ @@@@@@@@@@@@ @@@@@:                "
+        "                    *@@ @@=@@@@ @@ @@.                    "
+        "                    @@@:@@ @@@@ @@ @@@                    "
+        "                     @+@@@  @@  @@%@@                     "
+        "                      @ @@@ @@ @@@ @                      "
+        "                        @ @@  @@@@@                       "
+        "                     .@@ @ -.=@ *@@@@                     "
+        "                       @@  @  @  @@                       "
+        "                          @    @                          "
+        "                        @@ @- @ @@                        "
+        "                         @@ @@ @*                         "
+        "                            @+                            "
+        "                                                          "
+    )
+
+    # ── Info block (right column) ─────────────────────────────────────────────
+    local -a INFO=(
+        ""
+        "$(printf "${CLABEL}${BOLD}  Encryption${RESET}  ${CSEP}Command Overview${RESET}")"
+        "$(printf "${DIM}  Text & file encryption, decryption and key tools${RESET}")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "generate_key" "genkey")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}  %-26s${RESET} ${CSEP}%s${RESET}" "Text — Encrypt" "Decrypt")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "encrypt_text_aes256" "decrypt_text_aes256")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "encrypt_text_aes128" "decrypt_text_aes128")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "encrypt_text_chacha20" "decrypt_text_chacha20")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "encrypt_text_caesar" "decrypt_text_caesar")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "encrypt_text_vigenere" "decrypt_text_vigenere")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "encrypt_text_base64" "decrypt_text_base64")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "rot13_cipher" "rot13")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}  %-26s${RESET} ${CSEP}%s${RESET}" "File — Encrypt" "Decrypt")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "encrypt_file_aes256" "decrypt_file_aes256")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "encrypt_file_aes128" "decrypt_file_aes128")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "encrypt_file_chacha20" "decrypt_file_chacha20")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "encrypt_file_twofish" "decrypt_file_twofish")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "encrypt_file_serpent" "decrypt_file_serpent")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        ""
+        "$(printf "  ${DIM}codeberg.org/JasperC/Peregine${RESET}")"
+        "$(printf "  ${DIM}peregine license  •  peregine help${RESET}")"
+        ""
+        ""
+    )
+
+    # ── Render side-by-side ───────────────────────────────────────────────────
+    local max=$(( ${#LOGO[@]} > ${#INFO[@]} ? ${#LOGO[@]} : ${#INFO[@]} ))
+    echo
+    for (( i=0; i<max; i++ )); do
+        local logo_line="${LOGO[$i]:-$(printf '%58s' '')}"
+        local info_line="${INFO[$i]:-}"
+        printf "${CLOGO}%s${RESET}" "$logo_line"
+        printf "%b\n" "$info_line"
+    done
+    echo
+}
+osint () {
+# ── Colours ───────────────────────────────────────────────────────────────
+    local BOLD='\033[1m'
+    local RESET='\033[0m'
+    local DIM='\033[2m'
+    local CLOGO='\033[38;5;255m'   # white  — logo @'s
+    local CLABEL='\033[38;5;167m'  # soft red — info labels
+    local CVAL='\033[38;5;250m'    # grey   — info values
+    local CSEP='\033[38;5;240m'    # dim    — separators
+
+    # ── Logo ──────────────────────────────────────────────────────────────────
+    local -a LOGO=(
+        "                                                          "
+        "       @                                          @       "
+        "        @                                        @        "
+        "        @@@                                    @@@        "
+        "         @@@@.                              =@@@@         "
+        "           @@@@@                         .@@@@@           "
+        "           @@ *@@@@=                  %@@@@  @@           "
+        "            @@@@= @@@@@   @@@@@    @@@@@ %@@@@            "
+        "             @@@@@@@ @@@@   @@@  @@@@ @@@@@@@             "
+        "              @@@.   @@@@  @@@@@:@@@@   :@@@              "
+        "                %@@@@@ @@@@@@@@@@@@ @@@@@:                "
+        "                    *@@ @@=@@@@ @@ @@.                    "
+        "                    @@@:@@ @@@@ @@ @@@                    "
+        "                     @+@@@  @@  @@%@@                     "
+        "                      @ @@@ @@ @@@ @                      "
+        "                        @ @@  @@@@@                       "
+        "                     .@@ @ -.=@ *@@@@                     "
+        "                       @@  @  @  @@                       "
+        "                          @    @                          "
+        "                        @@ @- @ @@                        "
+        "                         @@ @@ @*                         "
+        "                            @+                            "
+        "                                                          "
+    )
+
+    # ── Info block (right column) ─────────────────────────────────────────────
+    local -a INFO=(
+        ""
+        "$(printf "${CLABEL}${BOLD}  OSINT${RESET}  ${CSEP}Command Overview${RESET}")"
+        "$(printf "${DIM}  Open-source intelligence & reconnaissance tools${RESET}")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "network_explorer" "ne")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}  %-26s${RESET} ${CSEP}%s${RESET}" "Lookup" "Alias")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "phone_lookup" "phone")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "web_phone_lookup" "")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "email_lookup" "email")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "ip_osint" "")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "maigret_search" "maigret")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}  %-26s${RESET} ${CSEP}%s${RESET}" "Web" "Alias")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "site_history" "site")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "site_screenshot" "")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        ""
+        "$(printf "  ${DIM}codeberg.org/JasperC/Peregine${RESET}")"
+        "$(printf "  ${DIM}peregine license  •  peregine help${RESET}")"
+        ""
+        ""
+    )
+
+    # ── Render side-by-side ───────────────────────────────────────────────────
+    local max=$(( ${#LOGO[@]} > ${#INFO[@]} ? ${#LOGO[@]} : ${#INFO[@]} ))
+    echo
+    for (( i=0; i<max; i++ )); do
+        local logo_line="${LOGO[$i]:-$(printf '%58s' '')}"
+        local info_line="${INFO[$i]:-}"
+        printf "${CLOGO}%s${RESET}" "$logo_line"
+        printf "%b\n" "$info_line"
+    done
+    echo
+}
+system/security() {
+    # ── Colours ───────────────────────────────────────────────────────────────
+    local BOLD='\033[1m'
+    local RESET='\033[0m'
+    local DIM='\033[2m'
+    local CLOGO='\033[38;5;255m'   # white  — logo @'s
+    local CLABEL='\033[38;5;179m'  # soft yellow — info labels
+    local CVAL='\033[38;5;250m'    # grey   — info values
+    local CSEP='\033[38;5;240m'    # dim    — separators
+
+    # ── Logo ──────────────────────────────────────────────────────────────────
+    local -a LOGO=(
+        "                                                          "
+        "       @                                          @       "
+        "        @                                        @        "
+        "        @@@                                    @@@        "
+        "         @@@@.                              =@@@@         "
+        "           @@@@@                         .@@@@@           "
+        "           @@ *@@@@=                  %@@@@  @@           "
+        "            @@@@= @@@@@   @@@@@    @@@@@ %@@@@            "
+        "             @@@@@@@ @@@@   @@@  @@@@ @@@@@@@             "
+        "              @@@.   @@@@  @@@@@:@@@@   :@@@              "
+        "                %@@@@@ @@@@@@@@@@@@ @@@@@:                "
+        "                    *@@ @@=@@@@ @@ @@.                    "
+        "                    @@@:@@ @@@@ @@ @@@                    "
+        "                     @+@@@  @@  @@%@@                     "
+        "                      @ @@@ @@ @@@ @                      "
+        "                        @ @@  @@@@@                       "
+        "                     .@@ @ -.=@ *@@@@                     "
+        "                       @@  @  @  @@                       "
+        "                          @    @                          "
+        "                        @@ @- @ @@                        "
+        "                         @@ @@ @*                         "
+        "                            @+                            "
+        "                                                          "
+    )
+
+    # ── Info block (right column) ─────────────────────────────────────────────
+    local -a INFO=(
+        ""
+        "$(printf "${CLABEL}${BOLD}  System & Security${RESET}  ${CSEP}Command Overview${RESET}")"
+        "$(printf "${DIM}  System maintenance, security & utility tools${RESET}")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}  %-26s${RESET} ${CSEP}%s${RESET}" "Maintenance" "Alias")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "update_apps" "")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "remove_temp_files" "rm_tmp")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "clean_metadata" "metadata")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "secure_empty_trash" "SET  set")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}  %-26s${RESET} ${CSEP}%s${RESET}" "Security" "Alias")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "system_audit" "audit")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "rootkit_hunt" "rootkit")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "generate_password" "genpass")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "secure_delete" "sedl")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "secure_overwrite_free_space" "sofs")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "secure_shred_dir" "ssd")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}  %-26s${RESET} ${CSEP}%s${RESET}" "Utilities" "Alias")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "local_server" "")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "show_weather" "")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "count_lines_file" "")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "view_cpu_processes" "")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "show_disk_usage" "")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "find_largest_files" "")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "show_edited_files" "")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "record_terminal" "")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "find_broken_symlinks" "")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "find_empty" "")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        ""
+        "$(printf "  ${DIM}codeberg.org/JasperC/Peregine${RESET}")"
+        "$(printf "  ${DIM}peregine license  •  peregine help${RESET}")"
+        ""
+        ""
+    )
+
+    # ── Render side-by-side ───────────────────────────────────────────────────
+    local max=$(( ${#LOGO[@]} > ${#INFO[@]} ? ${#LOGO[@]} : ${#INFO[@]} ))
+    echo
+    for (( i=0; i<max; i++ )); do
+        local logo_line="${LOGO[$i]:-$(printf '%58s' '')}"
+        local info_line="${INFO[$i]:-}"
+        printf "${CLOGO}%s${RESET}" "$logo_line"
+        printf "%b\n" "$info_line"
+    done
+    echo
+}
+networking() {
+  # ── Colours ───────────────────────────────────────────────────────────────
+    local BOLD='\033[1m'
+    local RESET='\033[0m'
+    local DIM='\033[2m'
+    local CLOGO='\033[38;5;255m'   # white  — logo @'s
+    local CLABEL='\033[38;5;141m'  # soft purple — info labels
+    local CVAL='\033[38;5;250m'    # grey   — info values
+    local CSEP='\033[38;5;240m'    # dim    — separators
+
+    # ── Logo ──────────────────────────────────────────────────────────────────
+    local -a LOGO=(
+        "                                                          "
+        "       @                                          @       "
+        "        @                                        @        "
+        "        @@@                                    @@@        "
+        "         @@@@.                              =@@@@         "
+        "           @@@@@                         .@@@@@           "
+        "           @@ *@@@@=                  %@@@@  @@           "
+        "            @@@@= @@@@@   @@@@@    @@@@@ %@@@@            "
+        "             @@@@@@@ @@@@   @@@  @@@@ @@@@@@@             "
+        "              @@@.   @@@@  @@@@@:@@@@   :@@@              "
+        "                %@@@@@ @@@@@@@@@@@@ @@@@@:                "
+        "                    *@@ @@=@@@@ @@ @@.                    "
+        "                    @@@:@@ @@@@ @@ @@@                    "
+        "                     @+@@@  @@  @@%@@                     "
+        "                      @ @@@ @@ @@@ @                      "
+        "                        @ @@  @@@@@                       "
+        "                     .@@ @ -.=@ *@@@@                     "
+        "                       @@  @  @  @@                       "
+        "                          @    @                          "
+        "                        @@ @- @ @@                        "
+        "                         @@ @@ @*                         "
+        "                            @+                            "
+        "                                                          "
+    )
+
+    # ── Info block (right column) ─────────────────────────────────────────────
+    local -a INFO=(
+        ""
+        "$(printf "${CLABEL}${BOLD}  Network${RESET}  ${CSEP}Command Overview${RESET}")"
+        "$(printf "${DIM}  Network diagnostics, lookup & monitoring tools${RESET}")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}  %-26s${RESET} ${CSEP}%s${RESET}" "Command" "Alias")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "whois_lookup" "whois")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "ping" "")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "traceroute" "")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "dns_info" "dns")"
+        "$(printf "  ${CLABEL}${BOLD}%-28s${RESET} ${CVAL}%s${RESET}" "get_ip" "ip")"
+        "$(printf "${CSEP}  ─────────────────────────────────────────────────${RESET}")"
+        ""
+        "$(printf "  ${DIM}codeberg.org/JasperC/Peregine${RESET}")"
+        "$(printf "  ${DIM}peregine license  •  peregine help${RESET}")"
+        ""
+        ""
+    )
+
+    # ── Render side-by-side ───────────────────────────────────────────────────
+    local max=$(( ${#LOGO[@]} > ${#INFO[@]} ? ${#LOGO[@]} : ${#INFO[@]} ))
+    echo
+    for (( i=0; i<max; i++ )); do
+        local logo_line="${LOGO[$i]:-$(printf '%58s' '')}"
+        local info_line="${INFO[$i]:-}"
+        printf "${CLOGO}%s${RESET}" "$logo_line"
+        printf "%b\n" "$info_line"
+    done
+    echo
+}
 version() {
     # ── Colours ───────────────────────────────────────────────────────────────
     local BOLD='\033[1m'
@@ -3309,6 +3625,22 @@ help() {
             echo -e "${CYAN}version / v / V${RESET}"
             echo "  Show the current Peregine version, type, release date, and test date."
             ;;
+        osint)
+            echo -e "${CYAN}osint${RESET}"
+            echo "  Show the OSINT-focused commands in the toolkit."
+            ;;
+        system/security)
+            echo -e "${CYAN}system/security${RESET}"
+            echo "  Show the system and security-focused commands in the toolkit."
+            ;;
+        networking)
+            echo -e "${CYAN}networking${RESET}"
+            echo "  Show the networking and OSINT-focused commands in the toolkit."
+            ;;
+        encryption)
+            echo -e "${CYAN}encryption${RESET}"
+            echo "  Show the encryption-focused commands in the toolkit."
+            ;;
         help)
             echo -e "${CYAN}help [command]${RESET}"
             echo "  With no arguments: show all available commands."
@@ -3654,6 +3986,10 @@ _PEREGINE_COMMANDS=(
     record_terminal
     find_broken_symlinks
     find_empty
+    encryption
+    osint
+    system/security
+    networking
 )
 
 _peregine_list_commands() { 
@@ -3728,7 +4064,6 @@ EOF
 
 # Special thanks to all contributors and all creators of the tools used in this program. 
 
-# Todo for 3.7
-# - new command lists
+# Todo for 3.8
 # - config options
 # - testing new commands
