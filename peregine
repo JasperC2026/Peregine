@@ -37,8 +37,7 @@ TRASH_INFO="$HOME/.local/share/Trash/info"
 
 # Configs
 dependencie_notice=show # Show dependencie installed message, standard: show.
-    
-
+output_color=CYAN # Color for command output, standard: CYAN.
 
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
@@ -222,8 +221,8 @@ whois_lookup() {
         return 1
     else
         echo -e "${GREEN}[+]${RESET} Whois lookup successful"
-        echo -e "${CYAN}WHOIS Information for $domain:${RESET}"
-        echo -e "${CYAN}$output${RESET}"
+        echo -e "${output_color}WHOIS Information for $domain:${RESET}"
+        echo -e "${output_color}$output${RESET}"
     fi
     echo "[->] Command executed"
     echo -e "${DIVIDER}"
@@ -324,8 +323,8 @@ traceroute() {
         return 1
     else
         echo -e "${GREEN}[+]${RESET} Traceroute successful"
-        echo -e "${CYAN}Traceroute results for $target:${RESET}"
-        echo -e "${CYAN}$output${RESET}"
+        echo -e "${output_color}Traceroute results for $target:${RESET}"
+        echo -e "${output_color}$output${RESET}"
     fi
 
     echo "[->] Command executed"
@@ -409,8 +408,8 @@ dns_info() {
         return 1
     else
         echo -e "${GREEN}[+]${RESET} DNS information retrieved successfully for $domain"
-        echo -e "${CYAN}DNS Information for $domain:${RESET}"
-        echo -e "${CYAN}$output${RESET}"
+        echo -e "${output_color}DNS Information for $domain:${RESET}"
+        echo -e "${output_color}$output${RESET}"
     fi
 
     echo "[->] Command executed"
@@ -468,8 +467,8 @@ ip_osint() {
         return 1
     else
         echo -e "${GREEN}[+]${RESET} OSINT data retrieved successfully for $target"
-        echo -e "${CYAN}OSINT Information for $target:${RESET}"
-        echo -e "${CYAN}$output${RESET}"
+        echo -e "${output_color}OSINT Information for $target:${RESET}"
+        echo -e "${output_color}$output${RESET}"
     fi
     echo "[->] Command executed"
     echo -e "${DIVIDER}"
@@ -571,8 +570,8 @@ maigret_search () {
         return 1
     else
         echo -e "${GREEN}[+]${RESET} Maigret search successful for $username"
-        echo -e "${CYAN}Maigret results for $username:${RESET}"
-        echo -e "${CYAN}$output${RESET}"
+        echo -e "${output_color}Maigret results for $username:${RESET}"
+        echo -e "${output_color}$output${RESET}"
     fi
     echo "[->] Command executed"
     echo -e "${DIVIDER}"
@@ -635,8 +634,8 @@ phone_lookup () {
         return 1
     else
         echo -e "${GREEN}[+]${RESET} Phone lookup successful for $phone"
-        echo -e "${CYAN}PhoneInfoga results for $phone:${RESET}"
-        echo -e "${CYAN}$output${RESET}"
+        echo -e "${output_color}PhoneInfoga results for $phone:${RESET}"
+        echo -e "${output_color}$output${RESET}"
     fi
     
     echo "[->] Command executed"
@@ -693,7 +692,7 @@ web_phone_lookup () {
         return 1
     else
         echo -e "${GREEN}[+]${RESET} PhoneInfoga web interface started successfully on port $port"
-        echo -e "Access it at: ${CYAN}http://localhost:$port${RESET}"
+        echo -e "Access it at: ${output_color}http://localhost:$port${RESET}"
     fi
 
     echo "[->] Command executed"
@@ -755,8 +754,8 @@ email_lookup () {
         return 1
     else
         echo -e "${GREEN}[+]${RESET} Domain recon successful for $domain (from $email)"
-        echo -e "${CYAN}TheHarvester results for $domain:${RESET}"
-        echo -e "${CYAN}$output${RESET}"
+        echo -e "${output_color}TheHarvester results for $domain:${RESET}"
+        echo -e "${output_color}$output${RESET}"
     fi
 
     echo "[->] Command executed"
@@ -809,8 +808,8 @@ site_history () {
         return 1
     else
         echo -e "${GREEN}[+]${RESET} Site history lookup successful for $target"
-        echo -e "${CYAN}Waybackurls results for $target:${RESET}"
-        echo -e "${CYAN}$output${RESET}"
+        echo -e "${output_color}Waybackurls results for $target:${RESET}"
+        echo -e "${output_color}$output${RESET}"
     fi
 
     echo "[->] Command executed"
@@ -881,7 +880,7 @@ site_screenshot () {
         return 1
     else
         echo -e "${GREEN}[+]${RESET} Screenshot successful for $target"
-        echo -e "${CYAN}Screenshot saved to: $save_dir${RESET}"
+        echo -e "${output_color}Screenshot saved to: $save_dir${RESET}"
     fi
 
     echo "[->] Command executed"
@@ -964,8 +963,8 @@ network_explorer () {
         return 1
     else
         echo -e "${GREEN}[+]${RESET} Nmap scan successful for $target"
-        echo -e "${CYAN}Nmap results for $target:${RESET}"
-        echo -e "${CYAN}$output${RESET}"
+        echo -e "${output_color}Nmap results for $target:${RESET}"
+        echo -e "${output_color}$output${RESET}"
     fi
 
     echo "[->] Command executed"
@@ -1016,8 +1015,8 @@ show_edited_files() {
         return 1
     else
         echo -e "${GREEN}[+]${RESET} Files listed successfully"
-        echo -e "${CYAN}Files in current directory sorted by last edited:${RESET}"
-        echo -e "${CYAN}$output${RESET}"
+        echo -e "${output_color}Files in current directory sorted by last edited:${RESET}"
+        echo -e "${output_color}$output${RESET}"
     fi
 
     echo "[->] Command executed"
@@ -1042,7 +1041,7 @@ show_weather() {
         echo -e "${RED}[!]${RESET} Failed to connect to weather website: $output"
         return 1
     else
-        echo -e "${GREEN}[+]${RESET} The wheather is: ${CYAN}$output${RESET}"
+        echo -e "${GREEN}[+]${RESET} The wheather is: ${output_color}$output${RESET}"
     fi
 
     echo "[->] Command executed"
@@ -1066,7 +1065,7 @@ count_lines_file() {
         echo -e "${RED}[!]${RESET} Failed to count lines in file: $output"
         return 1
     else
-        echo -e "${GREEN}[+]${RESET} Total lines: ${CYAN}$output${RESET}"
+        echo -e "${GREEN}[+]${RESET} Total lines: ${output_color}$output${RESET}"
     fi 
 
     echo "[->] Command executed"
@@ -1154,7 +1153,7 @@ record_terminal() {
 
     script -q "$filename"
 
-    echo -e "${GREEN}[+]${RESET} Terminal recording is being saved to: ${CYAN}$filename${RESET}"
+    echo -e "${GREEN}[+]${RESET} Terminal recording is being saved to: ${output_color}$filename${RESET}"
     echo -e "${YELLOW}[i]${RESET} Type 'exit' or press Ctrl+D to stop recording."
 
     echo "[->] Command executed"
@@ -1311,7 +1310,7 @@ secure_shred_dir() {
     rm -rf "$abs_target"
 
   echo
-    echo -e "${CYAN}── Summary ──────────────────────────────────────────────────${RESET}"
+    echo -e "${output_color}── Summary ──────────────────────────────────────────────────"
     echo -e "  Files processed : $current"
  
     if [[ $errors -gt 0 ]]; then
@@ -1322,7 +1321,7 @@ secure_shred_dir() {
         echo -e "\a"
         echo -e "${RED}[!]${RESET} Directory still exists — some files may not have been removed."
         echo -e "Check manually: $abs_target"
-        echo "───────────────────────────────────────────────────────────────"
+        echo "───────────────────────────────────────────────────────────────${RESET}"
         return 1
     fi
  
@@ -1356,7 +1355,7 @@ secure_empty_trash() {
     warning_destructive_actions
     echo
 
-    echo -e "${CYAN}[i] Found $file_count item(s) in Trash.${RESET}"
+    echo -e "${output_color}[i] Found $file_count item(s) in Trash.${RESET}"
     echo
     read -rp "Securely delete all trash? (y/n): " confirm
 
@@ -1469,7 +1468,7 @@ system_audit() {
 
 local report="/var/log/lynis-report.dat"
     if [[ -f "$report" ]]; then
-        echo -e "${CYAN}── Audit Summary ────────────────────────────────────────────${RESET}"
+        echo -e "${output_color}── Audit Summary ────────────────────────────────────────────${RESET}"
 
         local index warnings suggestions
         index=$(sudo grep   'hardening_index='  "$report" | cut -d= -f2)
@@ -1521,7 +1520,7 @@ rootkit_hunt() {
 
     rm -f "$tmpfile"
 
-    echo -e "${CYAN}── Scan Summary ─────────────────────────────────────────────${RESET}"
+    echo -e "${output_color}── Scan Summary ─────────────────────────────────────────────${RESET}"
     echo -e "  INFECTED  : $(  [[ $infected   -gt 0 ]] && echo -e "${RED}${infected}${RESET}"   || echo -e "${GREEN}${infected}${RESET}")"
     echo -e "  Warnings  : $(  [[ $warnings   -gt 0 ]] && echo -e "${RED}${warnings}${RESET}"   || echo -e "${GREEN}${warnings}${RESET}")"
     echo -e "  Suspicious: $([[ $suspicious -gt 0 ]] && echo -e "${YELLOW}${suspicious}${RESET}" || echo -e "${GREEN}${suspicious}${RESET}")"
@@ -1578,26 +1577,26 @@ generate_password() {
     fi
 
     echo
-    echo -e "${CYAN}── Passwords ────────────────────────────────────────────────${RESET}"
+    echo -e "${output_color}── Passwords ────────────────────────────────────────────────${RESET}"
 
     local pass_alnum
     pass_alnum=$(openssl rand -base64 96 | tr -dc 'A-Za-z0-9' | head -c "$length")
-    echo -e "  Alphanumeric : ${CYAN}${pass_alnum}${RESET}"
+    echo -e "  Alphanumeric : ${output_color}${pass_alnum}${RESET}"
 
     local pass_full
     pass_full=$(openssl rand -base64 96 | tr -dc 'A-Za-z0-9!@#$%^&*()-_=+[]{}|;:,.<>?' | head -c "$length")
-    echo -e "  With symbols : ${CYAN}${pass_full}${RESET}"
+    echo -e "  With symbols : ${output_color}${pass_full}${RESET}"
 
     local pass_hex
     pass_hex=$(openssl rand -hex 64 | head -c "$length")
-    echo -e "  Hex          : ${CYAN}${pass_hex}${RESET}"
+    echo -e "  Hex          : ${output_color}${pass_hex}${RESET}"
 
     echo
     local entropy_alnum entropy_full
     entropy_alnum=$(awk "BEGIN { printf \"%d\", $length * 5.954 }")
     entropy_full=$(awk  "BEGIN { printf \"%d\", $length * 6.554 }")
-    echo -e "${CYAN}[i] Estimated entropy — alphanumeric: ~${entropy_alnum} bits  |  with symbols: ~${entropy_full} bits${RESET}"
-    
+    echo -e "${output_color}[i] Estimated entropy — alphanumeric: ~${entropy_alnum} bits  |  with symbols: ~${entropy_full} bits${RESET}"
+
     echo "[->] Command executed"
     echo -e "${DIVIDER}"
 }
@@ -1687,7 +1686,7 @@ clean_metadata() {
                 ;;
             *)
                 echo -e "${RED}[!]${RESET} Unsupported file type: $mimetype"
-                echo -e "${YELLOW}[i${RESET} exiftool supports images, video, audio, and PDF"
+                echo -e "${YELLOW}[i] exiftool supports images, video, audio, and PDF${RESET}"
                 return 1
                 ;;
         esac
@@ -1719,7 +1718,7 @@ clean_metadata() {
     local remaining
     remaining=$(exiftool "$outfile" 2>/dev/null | grep -v "^File\|^Directory\|^MIME\|^ExifTool" | wc -l)
     echo -e "${GREEN}[+]${RESET} Metadata removed → $outfile"
-    echo -e "${CYAN}[i] Remaining metadata fields: $remaining (filesystem/format fields only).${RESET}"
+    echo -e "${output_color}[i] Remaining metadata fields: $remaining (filesystem/format fields only).${RESET}"
 
 
     echo "[->] Command executed"
@@ -1769,7 +1768,7 @@ generate_key () {
         return 1
     else
         echo -e "${GREEN}[+]${RESET} Key generated successfully:"
-        echo -e "${CYAN}$key${RESET}"
+        echo -e "${output_color}$key${RESET}"
     fi
 
     echo "[->] Command executed"
