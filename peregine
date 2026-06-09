@@ -36,7 +36,9 @@ TRASH_FILES="$HOME/.local/share/Trash/files"
 TRASH_INFO="$HOME/.local/share/Trash/info"
 
 # Configs
-silent_dependencie_notice=
+dependencie_notice=show # Show dependencie installed message, standard: show.
+    
+
 
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
@@ -115,7 +117,12 @@ terms_notice () {
         return 1
     fi
 }
-
+status_dependencies() {
+    if [[ ! "$dependencie_notice" =~ ^[show]$ ]]; then
+        echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+        echo 
+    fi
+}
 # Commands
 # Networking
 local_server() {
@@ -128,8 +135,7 @@ local_server() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo 
+    status_dependencies
 
     echo -e "${DIVIDER}"   
     echo -e "${RED}[!]${RESET} Note: This will expose the contents of the current directory to anyone who can access the specified port on your machine. Make sure you understand the security implications before proceeding."
@@ -171,8 +177,7 @@ whois_lookup() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo 
+    status_dependencies
 
     echo -n "Enter domain: "
     read -r domain
@@ -233,8 +238,7 @@ ping() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo 
+    status_dependencies
 
     echo -n "Enter IP address or domain to ping: "
     read -r target
@@ -282,8 +286,7 @@ traceroute() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo 
+    status_dependencies
 
     echo -n "Enter IP address or domain to traceroute: "
     read -r target
@@ -338,8 +341,7 @@ get_ip() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo 
+    status_dependencies
 
     output=$(curl -s --max-time 5 ifconfig.me 2>&1)
     status=$?
@@ -365,8 +367,7 @@ dns_info() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo 
+    status_dependencies
 
     echo
     osint_disclaimer
@@ -425,15 +426,11 @@ ip_osint() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
 
-    echo "${DIVIDER}"
-    echo -e "${RED}[!]${RESET}Note: This tool queries ipinfo.io for geolocation and ISP data.${RESET} "
-    echo -e "${RED}[!]${RESET} Be mindful of the number of queries you make to avoid hitting rate limits or violating terms of service."
-    echo -e "${RED}[!]${RESET} Only use on authorized systems, and respect privacy policies."
-    echo -e "${RED}[!]${RESET} Gathering OSINT data can be illegal in certain cases, use wisely."
-    echo "${DIVIDER}"
+    echo
+    osint_disclaimer
+    echo
 
     echo -n "Enter IP address to perform OSINT on: "
     read -r target
@@ -487,8 +484,7 @@ maigret_search () {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo 
+    status_dependencies
 
     echo
     osint_disclaimer
@@ -592,8 +588,7 @@ phone_lookup () {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
 
     echo
     osint_disclaimer
@@ -658,8 +653,7 @@ web_phone_lookup () {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
 
     echo
     osint_disclaimer
@@ -718,8 +712,7 @@ email_lookup () {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
 
     osint_disclaimer
     echo
@@ -779,8 +772,7 @@ site_history () {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
 
     osint_disclaimer
     echo
@@ -834,8 +826,7 @@ site_screenshot () {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
     
     echo
     osint_disclaimer
@@ -906,8 +897,7 @@ network_explorer () {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
 
     osint_disclaimer
     echo
@@ -1043,8 +1033,7 @@ show_weather() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo 
+    status_dependencies
 
     output=$(curl -s --max-time 5 wttr.in 2>&1)
     status=$?
@@ -1093,8 +1082,7 @@ view_cpu_processes() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo 
+    status_dependencies
 
     top
 
@@ -1111,8 +1099,7 @@ show_disk_usage() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo 
+    status_dependencies
 
     df -h
 
@@ -1129,8 +1116,7 @@ find_largest_files() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo 
+    status_dependencies
 
     read -rp "Enter directory to search for largest files (default: current directory): " target
 
@@ -1158,8 +1144,7 @@ record_terminal() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo 
+    status_dependencies
 
     read -rp "Enter filename to save terminal recording (default: terminal_recording.txt): " filename
 
@@ -1185,8 +1170,7 @@ find_empty() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo 
+    status_dependencies
 
     read -rp "Enter directory to search for empty files/directories (default: current directory): " target
 
@@ -1214,8 +1198,7 @@ find_broken_symlinks() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo 
+    status_dependencies
 
     read -rp "Enter directory to search for broken symlinks (default: current directory): " target
 
@@ -1244,8 +1227,7 @@ secure_shred_dir() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
     
     read -rp "Enter directory to shred: " target # Read user input for the directory to shred
     if [[ -z "$target" ]]; then # Check if the user entered a target
@@ -1361,8 +1343,7 @@ secure_empty_trash() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
 
     local file_count
     file_count=$(find "$TRASH_FILES" -mindepth 1 2>/dev/null | wc -l)
@@ -1421,8 +1402,7 @@ secure_overwrite_free_space() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
 
     root_partition=$(df / | tail -1 | awk '{print $1}')
     echo -e "${CYAN}[i] Root partition detected: $root_partition${RESET}"
@@ -1470,11 +1450,10 @@ system_audit() {
         return 1
     fi
 
+    status_dependencies
+
     echo
     warning_privilege_escalation 
-    echo
-    
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
     echo
 
     echo -e "${GREEN}[->]${RESET} Starting Lynis system audit — this may take a few minutes..."
@@ -1525,8 +1504,7 @@ rootkit_hunt() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
 
     echo -e "${GREEN}[➜] Scanning for rootkits — this may take a moment...${RESET}"
 
@@ -1588,8 +1566,7 @@ generate_password() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
 
    read -rp "Password length (default: 16, max: 128): " length
 
@@ -1633,8 +1610,7 @@ secure_delete() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
 
     echo
     warning_destructive_actions
@@ -1695,8 +1671,7 @@ clean_metadata() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
 
     read -rp "Enter input file: " file
 
@@ -1761,8 +1736,7 @@ generate_key () {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
 
     echo -e "${BOLD}Select key size:${RESET}"
     echo "  1) 128-bit  (16 bytes  — AES-128)"
@@ -1812,8 +1786,7 @@ encrypt_file_aes256() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
 
     echo -e "${GREEN}[➜]${RESET} Encrypting file (AES-256-CBC)..."
     echo
@@ -1867,8 +1840,7 @@ encrypt_file_aes128() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
-    echo
+    status_dependencies
 
     echo -e "${GREEN}[➜]${RESET} Encrypting file (AES-128-CBC)..."
     echo
@@ -1922,7 +1894,7 @@ decrypt_file_aes256() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    status_dependencies
 
     echo
     echo -e "${GREEN}[➜]${RESET} Decrypting file (AES-256-CBC)..."
@@ -1964,7 +1936,7 @@ decrypt_file_aes128() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    status_dependencies
 
     echo
     echo -e "${GREEN}[➜]${RESET} Decrypting file (AES-128-CBC)..."
@@ -2006,7 +1978,7 @@ encrypt_file_chacha20() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    status_dependencies
 
     echo
     echo -e "${GREEN}[➜]${RESET} Encrypting file (ChaCha20)..."
@@ -2048,7 +2020,7 @@ decrypt_file_chacha20() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    status_dependencies
 
     echo
     echo -e "${GREEN}[➜]${RESET} Decrypting file (ChaCha20)..."
@@ -2090,7 +2062,7 @@ encrypt_file_twofish() {
           return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    status_dependencies
 
     echo
     echo -e "${GREEN}[➜]${RESET} Encrypting file (Twofish)..."
@@ -2132,7 +2104,7 @@ decrypt_file_twofish() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    status_dependencies
 
     echo
     echo -e "${GREEN}[➜]${RESET} Decrypting file (Twofish)..."
@@ -2174,7 +2146,7 @@ encrypt_file_serpent() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    status_dependencies
 
     echo
     echo -e "${GREEN}[➜]${RESET} Encrypting file (Serpent)..."
@@ -2216,7 +2188,7 @@ decrypt_file_serpent() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    status_dependencies
 
     echo
     echo -e "${GREEN}[➜]${RESET} Decrypting file (Serpent)..."
@@ -2258,7 +2230,7 @@ encrypt_text_aes256() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    status_dependencies
 
     echo
     echo -e "${GREEN}[➜]${RESET} Encrypting text (AES-256-CBC)..."
@@ -2295,7 +2267,7 @@ encrypt_text_aes128() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    status_dependencies
 
     echo
     echo -e "${GREEN}[➜]${RESET} Encrypting text (AES-128-CBC)..."
@@ -2331,7 +2303,7 @@ decrypt_text_aes256() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    status_dependencies
 
     echo
     echo -e "${GREEN}[➜]${RESET} Decrypting text (AES-256-CBC)..."
@@ -2367,7 +2339,7 @@ decrypt_text_aes128() {
             return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    status_dependencies
 
     echo
     echo -e "${GREEN}[➜]${RESET} Decrypting text (AES-128-CBC)..."
@@ -2403,7 +2375,7 @@ encrypt_text_chacha20() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    status_dependencies
 
     echo
     echo -e "${GREEN}[➜]${RESET} Encrypting text (ChaCha20)..."
@@ -2439,7 +2411,7 @@ decrypt_text_chacha20() {
           return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} Dependencies are installed"
+    status_dependencies
 
     echo
     echo -e "${GREEN}[➜]${RESET} Decrypting text (ChaCha20)..."
@@ -4085,6 +4057,3 @@ EOF
 # Also you can contact me trough matrix: @whiteghost404:matrix.org
 
 # Special thanks to all contributors and all creators of the tools used in this program. 
-
-# Todo for 3.8
-# - config options
