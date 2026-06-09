@@ -35,6 +35,9 @@ DIVIDER="───────────────────────�
 TRASH_FILES="$HOME/.local/share/Trash/files"
 TRASH_INFO="$HOME/.local/share/Trash/info"
 
+# Configs
+silent_dependencie_notice=
+
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
 GREEN="\e[32m"
