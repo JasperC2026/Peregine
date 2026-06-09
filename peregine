@@ -3930,24 +3930,24 @@ site() {
 # ─── Command dispatcher ───────────────────────────────────────────────────────
 
 _PEREGINE_COMMANDS=(
-    local_server
+# Network
     whois_lookup whois
     ping
     traceroute
     dns_info dns
     get_ip ip
+# OSINT
+    network_explorer ne
+    # Lookup
     ip_osint
     maigret_search maigret
-    update_apps 
-    remove_temp_files rm_tmp
-    system_audit audit
-    rootkit_hunt rootkit
-    secure_empty_trash SET set
-    secure_overwrite_free_space sofs
-    secure_shred_dir ssd
-    generate_password genpass
-    secure_delete sedl
-    clean_metadata metadata
+    phone_lookup phone
+    web_phone_lookup
+    email_lookup email
+    # Web
+    site_history site 
+    site_screenshot
+# Encryption
     generate_key genkey
     rot13_cipher rot13
     encrypt_text_aes256
@@ -3972,19 +3972,21 @@ _PEREGINE_COMMANDS=(
     decrypt_file_aes256 
     encrypt_file_aes128
     decrypt_file_aes128   
-    license l
-    clone_source c
-    version v V    
-    help 
-    check_dependencies cd
-    update
-    phone_lookup phone
-    web_phone_lookup
-    email_lookup email
-    site_history site 
-    site_screenshot
-    install_dependencies id
-    network_explorer ne
+# System and security
+    # Maintenance 
+    update_apps 
+    remove_temp_files rm_tmp
+    clean_metadata metadata
+    secure_empty_trash SET set
+    # Security
+    system_audit audit
+    rootkit_hunt rootkit
+    generate_password genpass
+    secure_delete sedl
+    secure_overwrite_free_space sofs
+    secure_shred_dir ssd
+    # Uttilities
+    local_server
     show_weather
     count_lines_file
     view_cpu_processes
@@ -3994,11 +3996,20 @@ _PEREGINE_COMMANDS=(
     record_terminal
     find_broken_symlinks
     find_empty
+# Other
+    license l
+    clone_source c
+    version v V    
+    help 
+    check_dependencies cd
+    update
+    config
+    install_dependencies id
+# Lists
     encryption
     osint
     system/security
-    networking
-    config
+    networking  
 )
 
 _peregine_list_commands() { 
