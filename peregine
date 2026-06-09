@@ -3817,8 +3817,30 @@ test_colors() {
     echo -e "${DIVIDER}"
 }
 config() {
+    # Colors
+    local CLABEL='\033[38;5;39m' # Bright blue for labels
+    local CVAL='\033[38;5;15m' # Bright white for values
+    local BOLD='\033[1m' # Bold text
+    local RESET='\033[0m' # Reset formatting
+
+    echo
+    echo -e "${CLABEL}${BOLD}Peregine Configuration${RESET}"
+
     echo -e "${DIVIDER}"
-    echo "Configuration options coming soon!"
+    echo "Current config options:"
+
+    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "dependencie_notice" "${dependencie_notice}" 
+    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "output_color" "${output_color}"
+
+    echo
+    echo "To change a config option, edit the corresponding variable in the Peregine script and save it. Then run 'peregine config' again to see the updated settings. "
+    echo
+    echo "Example: To change the output color, edit the 'output_color' variable near the top of the script and set it to a different ANSI color code. Then run 'peregine config' to see the new color in action."
+    echo
+    echo "Note: Config options are currently limited. Future updates may include more customizable settings and a more user-friendly configuration interface."
+    echo
+    echo "Make sure when you upgrade to a new version to edit the config options again as they may be reset to default values. "
+
     echo -e "${DIVIDER}"
 }
 # Alternatives
