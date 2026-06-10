@@ -4293,7 +4293,7 @@ _PEREGINE_COMMANDS=(
 
 _peregine_list_commands() { 
     echo -e "${CYAN}"
-    echo "──────────────────────────────────────────────────────────────────────────────────"
+    echo -e "${DIVIDER}" 
     cat <<EOF
 '########::'########:'########::'########::'######:::'####:'##::: ##:'########:
  ##.... ##: ##.....:: ##.... ##: ##.....::'##... ##::. ##:: ###:: ##: ##.....::
@@ -4305,37 +4305,7 @@ _peregine_list_commands() {
 ..:::::::::........::..:::::..::........:::......::::....::..::::..::........::
                                                         
 EOF
-    echo "──────────────────────────────────────────────────────────────────────────────────"
-    echo -e "${RESET}"
-    echo -e "${CYAN}Usage:${RESET}  peregine <command>"   
-
-    echo
-    echo "${DIVIDER}"
-    echo -e "${BOLD} Peregine: A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface.${RESET} "
-    echo "License GPL-v3: see LICENSE file or use peregine license to view the license"
-    
-    echo
-    echo "This release: $version"
-    echo "Release type: $type"
-    echo "Release date: $release_date"
-    echo "Latest test on: $test_date"
-    echo "Previous versions: $previous_versions"
-    
-    echo
-    echo "Total commands: $total_commands"
-
-    echo
-    echo "Nerd stats: "
-    echo "Lines of code: $lines_of_code"
-    echo "Commits untill this verion: $total_commits_in_release"
-    echo "Created on: $created_on"
-
-    echo
-    echo "Thanks to the contributors: $contributors"
-    echo "And to all the users who support the project! <3"
-    echo "Written in: $written_in"
-    echo 
-    echo "${DIVIDER}"
+    echo -e "${DIVIDER}" 
 
     echo "All commands:"
     for cmd in "${_PEREGINE_COMMANDS[@]}"; do
