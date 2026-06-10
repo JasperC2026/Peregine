@@ -9,7 +9,7 @@
 
 # Variables
 written_in="Bash/shell"
-total_commands="72"
+total_commands="74"
 created_on="March 18, 2026"
 contributors="JasperC (Developer, Maintainer), and Open Source Community"
 license="GPL-3.0"
@@ -3795,6 +3795,283 @@ check_dependencies () {
 
     echo -e "${DIVIDER}"
 }
+show_random_fact() {
+
+    # ── Colours ───────────────────────────────────────────────────────────────
+    local BOLD='\033[1m'
+    local RESET='\033[0m'
+    local DIM='\033[2m'
+    local CLABEL='\033[38;5;250m'  # grey — label
+    local CVAL='\033[38;5;255m'    # white — fact text
+    local CSEP='\033[38;5;240m'    # dim — separators
+
+    # ── Facts list ────────────────────────────────────────────────────────────
+    local -a FACTS=(
+
+        # — Network —
+        "WHOIS was one of the first internet protocols, dating back to 1982."
+        "WHOIS was standardized in RFC 812 in 1982, making it one of the oldest internet protocols still in use."
+        "ping was written by Mike Muuss in 1983 and named after the sound sonar makes when it hits an object."
+        "traceroute was written by Van Jacobson in 1987 in under an hour as a debugging tool."
+        "A traceroute works by sending packets with increasing TTL values — each router that drops a packet reveals its IP."
+        "Traceroute can reveal network topology, ISP routing paths, and even geographic locations of intermediate hops."
+        "DNS was introduced in 1983, replacing a single HOSTS.TXT file shared across the internet."
+        "DNS uses port 53 and supports both UDP for fast lookups and TCP for larger responses like zone transfers."
+        "The global DNS system processes over 3 trillion queries per day across 13 root server clusters worldwide."
+        "A DNS cache poisoning attack can redirect an entire domain to a malicious IP without touching the real server."
+        "IPv4 has ~4.3 billion addresses. The internet ran out of unallocated IPv4 blocks in 2011."
+        "IPv6 provides 340 undecillion addresses — enough to assign trillions to every atom on Earth's surface."
+        "BGP, the protocol that routes traffic between ISPs, was designed on napkins during a lunch meeting in 1989."
+        "The first ARPANET message in 1969 was 'LO' — the system crashed before 'LOGIN' could be completed."
+        "Port 0 is reserved and technically unusable — but sending packets to it can reveal firewall behavior."
+        "A subnet mask determines which part of an IP address identifies the network and which identifies the host."
+
+        # — OSINT —
+        "OSINT stands for Open Source Intelligence — gathering information exclusively from publicly available sources."
+        "Maigret is named after the fictional French detective Jules Maigret, known for his methodical investigations."
+        "A single username reused across platforms can link an anonymous identity to a real person within minutes."
+        "Shodan is a search engine that indexes internet-connected devices — from webcams to industrial control systems."
+        "Email headers contain metadata revealing the sending server, route, timestamps, and sometimes the sender's IP."
+        "Phone number OSINT can reveal a carrier, registration country, and linked social accounts via reverse lookup."
+        "Web archives like the Wayback Machine store over 800 billion pages — deleted content is rarely truly gone."
+        "A website screenshot tool can capture pages behind redirects or that change content based on the visitor's location."
+        "OSINT investigators have identified individuals from reflections in glasses visible in social media profile photos."
+        "The EXIF data in an unstripped photo can contain GPS coordinates, device model, and exact timestamp."
+        "Google dorking uses advanced search operators to find exposed files, login panels, and sensitive data indexed publicly."
+        "Network scanning tools like nmap can fingerprint an OS based solely on how it responds to malformed packets."
+        "Over 300 billion emails are sent every day — roughly 85% of them are spam."
+        "LinkedIn profiles alone can expose an entire company's internal tech stack through job descriptions."
+        "Certificate transparency logs publicly record every TLS certificate issued — a goldmine for subdomain enumeration."
+        "Passive DNS databases store historical DNS records, revealing infrastructure that has since been taken offline."
+
+        # — Encryption —
+        "The first computer virus was created in 1983 by Fred Cohen as an experiment."
+        "AES-256 would take longer than the age of the universe to brute-force."
+        "SHA-256 produces the same length hash whether the input is 1 byte or 1 GB."
+        "AES was selected by NIST in 2001 after a 5-year public competition involving cryptographers from around the world."
+        "AES-128 and AES-256 use different numbers of rounds: 10 rounds for 128-bit, 14 rounds for 256-bit keys."
+        "A brute-force attack on a 128-bit key would require more attempts than atoms in the universe."
+        "The Caesar cipher shifts letters by a fixed number — Julius Caesar used a shift of 3."
+        "The Caesar cipher has only 25 possible keys — it can be brute-forced by hand in under a minute."
+        "The Vigenere cipher uses a keyword to shift each letter differently, making frequency analysis much harder."
+        "Vigenere cipher was considered unbreakable for 300 years until Charles Babbage cracked it."
+        "ROT13 is its own inverse — applying it twice returns the original text, making encrypt and decrypt identical."
+        "Base64 encoding increases data size by approximately 33%."
+        "Base64 was designed for email — SMTP was originally text-only and couldn't handle raw binary attachments."
+        "ChaCha20 was designed by Daniel J. Bernstein as a faster alternative to AES on mobile devices."
+        "ChaCha20 is used by default in TLS 1.3 on mobile devices where AES hardware acceleration is unavailable."
+        "ChaCha20-Poly1305 combines a stream cipher with a message authentication code, providing authenticated encryption."
+        "Twofish was one of the five finalists in the AES competition in 1997."
+        "Twofish uses a pre-computed key-dependent S-box, making it faster in software than many block ciphers."
+        "Serpent cipher was considered the most secure AES finalist, but lost to Rijndael on speed."
+        "Serpent was designed with a conservative security margin — its designers prioritized safety over speed."
+        "The one-time pad is the only mathematically proven unbreakable cipher — but requires a key as long as the message."
+        "A key derivation function like PBKDF2 or Argon2 turns a weak password into a strong cryptographic key."
+        "Encrypting a file twice with different keys does not always double security — it depends on the cipher used."
+        "Metadata of an encrypted file — its name, size, and timestamps — can reveal sensitive info even without decryption."
+        "The Enigma machine used by Nazi Germany had over 158 quintillion possible configurations."
+        "Public key cryptography was publicly proposed by Diffie and Hellman in 1976 — GCHQ had it secretly 3 years earlier."
+        "A rainbow table attack precomputes hashes to reverse them — salting passwords defeats this entirely."
+
+        # — System & Security —
+        "The term 'bug' originates from a 1947 moth found inside a Harvard computer."
+        "The word 'malware' was coined in 1990 by Yisrael Radai."
+        "Rootkits were first documented in Unix systems in the early 1990s, replacing system binaries to hide processes."
+        "A rootkit can hide itself so deeply it survives an OS reinstall if it targets the firmware."
+        "A system audit checks for unauthorized users, open ports, SUID binaries, and suspicious cron jobs."
+        "Temporary files left by applications can contain passwords, session tokens, and decrypted document contents."
+        "Secure deletion matters because SSDs use wear leveling — overwriting a file does not guarantee the old data is gone."
+        "Free space on a disk often contains remnants of deleted files until that space is actively overwritten."
+        "Shredding a directory recursively overwrites every file's contents before deletion, defeating most recovery tools."
+        "File metadata includes owner, permissions, timestamps, and sometimes geolocation embedded by the creating application."
+        "Secure empty trash tools overwrite file data multiple times before unlinking the directory entry from the filesystem."
+        "Password managers generate entropy-based passwords — a 20-character random password has ~131 bits of entropy."
+        "Running a local server without binding to 0.0.0.0 keeps it accessible only on your machine via 127.0.0.1."
+        "The first spam email was sent in 1978 over ARPANET to 400 recipients."
+        "SUID binaries run with the permissions of their owner, not the user — a common privilege escalation vector."
+        "Broken symlinks are a common source of silent failures — a script following a dead link may expose unexpected paths."
+        "Cron jobs run silently in the background — auditing them regularly can reveal persistence mechanisms left by attackers."
+        "The /tmp directory is world-writable by default — a common staging ground for malicious scripts."
+
+        # — General & Peregine —
+        "The Tor network was originally developed by the U.S. Naval Research Laboratory."
+        "The Peregine falcon is the fastest animal on Earth, reaching over 380 km/h in a dive."
+        "The Peregine falcon can spot prey from over 1 km away — a fitting symbol for a reconnaissance toolbox."
+        "Codeberg is a non-profit, privacy-respecting alternative to GitHub, hosted in the European Union."
+        "Bash scripts can be made portable across Linux and macOS by avoiding GNU-specific flags and using POSIX syntax."
+        "Checking dependencies before execution prevents cryptic errors — a missing binary can silently corrupt output."
+        "Open source tools can be audited by anyone — a critical advantage for privacy and security software."
+        "The best security tool is the one you actually understand — knowing what a command does matters more than running it."
+        "Bash's RANDOM variable generates numbers between 0 and 32767 — seeded automatically from the system clock."
+        "The Unix philosophy: write programs that do one thing well, work together, and handle text streams."
+        "A well-written --help flag can be more valuable than a full manual page for day-to-day use."
+        "Shell scripts have been the backbone of Unix automation since the late 1970s — and still are."
+
+    )
+
+    # ── Pick a random fact ────────────────────────────────────────────────────
+    local fact="${FACTS[RANDOM % ${#FACTS[@]}]}"
+
+    # ── Display ───────────────────────────────────────────────────────────────
+    echo
+    printf "  ${CSEP}────────────────────────────────────────────────────────${RESET}\n"
+    printf "  ${CLABEL}${BOLD}Did you know?${RESET}\n"
+    printf "  ${CVAL}%s${RESET}\n" "$fact"
+    printf "  ${CSEP}────────────────────────────────────────────────────────${RESET}\n"
+    echo
+}
+show_random_quote() {
+
+    # ── Colours ───────────────────────────────────────────────────────────────
+    local BOLD='\033[1m'
+    local RESET='\033[0m'
+    local DIM='\033[2m'
+    local CLABEL='\033[38;5;250m'  # grey — label
+    local CVAL='\033[38;5;255m'    # white — quote text
+    local CAUTHOR='\033[38;5;240m' # dim — author
+    local CSEP='\033[38;5;240m'    # dim — separators
+
+    # ── Quotes list ───────────────────────────────────────────────────────────
+    local -a QUOTES=(
+
+        # — Privacy —
+        "Privacy is not something that I'm merely entitled to, it's an absolute prerequisite.|Marlon Brando"
+        "Privacy is the foundation of all other freedoms.|Glenn Greenwald"
+        "Privacy is not about having something to hide. It is about having something to protect.|Anonymous"
+        "Once you've lost your privacy, you realize you've lost an extremely valuable thing.|Billy Graham"
+        "You don't know how much you appreciate your privacy until you don't have it.|Morgan Freeman"
+        "Privacy and security are those things you give up when you show the world what makes you extraordinary.|Margaret Cho"
+        "We are rapidly entering the age of no privacy, where everyone is open to surveillance at all times.|William O. Douglas"
+        "I don't want to live in a world where there's no privacy, and therefore no room for intellectual exploration and creativity.|Edward Snowden"
+        "Civilization is the progress toward a society of privacy. The savage's whole existence is public, ruled by the laws of his tribe. Civilization is the process of setting man free from men.|Ayn Rand"
+        "Law-abiding citizens value privacy. Terrorists require invisibility. The two are not the same, and they should not be confused.|Richard Perle"
+        "Arguing that you don't care about privacy because you have nothing to hide is no different from saying you don't care about free speech because you have nothing to say.|Edward Snowden"
+        "In digital era, privacy must be a priority. Is it just me, or is secret blanket surveillance obscenely outrageous?|Al Gore"
+
+        # — Surveillance —
+        "Surveillance is the business model of the internet.|Bruce Schneier"
+        "Relying on the government to protect your privacy is like asking a peeping tom to install your window blinds.|John Perry Barlow"
+        "You have zero privacy anyway. Get over it.|Scott McNealy"
+        "The more we do to you, the less you seem to believe we are doing it.|Josef Mengele"
+        "I actually think most people don't want Google to answer their questions. They want Google to tell them what they should be doing next.|Eric Schmidt"
+        "Sunlight is said to be the best of disinfectants.|Louis Brandeis"
+        "There is no cloud, just other people's computers.|FSF"
+
+        # — Security —
+        "Security is always excessive until it's not enough.|Robbie Sinclair"
+        "Security is a process, not a product.|Bruce Schneier"
+        "Security without awareness is just a false sense of safety.|Anonymous"
+        "A secure system is one that does exactly what it is supposed to do, and nothing more.|Anonymous"
+        "You can't secure what you don't acknowledge.|Anonymous"
+        "If you think technology can solve your security problems, then you don't understand the problems and you don't understand the technology.|Bruce Schneier"
+        "The only truly secure system is one that is powered off, cast in a block of concrete and sealed in a lead-lined room with armed guards.|Gene Spafford"
+        "Complexity is the enemy of security.|Bruce Schneier"
+        "It takes 20 years to build a reputation and a few minutes of cyber-incident to ruin it.|Stephane Nappo"
+        "There are only two types of companies: those that have been hacked, and those that will be.|Robert Mueller"
+        "The weakest link in any security system is the human being.|Kevin Mitnick"
+        "The most dangerous phrase in the language is: we've always done it this way.|Grace Hopper"
+        "Treat your password like your toothbrush. Don't let anybody else use it, and get a new one every six months.|Clifford Stoll"
+
+        # — Hacking —
+        "Amateurs hack systems, professionals hack people.|Bruce Schneier"
+        "Hackers are the immune system of the internet.|Keren Elazari"
+        "Hackers are breaking the systems for profit. Before, it was about intellectual curiosity and the pursuit of knowledge.|Kevin Mitnick"
+        "The hacker mindset doesn't actually see what happens on the other side, to the victim.|Kevin Mitnick"
+        "Every system is hackable. The question is only how much effort it takes.|Anonymous"
+        "Offense is the best intelligence.|Anonymous"
+        "The quieter you become, the more you are able to hear.|Kali Linux"
+        "In a world of locked rooms, the man with the key is king.|Sherlock Holmes"
+
+        # — Cryptography —
+        "Encryption works. Properly implemented strong crypto systems are one of the few things that you can rely on.|Edward Snowden"
+        "Cryptography is the ultimate form of non-violent direct action.|Julian Assange"
+        "Strong encryption is the cornerstone of a free and open internet.|Anonymous"
+        "A key is only as safe as the person who holds it.|Anonymous"
+        "Whoever controls the keys controls the kingdom.|Anonymous"
+        "The art of encryption is the art of writing secrets no one else can read.|Anonymous"
+        "Don't trust what you can't verify.|Anonymous"
+
+        # — Knowledge & Truth —
+        "Knowledge is power. Guard it well.|Warhammer 40K"
+        "Scientia potentia est. (Knowledge is power.)|Francis Bacon"
+        "The more you know, the more you realize you don't know.|Aristotle"
+        "To know what you know and what you do not know — that is true knowledge.|Confucius"
+        "An investment in knowledge pays the best interest.|Benjamin Franklin"
+        "Knowledge is the only instrument of production that is not subject to diminishing returns.|J.M. Clark"
+        "In the information age, the barriers to entry are knowledge and imagination.|Anonymous"
+        "The truth is rarely pure and never simple.|Oscar Wilde"
+        "Veritas vos liberabit. (The truth will set you free.)|John 8:32"
+        "Verba volant, scripta manent. (Spoken words fly away, written words remain.)|Anonymous"
+
+        # — Data & Information —
+        "Data is the new oil. It's valuable, but if unrefined it cannot really be used.|Clive Humby"
+        "Information wants to be free.|Stewart Brand"
+        "The internet is the world's largest library. It's just that all the books are on the floor.|John Allen Paulos"
+        "The internet interprets censorship as damage and routes around it.|John Gilmore"
+        "The net interprets censorship as damage and routes around it.|John Gilmore"
+        "The best place to hide a tree is in a forest.|Anonymous"
+
+        # — Tools & Craft —
+        "A bad craftsman blames his tools. A good one knows exactly what each tool does.|Anonymous"
+        "The best tool is the one that is already in your hands.|Anonymous"
+        "First, solve the problem. Then, write the code.|John Johnson"
+        "Make it work, make it right, make it fast.|Kent Beck"
+        "Simplicity is the ultimate sophistication.|Leonardo da Vinci"
+        "Perfection is achieved not when there is nothing more to add, but when there is nothing left to take away.|Antoine de Saint-Exupéry"
+        "Measuring programming progress by lines of code is like measuring aircraft building progress by weight.|Bill Gates"
+        "Any sufficiently advanced technology is indistinguishable from magic.|Arthur C. Clarke"
+        "The goal of computer science is to build something that will last at least until we've finished building it.|Anonymous"
+        "One man's cruelty is another man's features.|Anonymous"
+
+        # — Freedom & Resistance —
+        "He who sacrifices freedom for security deserves neither.|Benjamin Franklin"
+        "Freedom is not something that anybody can be given. Freedom is something people take.|James Baldwin"
+        "Disobedience is the true foundation of liberty.|Henry David Thoreau"
+        "Power concedes nothing without a demand. It never did and it never will.|Frederick Douglass"
+        "The price of freedom is eternal vigilance.|Thomas Jefferson"
+        "The only way to deal with an unfree world is to become so absolutely free that your very existence is an act of rebellion.|Albert Camus"
+        "The greatest dangers to liberty lurk in the insidious encroachment by men of zeal, well-meaning but without understanding.|Louis Brandeis"
+        "We must all obey the great law of change. It is the most powerful law of nature.|Edmund Burke"
+        "To be trusted is a greater compliment than being loved.|George MacDonald"
+
+        # — Latin —
+        "Nemo me impune lacessit. (No one provokes me with impunity.)|Scottish Motto"
+        "Nusquam est qui ubique est. (He who is everywhere is nowhere.)|Seneca"
+        "Omnia aliena sunt, tempus tantum nostrum est. (Everything is foreign to us, only time is truly ours.)|Seneca"
+        "Fide, sed cui vide. (Trust, but watch whom you trust.)|Anonymous"
+        "Noli me tangere. (Do not touch me.)|John 20:17"
+        "Errare humanum est, perseverare diabolicum. (To err is human, to persist in error is diabolical.)|Seneca"
+        "Alea iacta est. (The die is cast.)|Julius Caesar"
+        "Veni, vidi, vici. (I came, I saw, I conquered.)|Julius Caesar"
+        "Aut viam inveniam aut faciam. (I will either find a way or make one.)|Hannibal"
+        "Si vis pacem, para bellum. (If you want peace, prepare for war.)|Vegetius"
+        "Lucem sequimur. (We follow the light.)|Anonymous"
+        "Per aspera ad astra. (Through hardship to the stars.)|Seneca"
+        "Dum spiro, spero. (While I breathe, I hope.)|Cicero"
+        "In umbra igitur pugnabimus. (Then we shall fight in the shade.)|Xerxes"
+        "Silentium est aureum. (Silence is golden.)|Anonymous"
+        "Coge ut credas. (Compel them to believe.)|Anonymous"
+        "Omnia dicta fortiora si dicta Latina. (Everything sounds more powerful when said in Latin.)|Anonymous"
+        "Tempus fugit. (Time flies.)|Virgil"
+        "Amor fati. (Love of fate.)|Friedrich Nietzsche"
+        "Carpe diem. (Seize the day.)|Horace"
+        "Audentes fortuna iuvat. (Fortune favors the bold.)|Virgil"
+
+    )
+
+    # ── Pick a random quote ───────────────────────────────────────────────────
+    local entry="${QUOTES[RANDOM % ${#QUOTES[@]}]}"
+    local quote="${entry%%|*}"
+    local author="${entry##*|}"
+
+    # ── Display ───────────────────────────────────────────────────────────────
+    echo
+    printf "  ${CSEP}────────────────────────────────────────────────────────${RESET}\n"
+    printf "  ${CVAL}${BOLD}\"%s\"${RESET}\n" "$quote"
+    printf "  ${CAUTHOR}${DIM}— %s${RESET}\n" "$author"
+    printf "  ${CSEP}────────────────────────────────────────────────────────${RESET}\n"
+    echo
+}
 # Development / Testing
 test_colors() {
     echo -e "${DIVIDER}"
@@ -3999,6 +4276,8 @@ _PEREGINE_COMMANDS=(
     update
     config
     install_dependencies id
+    show_random_fact
+    show_random_quote
 # Lists
     encryption
     osint
