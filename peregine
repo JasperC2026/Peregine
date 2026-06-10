@@ -4120,6 +4120,12 @@ config() {
     echo -e "${DIVIDER}"
 }
 # Alternatives
+quote () {
+    show_random_quote
+}
+fact () {
+    show_random_fact
+}
 whois () {
     whois_lookup 
 }
