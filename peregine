@@ -33,6 +33,8 @@ unset _deps _deps_met _d
 DIVIDER="───────────────────────────────────────────────────────────────"
 TRASH_FILES="$HOME/.local/share/Trash/files"
 TRASH_INFO="$HOME/.local/share/Trash/info"
+status_negative="${RED}[!]${RESET}"
+status_positive="${GREEN}[✔]${RESET}"
 
 # Configs
 dependencie_notice=show # Show dependencie installed message, standard: show.
@@ -3649,10 +3651,70 @@ check_dependencies () {
     # Networking & OSINT
     echo "Networking & OSINT: "
 
-    if ! command -v python3 >/dev/null 2>&1; then
-        echo -e "${RED}[!]${RESET}"
+    if ! command -v curl >/dev/null 2>&1; then
+        echo -e "Status curl: $status_negative"
     else 
-        echo -e "${GREEN}[✔]${RESET}"
+        echo -e "Status curl: $status_positive"
+    fi
+
+    if ! command -v whois >/dev/null 2>&1; then
+        echo -e "Status whois: $status_negative"
+    else
+        echo -e "Status whois: $status_positive"
+    fi
+
+    if ! command -v dig >/dev/null 2>&1; then
+        echo -e "Status dig: $status_negative"
+    else 
+        echo -e "Status dig: $status_positive"
+    fi
+
+    if ! command -v ping >/dev/null 2>&1; then
+        echo -e "Status ping: $status_negative"
+    else 
+        echo -e "Status ping: $status_positive"
+    fi
+
+    if ! command -v traceroute >/dev/null 2>&1; then
+        echo -e "Status traceroute: $status_negative"
+    else
+        echo -e "Status traceroute: $status_positive"
+    fi
+
+    if ! command -v python3 >/dev/null 2>&1; then
+        echo -e "Status Python: $status_negative"
+    else 
+        echo -e "Status Python: $status_positive"
+    fi
+
+    if ! command -v maigret >/dev/null 2>&1; then
+        echo "Status maigret: $status_negative"
+    else 
+        echo "Status maigret: $status_positive"
+    fi
+
+    if ! command -v waybackurls >/dev/null 2>&1; then
+        echo "Status waybackurls: $status_negative"
+    else 
+        echo "Status waybackurls: $status_positive"
+    fi
+
+    if ! command -v iphoneinfoga >/dev/null 2>&1; then
+        echo "Status Iphoneinfoga: $status_negative"
+    else 
+        echo "Status Iphoneinfoga: $status_positive"
+    fi
+
+    if ! command -v theharvester >/dev/null 2>&1; then
+        echo "Status TheHarvester: $status_negative"
+    else
+        echo "Status TheHarvester: $status_positive"
+    fi
+
+    if ! command -v torsocks >/dev/null 2>&1; then
+        echo "Status torsocks: $status_negative"
+    else
+        echo "Status torsocks: $status_positive"
     fi
 }
 show_random_fact() {
