@@ -2635,21 +2635,218 @@ rot13_cipher() {
     echo -e "${DIVIDER}"
 }
 # Other
-licenses_explained () {
+licenses_explained() {
     echo -e "${DIVIDER}"
-
-    echo "Simple explainer of some common licenses" 
-
+    echo "Simple explainer of some common licenses"
     echo
-    echo "Currently supported licenses: "
-    printf "" ""
-    printf "" ""
-    printf "" ""
-    printf "" ""
-
+    echo "Currently supported licenses:"
+    echo "  GPL       - GNU General Public License"
+    echo "  AGPL      - GNU Affero General Public License"
+    echo "  LGPL      - GNU Lesser General Public License"
+    echo "  MPL       - Mozilla Public License"
+    echo "  MIT       - MIT License"
+    echo "  Apache    - Apache License 2.0"
+    echo "  BSL       - Boost Software License"
+    echo "  Unlicense - The Unlicense (public domain)"
     echo
-    echo "Want to know which license this project has? Run peregine license or look at the LICENSE file in the repo."
-    echo -e "${DIVIDER}"   
+    echo -e "${DIVIDER}"
+    echo "Common License Terms Explained"
+    echo
+    echo "  Commercial use      - Can be used for commercial purposes"
+    echo "  Distribution        - Can be distributed/shared"
+    echo "  Modification        - Can be modified"
+    echo "  Patent use          - Grants patent rights from contributors"
+    echo "  Private use         - Can be used/modified privately"
+    echo "  Disclose source     - Source code must be made available"
+    echo "  License & copyright - Must include license + copyright notice"
+    echo "  Network use = dist. - Using over a network counts as distribution (AGPL)"
+    echo "  Same license        - Modifications must use the same license"
+    echo "  State changes       - Must document changes made to the code"
+    echo "  Liability           - License limits authors' liability"
+    echo "  Trademark use       - Does NOT grant trademark rights"
+    echo "  Warranty            - Software provided without warranty"
+    echo -e "${DIVIDER}"
+    echo
+    echo "Want to know which license this project has? Run 'peregrine license' or look at the LICENSE file in the repo."
+    echo -e "${DIVIDER}"
+}
+gpl_explained() {
+    echo
+    echo -e "${CYAN}GNU GPLv3${NC}"
+    echo
+
+    echo -e "${GREEN}Permissions:${NC}"
+    for p in "Commercial use" "Distribution" "Modification" "Patent use" "Private use"; do
+        echo "  + $p"
+    done
+    echo
+
+    echo -e "${BLUE}Conditions:${NC}"
+    for c in "Disclose source" "License and copyright notice" "Same license" "State changes"; do
+        echo "  ~ $c"
+    done
+    echo
+
+    echo -e "${RED}Limitations:${NC}"
+    for l in "Liability" "Warranty"; do
+        echo "  - $l"
+    done
+    echo
+}
+agpl_explained() {
+    echo
+    echo -e "${CYAN}GNU AGPLv3${NC}"
+    echo
+
+    echo -e "${GREEN}Permissions:${NC}"
+    for p in "Commercial use" "Distribution" "Modification" "Patent use" "Private use"; do
+        echo "  + $p"
+    done
+    echo
+
+    echo -e "${BLUE}Conditions:${NC}"
+    for c in "Disclose source" "License and copyright notice" "Network use is distribution" "Same license" "State changes"; do
+        echo "  ~ $c"
+    done
+    echo
+
+    echo -e "${RED}Limitations:${NC}"
+    for l in "Liability" "Warranty"; do
+        echo "  - $l"
+    done
+    echo
+}
+lgpl_explained() {
+    echo
+    echo -e "${CYAN}GNU LGPLv3${NC}"
+    echo
+
+    echo -e "${GREEN}Permissions:${NC}"
+    for p in "Commercial use" "Distribution" "Modification" "Patent use" "Private use"; do
+        echo "  + $p"
+    done
+    echo
+
+    echo -e "${BLUE}Conditions:${NC}"
+    for c in "Disclose source" "License and copyright notice" "Same license (library)" "State changes"; do
+        echo "  ~ $c"
+    done
+    echo
+
+    echo -e "${RED}Limitations:${NC}"
+    for l in "Liability" "Warranty"; do
+        echo "  - $l"
+    done
+    echo
+}
+mpl_explained() {
+    echo
+    echo -e "${CYAN}Mozzila public license 2.0${NC}"
+    echo
+
+    echo -e "${GREEN}Permissions:${NC}"
+    for p in "Commercial use" "Distribution" "Modification" "Patent use" "Private use"; do
+        echo "  + $p"
+    done
+    echo
+
+    echo -e "${BLUE}Conditions:${NC}"
+    for c in "Disclose source" "License and copyright notice" "Same license (file)"; do
+        echo "  ~ $c"
+    done
+    echo
+
+    echo -e "${RED}Limitations:${NC}"
+    for l in "Liability" "Warranty" "Trademark use"; do
+        echo "  - $l"
+    done
+    echo    
+}
+apache_explained() {
+    echo
+    echo -e "${CYAN}Apache license 2.0${NC}"
+    echo
+
+    echo -e "${GREEN}Permissions:${NC}"
+    for p in "Commercial use" "Distribution" "Modification" "Patent use" "Private use"; do
+        echo "  + $p"
+    done
+    echo
+
+    echo -e "${BLUE}Conditions:${NC}"
+    for c in "License and copyright notice" "State changes"; do
+        echo "  ~ $c"
+    done
+    echo
+
+    echo -e "${RED}Limitations:${NC}"
+    for l in "Liability" "Warranty" "Trademark use"; do
+        echo "  - $l"
+    done
+    echo    
+}
+mit_explained() {
+    echo
+    echo -e "${CYAN}MIT license${NC}"
+    echo
+
+    echo -e "${GREEN}Permissions:${NC}"
+    for p in "Commercial use" "Distribution" "Modification"  "Private use"; do
+        echo "  + $p"
+    done
+    echo
+
+    echo -e "${BLUE}Conditions:${NC}"
+    for c in "License and copyright notice"; do
+        echo "  ~ $c"
+    done
+    echo
+
+    echo -e "${RED}Limitations:${NC}"
+    for l in "Liability" "Warranty"; do
+        echo "  - $l"
+    done
+    echo     
+}
+bsl_explained() {
+    echo
+    echo -e "${CYAN}Boost Software License 1.0${NC}"
+    echo
+
+    echo -e "${GREEN}Permissions:${NC}"
+    for p in "Commercial use" "Distribution" "Modification"  "Private use"; do
+        echo "  + $p"
+    done
+    echo
+
+    echo -e "${BLUE}Conditions:${NC}"
+    for c in "License and copyright notice"; do
+        echo "  ~ $c"
+    done
+    echo
+
+    echo -e "${RED}Limitations:${NC}"
+    for l in "Liability" "Warranty"; do
+        echo "  - $l"
+    done
+    echo   
+}
+unlicense_explained() {
+    echo
+    echo -e "${CYAN}Boost Software License 1.0${NC}"
+    echo
+
+    echo -e "${GREEN}Permissions:${NC}"
+    for p in "Commercial use" "Distribution" "Modification"  "Private use"; do
+        echo "  + $p"
+    done
+    echo
+
+    echo -e "${RED}Limitations:${NC}"
+    for l in "Liability" "Warranty"; do
+        echo "  - $l"
+    done
+    echo   
 }
 license() {
     echo -e "${DIVIDER}"
@@ -3416,7 +3613,7 @@ help() {
             echo -e "  ${YELLOW}[!] Use responsibly. Misuse may be illegal.${RESET}"
             echo "  Supports optional Tor routing via torsocks."
             ;;
-        site_history)
+        site_history|site)
             echo  -e "${CYAN}site_history ${RESET}"
             echo "  Site OSINT — queries the wayback machine for site history data."
             echo -e "  ${YELLOW}[!] Use responsibly. Misuse may be illegal.${RESET}"
@@ -3427,7 +3624,7 @@ help() {
             echo "  Capture a screenshot of all websites of a domain using theharvester."
             echo -e "  ${YELLOW}[!] Use responsibly. Misuse may be illegal.${RESET}"
             ;;
-        network_explorer)
+        network_explorer|ne)
             echo -e "${CYAN}network_explorer${RESET}"
             echo "Explore a network with NMAP."
             echo -e "  ${YELLOW}[!] Use responsibly. Misuse may be illegal.${RESET}"
@@ -3602,6 +3799,42 @@ help() {
             ;;
 
         # ── Misc ─────────────────────────────────────────────────────────────
+        licenses_explained)
+            echo -e "${CYAN}licenses_explained ${RESET}"    
+            echo "  Explainer of some of the most common licenses"  
+            ;;
+        gpl_explained)
+            echo -e "${CYAN}gpl_explained${RESET}"
+            echo "  Explainer of the GPL (GNU General Public License)"
+            ;;
+        agpl_explained)
+            echo -e "${CYAN}agpl_explained${RESET}"
+            echo "  Explainer of the AGPL (Affero General Public License)"
+            ;;
+        lgpl_explained)
+            echo -e "${CYAN}lgpl_explained${RESET}"
+            echo "  Explainer of the LGPL (Lesser General Public License)"
+            ;;
+        mpl_explained)
+            echo -e "${CYAN}mpl_explained${RESET}"
+            echo "  Explainer of the MPL (Mozilla Public License)"
+            ;;
+        mit_explained)
+            echo -e "${CYAN}mit_explained${RESET}"
+            echo "  Explainer of the MIT License"
+            ;;
+        apache_explained)
+            echo -e "${CYAN}apache_explained${RESET}"
+            echo "  Explainer of the Apache License 2.0"
+            ;;
+        bsl_explained)
+            echo -e "${CYAN}bsl_explained${RESET}"
+            echo "  Explainer of the BSL (Business Source License)"
+            ;;
+        unlicense_explained)
+            echo -e "${CYAN}unlicense_explained${RESET}"
+            echo "  Explainer of the Unlicense (public domain dedication)"
+            ;;
         license|l)
             echo -e "${CYAN}license / l${RESET}"
             echo "  Display the full GPL-3.0 license text and a plain-English summary."
@@ -4271,6 +4504,14 @@ _PEREGINE_COMMANDS=(
     show_random_fact
     show_random_quote
     licenses_explained
+    gpl_explained
+    agpl_explained
+    lgpl_explained
+    mpl_explained
+    mit_explained
+    apache_explained
+    bsl_explained
+    unlicense_explained
 # Lists
     encryption
     osint
