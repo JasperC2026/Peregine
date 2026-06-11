@@ -3688,33 +3688,81 @@ check_dependencies () {
     fi
 
     if ! command -v maigret >/dev/null 2>&1; then
-        echo "Status maigret: $status_negative"
+        echo -e "Status maigret: $status_negative"
     else 
-        echo "Status maigret: $status_positive"
+        echo -e "Status maigret: $status_positive"
     fi
 
     if ! command -v waybackurls >/dev/null 2>&1; then
-        echo "Status waybackurls: $status_negative"
+        echo -e "Status waybackurls: $status_negative"
     else 
-        echo "Status waybackurls: $status_positive"
+        echo -e "Status waybackurls: $status_positive"
     fi
 
     if ! command -v iphoneinfoga >/dev/null 2>&1; then
-        echo "Status Iphoneinfoga: $status_negative"
+        echo -e "Status Iphoneinfoga: $status_negative"
     else 
-        echo "Status Iphoneinfoga: $status_positive"
+        echo -e "Status Iphoneinfoga: $status_positive"
     fi
 
     if ! command -v theharvester >/dev/null 2>&1; then
-        echo "Status TheHarvester: $status_negative"
+        echo -e "Status TheHarvester: $status_negative"
     else
-        echo "Status TheHarvester: $status_positive"
+        echo -e "Status TheHarvester: $status_positive"
     fi
 
     if ! command -v torsocks >/dev/null 2>&1; then
-        echo "Status torsocks: $status_negative"
+        echo -e "Status torsocks: $status_negative"
     else
-        echo "Status torsocks: $status_positive"
+        echo -e "Status torsocks: $status_positive"
+    fi
+    # Security & System
+    if ! command -v lynis >/dev/null 2>&1; then
+        echo -e "Status Lynis: $status_negative"
+    else 
+        echo -e "Status Lynis: $status_positive"
+    fi
+
+    if ! command -v chkrootkit >/dev/null 2>&1; then
+        echo -e "Status chkrootkit: $status_negative"
+    else
+        echo -e "Status chkrootkit: $status_positive"
+    fi
+
+    if ! command -v shred >/dev/null 2>&1; then
+        echo -e "Status shred: $status_negative"
+    else
+        echo -e "Status shred: $status_positive"
+    fi
+
+    if ! command -v sfill >/dev/null 2>&1; then
+        echo -e "Status sfill: $status_negative"
+    else
+        echo -e "Status sfill: $status_positive"
+    fi
+
+    if ! command -v top >/dev/null 2>&1; then
+        echo -e "Status top: $status_negative"
+    else
+        echo -e "Status sfill: $status_positive"
+    fi
+    # Privacy 
+    if ! command -v exiftool >/dev/null 2>&1; then
+        echo -e "Status exiftool: $status_negative"
+    else
+        echo -e "Status exiftool: $status_positive"
+    fi
+    # Encryption
+    if ! command -v openssl >/dev/null 2>&1; then
+        echo -e "Status OpenSSL: $status_negative"
+    else
+        echo -e "Status OpenSSL: $status_positive"
+    fi
+
+    if ! command -v gpg >/dev/null 2>&1; then
+        echo "Status GnuPG: $status_negative"
+    else
+        echo "Status GnuPG: $status_positive"
     fi
 }
 show_random_fact() {
