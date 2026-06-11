@@ -2635,6 +2635,22 @@ rot13_cipher() {
     echo -e "${DIVIDER}"
 }
 # Other
+licenses_explained () {
+    echo -e "${DIVIDER}"
+
+    echo "Simple explainer of some common licenses" 
+
+    echo
+    echo "Currently supported licenses: "
+    printf "" ""
+    printf "" ""
+    printf "" ""
+    printf "" ""
+
+    echo
+    echo "Want to know which license this project has? Run peregine license or look at the LICENSE file in the repo."
+    echo -e "${DIVIDER}"   
+}
 license() {
     echo -e "${DIVIDER}"
     cat <<'EOF'
@@ -4254,6 +4270,7 @@ _PEREGINE_COMMANDS=(
     install_dependencies id
     show_random_fact
     show_random_quote
+    licenses_explained
 # Lists
     encryption
     osint
