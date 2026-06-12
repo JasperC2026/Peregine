@@ -6,12 +6,12 @@
 
 **A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface.**
 
-![Version](https://img.shields.io/badge/v3.0-000000?style=for-the-badge) [![GPL v3](https://img.shields.io/badge/GPL_v3.0-000000?style=for-the-badge&logo=gnu&logoColor=white)](./LICENSE) ![BASH](https://img.shields.io/badge/Bash-000000?style=for-the-badge&logo=gnubash&logoColor=white) ![Platform](https://img.shields.io/badge/Linux-000000?style=for-the-badge&logo=linux&logoColor=white) ![Kind](https://img.shields.io/badge/FOSS-000000?style=for-the-badge)
+![Version](https://img.shields.io/badge/v3.0-000000?style=for-the-badge) [![GPL v3](https://img.shields.io/badge/GPL_v3.0-000000?style=for-the-badge&logo=gnu&logoColor=white)](./LICENSE) ![BASH](https://img.shields.io/badge/Bash-000000?style=for-the-badge&logo=gnubash&logoColor=white) ![Platform](https://img.shields.io/badge/Linux-000000?style=for-the-badge&logo=linux&logoColor=white) ![Kind](https://img.shields.io/badge/FOSS-000000?style=for-the-badge) ![Codeberg](https://img.shields.io/badge/Codeberg-2185D0?style=for-the-badge&logo=codeberg&logoColor=white)
 
 </div>
-   
+
 ---  
-   
+
 ## What is Peregine?  
    
 Peregine is a modular, terminal-based CLI toolkit for Linux users who want fast access to a wide range of tools — without juggling a dozen different utilities.  
@@ -37,7 +37,7 @@ Built for speed, simplicity, and control — privacy-first by design.
 | Distro family | Status |  
 |---|---|  
 | ![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white) ![Debian](https://img.shields.io/badge/Debian-A81D33?style=for-the-badge&logo=debian&logoColor=white) | ✔ Fully tested |  
-| ![Linux](https://img.shields.io/badge/Other_Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) | ⚠︎ Should work, minor issues possible |  
+| ![Linux](https://img.shields.io/badge/Other_Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black) | ✔ Working properly, minor issues possible |  
 | ![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white) ![Windows](https://img.shields.io/badge/Windows-0078D4?style=for-the-badge&logo=windows11&logoColor=white) | ✗ Not supported |  
    
 > This project is actively developed. Fast iteration may occasionally introduce bugs — bug reports and PRs are welcome.  
@@ -157,6 +157,6 @@ Found a bug or have a feature request? [Open an issue](https://codeberg.org/pere
 | Component | License |  
 |---|---|  
 | Source code | [![GPL v3](https://img.shields.io/badge/GPL_v3.0-A42E2B?style=for-the-badge&logo=gnu&logoColor=white)](./LICENSE) |  
-| Logos & assets | [![CC0](https://img.shields.io/badge/CC0_1.0-EF9421?style=for-the-badge&logo=creativecommons&logoColor=white)](./LICENSE) |  
+| Logos & assets | [![CC0](https://img.shields.io/badge/CC0_1.0-EF9421?style=for-the-badge&logo=creativecommons&logoColor=white)](./LICENSE) |    
    
 Copyright (C) 2026 JasperC(https://codeberg.org/JasperC/Peregine)  
