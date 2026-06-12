@@ -2635,6 +2635,59 @@ rot13_cipher() {
     echo -e "${DIVIDER}"
 }
 # Other
+system_recovery_help() {
+    echo -e "${DIVIDER}"
+    echo "Help with system recovery" 
+    
+    echo  
+    echo "Does not guarantee a fix, only inteded to help. If you don't know what your doing consider seeking helo before compeltely destroying your system."
+    echo "Some good sources: https://linuxcommandlibrary.com/basic/systemrecovery or https://www.howtogeek.com/887757/how-to-use-grub-rescue-to-fix-linux/ there are more sources availible online, search for them."
+
+    echo 
+    echo 
+    echo "  Case:                 Possible fix: "
+    echo "  No bootloader         grub-install  "
+    echo "  Emergency shell        systemctl    "
+    echo "  Lost root password      passwd      "
+    echo "  Dirty filesystem         fsck       "
+    echo "  Broken packages       dpkg (deb)    "
+    echo "  Failing disk           smartctl     "
+    echo "  Deleted files          testdisk     "
+    echo
+
+    echo "Under here options for each fix:  "
+
+    echo -e "${BOLD}grub-install"
+    echo "BIOS system: sudo grub-install [/dev/device]"
+    echo "UEFI system:  sudo grub-install --efi-directory [/path/to/efi]"
+    echo "HELP: grub-install --help"
+    echo
+
+    echo -e "${BOLD}passwd"
+    echo "Standard: passwd"
+    echo "Change another uses's password: password [username]"
+    echo "Show status: passwd -S [username]"
+    echo
+
+    echo -e "${BOLD}fsck"
+    echo "Check filesystem: sudo fsck /dev/sdXN"
+    echo "Check and report: sudo fsck -r /dev/sdXN"
+    echo "Automatticly repair: sudo fsck -a /dev/sdXN"
+    echo
+
+    echo -e "${BOLD}fsck"
+    echo "Check filesystem: sudo fsck /dev/sdXN"
+    echo "Check and report: sudo fsck -r /dev/sdXN"
+    echo "Automatticly repair: sudo fsck -a /dev/sdXN"
+    echo
+
+    echo -e "${BOLD}smartctl"
+    echo "Show drive info:  smartctl -i /dev/[sda]"
+    echo "Show SMART: smartctl -a /dev/[sda]"
+    echo "Check health: smartctl -H /dev/[sda]"
+    echo "Scan for drives: smartctl --scan"
+    echo
+}
 licenses_explained() {
     echo -e "${DIVIDER}"
     echo "Simple explainer of some common licenses"
