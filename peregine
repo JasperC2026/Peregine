@@ -2648,6 +2648,7 @@ licenses_explained() {
     echo "  Apache    - Apache License 2.0"
     echo "  BSL       - Boost Software License"
     echo "  Unlicense - The Unlicense (public domain)"
+    echo "  CC        - Creative Commons"
     echo
     echo -e "${DIVIDER}"
     echo "Common License Terms Explained"
@@ -2668,6 +2669,33 @@ licenses_explained() {
     echo -e "${DIVIDER}"
     echo
     echo "Want to know which license this project has? Run 'peregrine license' or look at the LICENSE file in the repo."
+    echo -e "${DIVIDER}"
+}
+cc_explained() {
+    echo
+    echo -e "${CYAN}Creative Commons${NC}"
+    echo
+
+    echo -e "${DIVIDER}"
+    echo "Common License Terms Explained"
+    echo
+    echo "  BY                  - Appropiate credit to author"
+    echo "  SA                  - Must be with same terms"
+    echo "  ND                  - No derivatives or adaptations permitted"
+    echo "  NC                  - Only non-commercial use "
+    echo "  0                   - Public domain dedication"
+    echo -e "${DIVIDER}"
+
+    echo -e "${DIVIDER}"
+    echo "All versions"
+    echo
+    echo "  CC BY               - Credit must be given to the creator"
+    echo "  CC BY-SA            - Credit must be given to the creator, Adaptations must be shared under the same terms."
+    echo "  CC BY-ND            - Credit must be given to the creator, No derivatives or adaptations are permitted."
+    echo "  CC BY-NC            - Credit must be given to the creator, Only non-commercial use."
+    echo "  CC BY-NC-SA         - Credit must be given to the creator, Only non-commercial use, Must be same terms."
+    echo "  CC BY-NC-ND         - Credit must be given to the creator, Only non-commercial use,  No derivatives or adaptations are permitted."
+    echo "  CC-0                - Public domain dedication"
     echo -e "${DIVIDER}"
 }
 gpl_explained() {
@@ -3835,6 +3863,10 @@ help() {
             echo -e "${CYAN}unlicense_explained${RESET}"
             echo "  Explainer of the Unlicense (public domain dedication)"
             ;;
+        cc_explained)
+            echo -e "${CYAN}cc_explained${RESET}"
+            echo "  Explainer of the Creative Commons licenses."
+            ;;
         license|l)
             echo -e "${CYAN}license / l${RESET}"
             echo "  Display the full GPL-3.0 license text and a plain-English summary."
@@ -4512,6 +4544,7 @@ _PEREGINE_COMMANDS=(
     apache_explained
     bsl_explained
     unlicense_explained
+    cc_explained
 # Lists
     encryption
     osint
