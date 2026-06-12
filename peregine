@@ -3827,6 +3827,10 @@ help() {
             ;;
 
         # ── Misc ─────────────────────────────────────────────────────────────
+        system_recovery_help)
+            echo -e "${CYAN}system_recovery_help ${RESET}"    
+            echo "  Some useful commands to help recover a broken system"  
+            ;;       
         licenses_explained)
             echo -e "${CYAN}licenses_explained ${RESET}"    
             echo "  Explainer of some of the most common licenses"  
@@ -4545,6 +4549,7 @@ _PEREGINE_COMMANDS=(
     bsl_explained
     unlicense_explained
     cc_explained
+    system_recovery_help
 # Lists
     encryption
     osint
