@@ -159,4 +159,4 @@ Found a bug or have a feature request? [Open an issue](https://codeberg.org/pere
 | Source code | [![GPL v3](https://img.shields.io/badge/GPL_v3.0-A42E2B?style=for-the-badge&logo=gnu&logoColor=white)](./LICENSE) |  
 | Logos & assets | [![CC0](https://img.shields.io/badge/CC0_1.0-EF9421?style=for-the-badge&logo=creativecommons&logoColor=white)](./LICENSE) |  
    
-Copyright © 2026 [Peregine](https://codeberg.org/JasperC/Peregine)  
+Copyright (C) 2026 JasperC(https://codeberg.org/JasperC/Peregine)  
