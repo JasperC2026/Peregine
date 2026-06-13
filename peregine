@@ -2663,25 +2663,25 @@ system_recovery_help() {
     echo "HELP: grub-install --help"
     echo
 
-    echo -e "${BOLD}passwd"
+    echo -e "${BOLD}passwd${RESET}"
     echo "Standard: passwd"
     echo "Change another uses's password: password [username]"
     echo "Show status: passwd -S [username]"
     echo
 
-    echo -e "${BOLD}fsck"
+    echo -e "${BOLD}fsck${RESET}"
     echo "Check filesystem: sudo fsck /dev/sdXN"
     echo "Check and report: sudo fsck -r /dev/sdXN"
     echo "Automatticly repair: sudo fsck -a /dev/sdXN"
     echo
 
-    echo -e "${BOLD}fsck"
+    echo -e "${BOLD}fsck${RESET}"
     echo "Check filesystem: sudo fsck /dev/sdXN"
     echo "Check and report: sudo fsck -r /dev/sdXN"
     echo "Automatticly repair: sudo fsck -a /dev/sdXN"
     echo
 
-    echo -e "${BOLD}smartctl"
+    echo -e "${BOLD}smartctl${RESET}"
     echo "Show drive info:  smartctl -i /dev/[sda]"
     echo "Show SMART: smartctl -a /dev/[sda]"
     echo "Check health: smartctl -H /dev/[sda]"
