@@ -5,20 +5,20 @@
 # You are free to use, copy, modify, and distribute this software for any purpose.
 # With the requirements of: keeping the source code open and availible, license any modified or derived versions under GPL-3.0 as well and keeping all copyright and license notices intact.
 # You cannot distribute it as closed-source / proprietary, add restrictions that prevent others from exercising these rights, hold the author (JasperC) liable for anything — the software comes with no warranty.
-# Version: 3.8
+# Version: 3.9
 
 # Variables
 written_in="Bash/shell"
-total_commands="74"
+total_commands="81"
 created_on="March 18, 2026"
 contributors="JasperC (Developer, Maintainer), and Open Source Community"
 license="GPL-3.0"
 lines_of_code=$(wc -l < "${BASH_SOURCE[0]}")
 type="Stable"
-version="V3.8"
-release_date="9-6-2026"
-test_date="8-6-2026"
-previous_versions="Beta: V3.7 Beta: V3.6"
+version="V3.9"
+release_date="13-6-2026"
+test_date="13-6-2026"
+previous_versions="Stable: V3.8 Beta: V3.7"
 install_path=$(command -v peregine 2>/dev/null || echo "not installed")
 installed=$( [[ "$install_path" != "not installed" ]] && echo "Yes" || echo "No (running from repo)" )
 shell_info="$( basename "$SHELL" ) $BASH_VERSION"
@@ -4581,7 +4581,7 @@ _PEREGINE_COMMANDS=(
     record_terminal
     find_broken_symlinks
     find_empty
-# Other
+    # Other
     license l
     clone_source c
     version v V    
@@ -4603,7 +4603,7 @@ _PEREGINE_COMMANDS=(
     unlicense_explained
     cc_explained
     system_recovery_help
-# Lists
+    # Lists
     encryption
     osint
     system/security
