@@ -587,10 +587,10 @@ maigret_search () {
                 return 1
             fi
             echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-            output=$(torsocks maigret -a -pdf --tor "$username" 2>&1)
+            output=$(torsocks maigret --pdf "$username" 2>&1)
             status=$?
         else 
-            output=$(maigret -a -pdf "$username" 2>&1)
+            output=$(maigret --pdf "$username" 2>&1)
             status=$?
         fi
     elif [[ "$output_choice" =~ ^[Hh]$ ]]; then
@@ -605,10 +605,10 @@ maigret_search () {
                 return 1
             fi
             echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-            output=$(torsocks maigret -a -html --tor "$username" 2>&1)
+            output=$(torsocks maigret --html "$username" 2>&1)
             status=$?
         else 
-            output=$(maigret -a -html "$username" 2>&1)
+            output=$(maigret --html "$username" 2>&1)
             status=$?
         fi
     elif [[ "$output_choice" =~ ^[Tt]$ ]]; then
@@ -623,7 +623,7 @@ maigret_search () {
                 return 1
             fi
             echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-            output=$(torsocks maigret -a --tor "$username" 2>&1)
+            output=$(torsocks maigret "$username" 2>&1)
             status=$?
         else 
             output=$(maigret -a "$username" 2>&1)
