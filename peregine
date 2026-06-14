@@ -125,6 +125,71 @@ status_dependencies() {
 }
 # Commands
 # Networking
+intel_report() {
+    echo -e "${DIVIDER}"
+    current_date="date +”%A, %b %d, %Y %H:%M:%S”"
+    
+    echo -n "Enter target name: "
+    read -r target
+
+    if [[ -z "$target" ]]; then
+        echo -e "${RED}[!]${RESET} No target entered, Exiting."
+        return 1
+    fi
+
+    echo
+    echo "Next part is optional, if you leave an option empty it will be set to N/A"
+    echo
+
+    echo -n "Enter target IP: "
+    read -r IP
+
+    if [[ -z "$IP" ]]; then
+        IP="N/A"
+    fi
+
+    echo -n "Enter target username: "
+    read -r username
+
+    if [[ -z "$username" ]]; then
+        username="N/A"
+    fi
+
+    echo -n "Enter target website: "
+    read -r website
+
+    if [[ -z "$website" ]]; then
+        website="N/A"
+    fi
+
+    echo -n "Enter target location: "
+    read -r location
+
+    if [[ -z "$location" ]]; then
+        location="N/A"
+    fi 
+
+    echo
+    echo -n "If you have any notes you can do it here: "
+    read -r notes
+
+    if [[ -z "$notes" ]]; then
+        notes="N/A"
+    fi 
+
+    cat << EOF > $target.txt
+Peregine intel report | $target
+Created on: $current_date
+-------------------------------
+Target IP: $IP
+Target website: $website
+Target username: $username
+Target location: $location
+
+Notes:
+$notes
+EOF
+}
 local_server() {
     echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
@@ -4523,6 +4588,7 @@ _PEREGINE_COMMANDS=(
     get_ip ip
 # OSINT
     network_explorer ne
+    intel_report
     # Lookup
     ip_osint
     maigret_search maigret
@@ -4640,8 +4706,8 @@ EOF
     elif [[ " ${_PEREGINE_COMMANDS[*]} " == *" $1 "* ]]; then
        "$1"
     else
-    echo -e "${RED}[!] Unknown command: $1${RESET}"
-    echo -e "    Run ${CYAN}peregine${RESET} without arguments to list all commands."   
+        echo -e "${RED}[!] Unknown command: $1${RESET}"
+        echo -e "    Run ${CYAN}peregine${RESET} without arguments to list all commands."   
     return 1
     fi
 
