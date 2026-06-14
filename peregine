@@ -123,6 +123,65 @@ status_dependencies() {
         echo 
     fi
 }
+list_intel_report_options() {
+    local target="$1"
+    echo
+    echo "Options: "
+    echo "Traceroute:       t"
+    echo "IP-osint:         i"
+    echo "DNS-info:         d"
+    echo "Maigret search:   m"
+    echo "Phone lookup:     p"
+    echo "Site history:     s"
+    echo "Network explorer: n"
+    echo
+    echo -n "Enter choice: "
+    read -r commands
+
+    local section=""
+    local tmpfile
+    tmpfile=$(mktemp)
+
+    case "$commands" in
+        t) section="Traceroute Results" ;;
+        i) section="IP OSINT Results" ;;
+        d) section="DNS Info Results" ;;
+        m) section="Maigret Search Results" ;;
+        p) section="Phone Lookup Results" ;;
+        s) section="Site History Results" ;;
+        n) section="Network Explorer Results" ;;
+        *)
+            echo -e "${RED}[!]${RESET} Invalid option."
+            rm -f "$tmpfile"
+            return 1
+            ;;
+    esac
+
+    # Run the tool, output goes to terminal AND tmpfile simultaneously
+    case "$commands" in
+        t) traceroute 2>&1 | tee "$tmpfile" ;;
+        i) ip_osint   2>&1 | tee "$tmpfile" ;;
+        d) dns_info   2>&1 | tee "$tmpfile" ;;
+        m) maigret_search 2>&1 | tee "$tmpfile" ;;
+        p) phone_lookup   2>&1 | tee "$tmpfile" ;;
+        s) site_history   2>&1 | tee "$tmpfile" ;;
+        n) network_explorer 2>&1 | tee "$tmpfile" ;;
+    esac
+
+    # Append clean (no ANSI codes) output to report
+    if [[ -n "$target" && -f "$target.txt" ]]; then
+        {
+            echo ""
+            echo "-------------------------------"
+            echo "$section"
+            echo "-------------------------------"
+            sed 's/\x1b\[[0-9;]*m//g' "$tmpfile"
+        } >> "$target.txt"
+        echo -e "${GREEN}[+]${RESET} Results appended to $target.txt"
+    fi
+
+    rm -f "$tmpfile"
+}
 # Commands
 # Networking
 intel_report() {
@@ -147,6 +206,9 @@ intel_report() {
     echo -n "Enter target username: "
     read -r username
 
+    echo -n "Enter target phone: "
+    read -r phone
+
     echo -n "Enter target website: "
     read -r website
 
@@ -159,6 +221,10 @@ intel_report() {
 
     if [[ -z "$username" ]]; then
         username="N/A"
+    fi
+
+    if [[ -z "$phone" ]]; then
+        phone="N/A"
     fi
 
     if [[ -z "$IP" ]]; then
@@ -196,6 +262,21 @@ EOF
     else
         return 1
     fi
+
+    while true; do
+        read -p "Show Intel report options? [y/n]: " option
+        if [[ "$option" =~ ^[Yy]$ ]]; then
+            list_intel_report_options "$target"
+        elif [[ "$option" =~ ^[Nn]$ ]]; then
+            echo "Exiting."
+            break
+        else
+            echo "Invalid input. Please enter y or n."
+        fi
+    done
+
+    echo "[->] Command executed" 
+    echo -e "${DIVIDER}"
 }
 local_server() {
     echo -e "${DIVIDER}"
