@@ -144,40 +144,44 @@ intel_report() {
     echo -n "Enter target IP: "
     read -r IP
 
-    if [[ -z "$IP" ]]; then
-        IP="N/A"
-    fi
-
     echo -n "Enter target username: "
     read -r username
-
-    if [[ -z "$username" ]]; then
-        username="N/A"
-    fi
 
     echo -n "Enter target website: "
     read -r website
 
-    if [[ -z "$website" ]]; then
-        website="N/A"
-    fi
-
     echo -n "Enter target location: "
     read -r location
-
-    if [[ -z "$location" ]]; then
-        location="N/A"
-    fi 
 
     echo
     echo -n "If you have any notes you can do it here: "
     read -r notes
 
+    if [[ -z "$username" ]]; then
+        username="N/A"
+    fi
+
+    if [[ -z "$IP" ]]; then
+        IP="N/A"
+    fi
+
+    if [[ -z "$website" ]]; then
+        website="N/A"
+    fi
+
+    if [[ -z "$location" ]]; then
+        location="N/A"
+    fi 
+
     if [[ -z "$notes" ]]; then
         notes="N/A"
     fi 
 
-    cat << EOF > $target.txt
+    echo -n "Make document? (y/n)"
+    read -r option
+
+    if [[ "$option" =~ ^[Yy]$ ]]; then
+        cat << EOF > $target.txt
 Peregine intel report | $target
 Created on: $current_date
 -------------------------------
@@ -189,6 +193,9 @@ Target location: $location
 Notes:
 $notes
 EOF
+    else
+        return 1
+    fi
 }
 local_server() {
     echo -e "${DIVIDER}"
