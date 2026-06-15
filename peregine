@@ -39,6 +39,7 @@ status_positive="${GREEN}[✔]${RESET}"
 # Configs
 dependencie_notice=show # Show dependencie installed message, standard: show.
 output_color=CYAN # Color for command output, standard: CYAN.
+# todo: add more options
 
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
