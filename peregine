@@ -362,7 +362,7 @@ whois_lookup() {
     fi
 
     if echo "$output" | grep -qiE "no match|not found|no data found|status: free"; then
-        echo -e "\a"
+
         echo -e "${RED}[!]${RESET} Domain not found or no WHOIS data available."
         return 1
     fi
@@ -1313,7 +1313,7 @@ secure_shred_dir() {
     local abs_target # Get the absolute path of the target directory to ensure we are checking the correct path for safety
     abs_target=$(realpath "$target") # Get the absolute path of the target directory to ensure we are checking the correct path for safety
     if [[ "$abs_target" == "/" || "$abs_target" == "$HOME" ]]; then # Check if the target directory is the root directory or the user's home directory, which would be too dangerous to shred
-        echo -e "\a"
+
         echo -e "${RED}[!] Refusing to shred '$abs_target' — too dangerous.${RESET}"
         return 1
     fi
@@ -1354,7 +1354,7 @@ secure_shred_dir() {
     read -rp "Type the directory name to confirm: " confirm_name
 
     if [[ "$confirm_name" != "$(basename "$abs_target")" ]]; then # Check if the user correctly confirmed the directory name to prevent accidental shredding
-        echo -e "\a"
+
         echo -e "${RED}[!]${RESET} Confirmation failed. Directory name did not match. Exiting."
         return 1
     fi
@@ -1388,7 +1388,7 @@ secure_shred_dir() {
     fi
  
     if [[ -e "$abs_target" ]]; then
-        echo -e "\a"
+
         echo -e "${RED}[!]${RESET} Directory still exists — some files may not have been removed."
         echo -e "Check manually: $abs_target"
         echo "───────────────────────────────────────────────────────────────${RESET}"
@@ -1449,7 +1449,7 @@ secure_empty_trash() {
     if [[ $remaining -eq 0 ]]; then
         echo -e "${GREEN}[+] Trash securely emptied.${RESET}"
     else
-        echo -e "\a"
+
         echo -e "${RED}[!] $remaining item(s) may not have been deleted — check manually.${RESET}"
         return 1
     fi
@@ -1519,7 +1519,7 @@ system_audit() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
+
         echo -e "${RED}[!] Lynis finished with errors (exit code $status).${RESET}"
         return 1
     fi
@@ -1581,14 +1581,14 @@ rootkit_hunt() {
     echo -e "${DIVIDER}"
 
     if [[ $infected -gt 0 || $warnings -gt 0 ]]; then
-        echo -e "\a"
+
         echo -e "${RED}[!]${RESET} Potential threats detected — review the output above carefully."
         echo -e "${YELLOW}[i]${RESET} Note: chkrootkit can produce false positives. Verify findings manually."
         return 1
     fi
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
+
         echo -e "${RED}[!]${RESET} chkrootkit finished with errors (exit code $status)."
         return 1
     fi
@@ -1599,7 +1599,7 @@ remove_temp_files() {
     if rm -rf /tmp/* 2>/dev/null; then
         echo -e "${GREEN}[+] Temporary files removed.${RESET}"
     else
-        echo -e "\a"
+
         echo -e "${RED}[!] Failed to remove some temporary files (permissions or in-use files).${RESET}"
         return 1
     fi
@@ -1789,7 +1789,7 @@ generate_key () {
         3) bits=256;  bytes=32  ;;
         4) bits=512;  bytes=64  ;;
         *)
-            echo -e "\a"
+    
             echo -e "${RED}[!] Invalid choice. Enter 1, 2, 3, or 4.${RESET}"
             return 1
             ;;
@@ -1826,7 +1826,6 @@ encrypt_file_aes256() {
     read -rp "Enter file to encrypt: " file
 
     if [[ ! -f "$file" ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} File not found."
         return 1
     fi
@@ -1837,7 +1836,6 @@ encrypt_file_aes256() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} Encryption failed."
         return 1
     else
@@ -1875,7 +1873,6 @@ encrypt_file_aes128() {
     read -rp "Enter file to encrypt: " file
 
     if [[ ! -f "$file" ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} File not found."
         return 1
     fi
@@ -1886,12 +1883,11 @@ encrypt_file_aes128() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} Encryption failed."
         return 1
+    else
+        echo -e "${GREEN}[+]${RESET} File encrypted $arrow $outfile"
     fi
-
-    echo -e "${GREEN}[+]${RESET} File encrypted $arrow $outfile"
 
     echo
     read -rp "Remove original file? (y/n): " remove_original
@@ -1925,7 +1921,6 @@ decrypt_file_aes256() {
     read -rp "Enter encrypted file: " file
 
     if [[ ! -f "$file" ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} File not found."
         return 1
     fi
@@ -1936,12 +1931,11 @@ decrypt_file_aes256() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} Decryption failed (wrong password or corrupted file)."
         return 1
+    else
+        echo -e "${GREEN}[+]${RESET} File decrypted $arrow $outfile"
     fi
-
-    echo -e "${GREEN}[+]${RESET} File decrypted $arrow $outfile"
 
     command_executed
     echo -e "${DIVIDER}"
@@ -1963,7 +1957,6 @@ decrypt_file_aes128() {
     read -rp "Enter encrypted file: " file
 
     if [[ ! -f "$file" ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} File not found."
         return 1
     fi
@@ -1974,12 +1967,11 @@ decrypt_file_aes128() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} Decryption failed (wrong password or corrupted file)."
         return 1
+    else
+        echo -e "${GREEN}[+]${RESET} File decrypted $arrow $outfile"
     fi
-
-    echo -e "${GREEN}[+]${RESET} File decrypted $arrow $outfile"
 
     command_executed
 }
@@ -2000,7 +1992,7 @@ encrypt_file_chacha20() {
     read -rp "Enter file to encrypt: " file
 
     if [[ ! -f "$file" ]]; then
-        echo -e "\a"
+
         echo -e "${RED}[!]${RESET} File not found."
         return 1
     fi
@@ -2011,12 +2003,11 @@ encrypt_file_chacha20() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} Encryption failed."
         return 1
+    else 
+        echo -e "${GREEN}[+]${RESET} File encrypted $arrow $outfile"
     fi
-
-    echo -e "${GREEN}[+]${RESET} File encrypted $arrow $outfile"
 
     command_executed
 }
@@ -2037,7 +2028,6 @@ decrypt_file_chacha20() {
     read -rp "Enter encrypted file: " file
 
     if [[ ! -f "$file" ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} File not found."
         return 1
     fi
@@ -2048,12 +2038,11 @@ decrypt_file_chacha20() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} Decryption failed (wrong password or corrupted file)."
         return 1
+    else
+        echo -e "${GREEN}[+]${RESET} File decrypted $arrow $outfile"      
     fi
-
-    echo -e "${GREEN}[+]${RESET} File decrypted $arrow $outfile"
 
     command_executed
 }
@@ -2074,7 +2063,6 @@ encrypt_file_twofish() {
     read -rp "Enter file to encrypt: " file
 
     if [[ ! -f "$file" ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} File not found."
         return 1
     fi
@@ -2085,12 +2073,11 @@ encrypt_file_twofish() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} Encryption failed."
         return 1
+    else
+        echo -e "${GREEN}[+]${RESET} File encrypted $arrow $outfile"
     fi
-
-    echo -e "${GREEN}[+]${RESET} File encrypted $arrow $outfile"
 
     command_executed
 }
@@ -2111,7 +2098,7 @@ decrypt_file_twofish() {
     read -rp "Enter encrypted file: " file
 
     if [[ ! -f "$file" ]]; then
-        echo -e "\a"
+
         echo -e "${RED}[!]${RESET} File not found."
         return 1
     fi
@@ -2122,12 +2109,11 @@ decrypt_file_twofish() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} Decryption failed."
         return 1
+    else
+        echo -e "${GREEN}[+]${RESET} File decrypted $arrow $outfile"
     fi
-
-    echo -e "${GREEN}[+]${RESET} File decrypted $arrow $outfile"
 
     command_executed
 }
@@ -2148,7 +2134,7 @@ encrypt_file_serpent() {
     read -rp "Enter file to encrypt: " file
 
     if [[ ! -f "$file" ]]; then
-        echo -e "\a"
+
         echo -e "${RED}[!]${RESET} File not found."
         return 1
     fi
@@ -2159,12 +2145,11 @@ encrypt_file_serpent() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} Encryption failed."
         return 1
+    else 
+        echo -e "${GREEN}[+]${RESET} File encrypted $arrow $outfile"
     fi
-
-    echo -e "${GREEN}[+]${RESET} File encrypted $arrow $outfile"
 
     command_executed
 }
@@ -2185,7 +2170,7 @@ decrypt_file_serpent() {
     read -rp "Enter encrypted file: " file
 
     if [[ ! -f "$file" ]]; then
-        echo -e "\a"
+
         echo -e "${RED}[!]${RESET} File not found."
         return 1
     fi
@@ -2196,15 +2181,13 @@ decrypt_file_serpent() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} Decryption failed."
         return 1
+    else
+        echo -e "${GREEN}[+]${RESET} File decrypted $arrow $outfile"
     fi
 
-    echo -e "${GREEN}[+]${RESET} File decrypted $arrow $outfile"
-
     command_executed
-    echo -e "${DIVIDER}"
 }
 
 encrypt_text_aes256() {
@@ -2228,16 +2211,14 @@ encrypt_text_aes256() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} Encryption failed."
         return 1
+    else
+        echo
+        echo -e "${GREEN}[+]${RESET} Text encrypted."
     fi
 
-    echo
-    echo -e "${GREEN}[+]${RESET} Text encrypted."
-
     command_executed
-    echo -e "${DIVIDER}"
 }
 
 encrypt_text_aes128() {
@@ -2260,13 +2241,12 @@ encrypt_text_aes128() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} Encryption failed."
         return 1
+    else
+        echo
+        echo -e "${GREEN}[+]${RESET} Text encrypted."
     fi
-
-    echo
-    echo -e "${GREEN}[+]${RESET} Text encrypted."
 
     command_executed
 }
@@ -2291,13 +2271,12 @@ decrypt_text_aes256() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} Decryption failed."
         return 1
+    else 
+        echo
+        echo -e "${GREEN}[+]${RESET} Text decrypted."
     fi
-
-    echo
-    echo -e "${GREEN}[+]${RESET} Text decrypted."
 
     command_executed
 }
@@ -2322,13 +2301,12 @@ decrypt_text_aes128() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} Decryption failed."
         return 1
+    else
+        echo
+        echo -e "${GREEN}[+]${RESET} Text decrypted."
     fi
-
-    echo
-    echo -e "${GREEN}[+]${RESET} Text decrypted."
 
     command_executed
 }
@@ -2353,13 +2331,12 @@ encrypt_text_chacha20() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} Encryption failed."
         return 1
+    else
+        echo
+        echo -e "${GREEN}[+]${RESET} Text encrypted."
     fi
-
-    echo
-    echo -e "${GREEN}[+]${RESET} Text encrypted."
 
     command_executed
 }
@@ -2386,13 +2363,12 @@ decrypt_text_chacha20() {
     status=$?
 
     if [[ $status -ne 0 ]]; then
-        echo -e "\a"
         echo -e "${RED}[!]${RESET} Decryption failed."
         return 1
+    else
+        echo
+        echo -e "${GREEN}[+]${RESET} Text decrypted."
     fi
-
-    echo
-    echo -e "${GREEN}[+]${RESET} Text decrypted."
 
     command_executed
 }
@@ -2403,6 +2379,7 @@ encrypt_text_base64() {
     echo
     read -rp "Enter text: " text
     result=$(printf "%s" "$text" | base64)
+    status=$?
 
     echo
     echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
@@ -2418,7 +2395,7 @@ decrypt_text_base64() {
     result=$(printf "%s" "$text" | base64 -d 2>/dev/null)
 
     if [[ $? -ne 0 ]]; then
-        echo -e "\a"
+
         echo -e "${RED}[!]${RESET} Invalid Base64 input."
         return 1
     fi
