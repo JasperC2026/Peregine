@@ -35,7 +35,7 @@ TRASH_FILES="$HOME/.local/share/Trash/files"
 TRASH_INFO="$HOME/.local/share/Trash/info"
 status_negative="${RED}[!]${RESET}"
 status_positive="${GREEN}[✔]${RESET}"
-
+forward="${GREEN}[➜]${RESET}" 
 # Configs
 dependencie_notice=show # Show dependencie installed message, standard: show.
 output_color=CYAN # Color for command output, standard: CYAN.
@@ -125,7 +125,7 @@ status_dependencies() {
     fi
 }
 command_executed() {
-echo "${GREEN}[⟶]${RESET}${BOLD} Command Executed ${RESET}"
+echo "$forward${BOLD} Command Executed ${RESET}"
 }
 list_intel_report_options() {
     local target="$1"
@@ -1373,7 +1373,7 @@ secure_shred_dir() {
         fi
     done < <(find "$abs_target" -type f -print0)
 
-    echo -e "${GREEN}[➜]${RESET} Removing directory structure..."
+    echo -e "$forward Removing directory structure..."
     find "$abs_target" -type l -delete 2>/dev/null
     rm -rf "$abs_target"
 
@@ -1686,7 +1686,7 @@ secure_delete() {
         read -rp "Securely delete '$target'? (y/n): " confirm
         [[ "$confirm" != "y" ]] && return 0
 
-        echo -e "${GREEN}[➜]${RESET} Shredding '$target'..."
+        echo -e "$forward Shredding '$target'..."
         shred -u -v -n 5 "$target"
 
         if [[ ! -e "$target" ]]; then
@@ -1818,7 +1818,7 @@ encrypt_file_aes256() {
 
     status_dependencies
 
-    echo -e "${GREEN}[➜]${RESET} Encrypting file (AES-256-CBC)..."
+    echo -e "$forward Encrypting file (AES-256-CBC)..."
     echo
 
     read -rp "Enter file to encrypt: " file
@@ -1867,7 +1867,7 @@ encrypt_file_aes128() {
 
     status_dependencies
 
-    echo -e "${GREEN}[➜]${RESET} Encrypting file (AES-128-CBC)..."
+    echo -e "$forward Encrypting file (AES-128-CBC)..."
     echo
 
     read -rp "Enter file to encrypt: " file
@@ -1917,7 +1917,7 @@ decrypt_file_aes256() {
     status_dependencies
 
     echo
-    echo -e "${GREEN}[➜]${RESET} Decrypting file (AES-256-CBC)..."
+    echo -e "$forward Decrypting file (AES-256-CBC)..."
 
     echo
     read -rp "Enter encrypted file: " file
@@ -1955,7 +1955,7 @@ decrypt_file_aes128() {
     status_dependencies
 
     echo
-    echo -e "${GREEN}[➜]${RESET} Decrypting file (AES-128-CBC)..."
+    echo -e "$forward Decrypting file (AES-128-CBC)..."
 
     echo
     read -rp "Enter encrypted file: " file
@@ -1992,7 +1992,7 @@ encrypt_file_chacha20() {
     status_dependencies
 
     echo
-    echo -e "${GREEN}[➜]${RESET} Encrypting file (ChaCha20)..."
+    echo -e "$forward Encrypting file (ChaCha20)..."
 
     echo
     read -rp "Enter file to encrypt: " file
@@ -2029,7 +2029,7 @@ decrypt_file_chacha20() {
     status_dependencies
 
     echo
-    echo -e "${GREEN}[➜]${RESET} Decrypting file (ChaCha20)..."
+    echo -e "$forward Decrypting file (ChaCha20)..."
 
     echo
     read -rp "Enter encrypted file: " file
@@ -2066,7 +2066,7 @@ encrypt_file_twofish() {
     status_dependencies
 
     echo
-    echo -e "${GREEN}[➜]${RESET} Encrypting file (Twofish)..."
+    echo -e "$forward Encrypting file (Twofish)..."
 
     echo
     read -rp "Enter file to encrypt: " file
@@ -2103,7 +2103,7 @@ decrypt_file_twofish() {
     status_dependencies
 
     echo
-    echo -e "${GREEN}[➜]${RESET} Decrypting file (Twofish)..."
+    echo -e "$forward Decrypting file (Twofish)..."
 
     echo
     read -rp "Enter encrypted file: " file
@@ -2140,7 +2140,7 @@ encrypt_file_serpent() {
     status_dependencies
 
     echo
-    echo -e "${GREEN}[➜]${RESET} Encrypting file (Serpent)..."
+    echo -e "$forward Encrypting file (Serpent)..."
 
     echo
     read -rp "Enter file to encrypt: " file
@@ -2177,7 +2177,7 @@ decrypt_file_serpent() {
     status_dependencies
 
     echo
-    echo -e "${GREEN}[➜]${RESET} Decrypting file (Serpent)..."
+    echo -e "$forward Decrypting file (Serpent)..."
 
     echo
     read -rp "Enter encrypted file: " file
@@ -2215,7 +2215,7 @@ encrypt_text_aes256() {
     status_dependencies
 
     echo
-    echo -e "${GREEN}[➜]${RESET} Encrypting text (AES-256-CBC)..."
+    echo -e "$forward Encrypting text (AES-256-CBC)..."
 
     echo
 
@@ -2248,7 +2248,7 @@ encrypt_text_aes128() {
     status_dependencies
 
     echo
-    echo -e "${GREEN}[➜]${RESET} Encrypting text (AES-128-CBC)..."
+    echo -e "$forward Encrypting text (AES-128-CBC)..."
 
     echo
     read -rp "Enter text: " text
@@ -2279,7 +2279,7 @@ decrypt_text_aes256() {
     status_dependencies
 
     echo
-    echo -e "${GREEN}[➜]${RESET} Decrypting text (AES-256-CBC)..."
+    echo -e "$forward Decrypting text (AES-256-CBC)..."
 
     echo
     read -rp "Enter encrypted text: " text
@@ -2310,7 +2310,7 @@ decrypt_text_aes128() {
     status_dependencies
 
     echo
-    echo -e "${GREEN}[➜]${RESET} Decrypting text (AES-128-CBC)..."
+    echo -e "$forward Decrypting text (AES-128-CBC)..."
 
     echo
     read -rp "Enter encrypted text: " text
@@ -2341,7 +2341,7 @@ encrypt_text_chacha20() {
     status_dependencies
 
     echo
-    echo -e "${GREEN}[➜]${RESET} Encrypting text (ChaCha20)..."
+    echo -e "$forward Encrypting text (ChaCha20)..."
 
     echo
     read -rp "Enter text: " text
@@ -2372,7 +2372,7 @@ decrypt_text_chacha20() {
     status_dependencies
 
     echo
-    echo -e "${GREEN}[➜]${RESET} Decrypting text (ChaCha20)..."
+    echo -e "$forward Decrypting text (ChaCha20)..."
 
     echo
     echo "Paste encrypted Base64 text below:"
@@ -2396,7 +2396,7 @@ decrypt_text_chacha20() {
 }
 
 encrypt_text_base64() {
-    echo -e "${GREEN}[➜]${RESET} Base64 Encode"
+    echo -e "$forward Base64 Encode"
 
     echo
     read -rp "Enter text: " text
@@ -2409,7 +2409,7 @@ encrypt_text_base64() {
 }
 
 decrypt_text_base64() {
-    echo -e "${GREEN}[➜]${RESET} Base64 Decode"
+    echo -e "$forward Base64 Decode"
 
     echo
     read -rp "Enter Base64 text: " text
@@ -2428,7 +2428,7 @@ decrypt_text_base64() {
 }
 
 encrypt_text_ceasar() {
-    echo -e "${GREEN}[➜]${RESET} Caesar Cipher"
+    echo -e "$forward Caesar Cipher"
     echo
 
     read -rp "Enter text: " text
@@ -2458,7 +2458,7 @@ encrypt_text_ceasar() {
 }
 
 decrypt_text_ceasar() {
-    echo -e "${GREEN}[➜]${RESET} Caesar Decipher"
+    echo -e "$forward Caesar Decipher"
 
     echo
     read -rp "Enter text: " text
@@ -2489,7 +2489,7 @@ decrypt_text_ceasar() {
 }
 
 encrypt_text_vigenere() {
-    echo -e "${GREEN}[➜]${RESET} Vigenère Cipher"
+    echo -e "$forward Vigenère Cipher"
 
     echo
     read -rp "Enter text: " text
@@ -2524,7 +2524,7 @@ encrypt_text_vigenere() {
 }
 
 decrypt_text_vigenere() {
-    echo -e "${GREEN}[➜]${RESET} Vigenère Decipher"
+    echo -e "$forward Vigenère Decipher"
 
     echo
     read -rp "Enter text: " text
@@ -2559,7 +2559,7 @@ decrypt_text_vigenere() {
 }
 
 rot13_cipher() {
-    echo -e "${GREEN}[➜]${RESET} ROT13 Cipher"
+    echo -e "$forward ROT13 Cipher"
 
     echo
     read -rp "Enter text: " text
