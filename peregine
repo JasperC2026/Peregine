@@ -2381,9 +2381,12 @@ encrypt_text_base64() {
     result=$(printf "%s" "$text" | base64)
     status=$?
 
-    echo
-    echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
-
+    if [[ $status -ne 0 ]]; then
+        echo "${RED}[!]{RESET} Error occured"
+    else
+        echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
+    fi
+    
     command_executed
 }
 
@@ -2395,7 +2398,6 @@ decrypt_text_base64() {
     result=$(printf "%s" "$text" | base64 -d 2>/dev/null)
 
     if [[ $? -ne 0 ]]; then
-
         echo -e "${RED}[!]${RESET} Invalid Base64 input."
         return 1
     fi
