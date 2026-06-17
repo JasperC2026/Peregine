@@ -3529,8 +3529,6 @@ help() {
         return 0
     fi
 
-    echo -e "${DIVIDER}"
-
     case "$1" in
 
         # ── Networking / OSINT ───────────────────────────────────────────────
@@ -3895,8 +3893,6 @@ help() {
             return 1
             ;;
     esac
-
-    echo -e "${DIVIDER}"
 }
 check_dependencies () {
     # Networking & OSINT
@@ -4525,26 +4521,177 @@ _PEREGINE_COMMANDS=(
 )
 
 _peregine_list_commands() { 
-    echo -e "${CYAN}"
-    echo -e "${DIVIDER}" 
-    cat <<EOF
-'########::'########:'########::'########::'######:::'####:'##::: ##:'########:
- ##.... ##: ##.....:: ##.... ##: ##.....::'##... ##::. ##:: ###:: ##: ##.....::
- ##:::: ##: ##::::::: ##:::: ##: ##::::::: ##:::..:::: ##:: ####: ##: ##:::::::
- ########:: ######::: ########:: ######::: ##::'####:: ##:: ## ## ##: ######:::
- ##.....::: ##...:: :: ##.. ##::: ##...:::: ##::: ##::: ##:: ##. ####: ##...::::
- ##:::::::: ##::::::: ##::. ##:: ##::::::: ##::: ##::: ##:: ##:. ###: ##:::::::
- ##:::::::: ########: ##:::. ##: ########:. ######:::'####: ##::. ##: ########:
-..:::::::::........::..:::::..::........:::......::::....::..::::..::........::
-                                                        
-EOF
-    echo -e "${DIVIDER}" 
+DIM="\e[38;5;67m"       # muted slate blue
+MID="\e[38;5;32m"       # mid blue
+BRIGHT="\e[38;5;75m"    # bright blue
+ACCENT="\e[38;5;111m"   # light blue
+HI="\e[38;5;153m"       # near-white blue
 
-    echo "All commands:"
-    for cmd in "${_PEREGINE_COMMANDS[@]}"; do
-        printf "  %-36s %s\n" "$cmd" "$(help "$cmd" | sed -n '2p')"
-    done
-    echo -e "${DIVIDER}"
+echo -e "
+${DIM} ███████████ ${MID} ██████████${BRIGHT} ███████████  ${ACCENT} ██████████  ${HI} █████████ ${ACCENT} █████${BRIGHT} ██████  ${MID} █████${DIM} ██████████${RESET}
+${DIM}░░███░░░░░███${MID}░░███░░░░░█${BRIGHT}░░███░░░░░███ ${ACCENT}░░███░░░░░█ ${HI} ███░░░░░███${ACCENT}░░███ ${BRIGHT}░░██████ ${MID}░░███${DIM}░░███░░░░░█${RESET}
+${DIM} ░███    ░███${MID} ░███  █ ░ ${BRIGHT} ░███    ░███ ${ACCENT} ░███  █ ░  ${HI}███     ░░░ ${ACCENT} ░███ ${BRIGHT} ░███░███ ${MID}░███${DIM} ░███  █ ░ ${RESET}
+${DIM} ░██████████ ${MID} ░██████   ${BRIGHT} ░██████████  ${ACCENT} ░██████    ${HI}░███         ${ACCENT} ███ ${BRIGHT} ░███░░███${MID}░███${DIM} ░██████   ${RESET}
+${DIM} ░███░░░░░░  ${MID} ░███░░█   ${BRIGHT} ░███░░░░░███ ${ACCENT} ░███░░█    ${HI}░███    █████${ACCENT} ███ ${BRIGHT} ░███ ░░██${MID}████${DIM} ░███░░█   ${RESET}
+${DIM} ░███        ${MID} ░███ ░   █${BRIGHT} ░███    ░███ ${ACCENT} ░███ ░   █ ${HI}░░███  ░░███${ACCENT} ░███ ${BRIGHT} ░███  ░░█${MID}████${DIM} ░███ ░   █${RESET}
+${DIM} █████       ${MID} ██████████${BRIGHT} █████   █████${ACCENT} ██████████ ${HI} ░░█████████${ACCENT} █████${BRIGHT} █████  ${MID}░░███${DIM}   ██████████${RESET}
+${DIM}░░░░░        ${MID}░░░░░░░░░░${BRIGHT}░░░░░   ░░░░░${ACCENT}░░░░░░░░░░ ${HI}  ░░░░░░░░░ ${ACCENT}░░░░░${BRIGHT}░░░░░  ${MID} ░░░░${DIM}░░░░░░░░░░${RESET}
+"
+echo -e "${BLUE}${BOLD} Peregine: A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface.${RESET}"
+echo
+
+echo "See license: peregine license or look at the LICENSE file." 
+echo "See version info: peregine version." 
+echo "Install all dependencies: peregine install_dependencies" 
+echo
+
+echo "All commands included in this toolkit: "
+
+# ── Colors ────────────────────────────────────────────────────────────────────
+DIM="\e[38;5;67m"
+MID="\e[38;5;32m"
+BRIGHT="\e[38;5;75m"
+ACCENT="\e[38;5;111m"
+HI="\e[38;5;153m"
+
+MUTED="\e[38;5;240m"
+LABEL="\e[38;5;33m"
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
+_divider() {
+    printf "${DIM}%s${RESET}\n" "$(printf '─%.0s' {1..72})"
+}
+
+_section() {
+    echo ""
+    printf "${BOLD}${ACCENT}  %-20s${RESET}\n" "── $1"
+    _divider
+}
+
+_cmd() {
+    local name="$1"
+    local alias="$2"
+    if [[ -n "$alias" ]]; then
+        printf "  ${BRIGHT}%-32s${MUTED}%s${RESET}\n" "$name" "$alias"
+    else
+        printf "  ${BRIGHT}%s${RESET}\n" "$name"
+    fi
+}
+
+# ── Network ───────────────────────────────────────────────────────────────────
+_section "network"
+_cmd "whois_lookup"              "whois"
+_cmd "ping"
+_cmd "traceroute"
+_cmd "dns_info"                  "dns"
+_cmd "get_ip"                    "ip"
+_cmd "local_server"
+
+# ── OSINT ─────────────────────────────────────────────────────────────────────
+_section "osint"
+_cmd "network_explorer"          "ne"
+_cmd "intel_report"
+_cmd "ip_osint"
+_cmd "maigret_search"            "maigret"
+_cmd "phone_lookup"              "phone"
+_cmd "web_phone_lookup"
+_cmd "email_lookup"              "email"
+_cmd "site_history"              "site"
+_cmd "site_screenshot"
+
+# ── Encryption — text ─────────────────────────────────────────────────────────
+_section "encryption — text"
+_cmd "encrypt_text_aes256"
+_cmd "decrypt_text_aes256"
+_cmd "encrypt_text_aes128"
+_cmd "decrypt_text_aes128"
+_cmd "encrypt_text_chacha20"
+_cmd "decrypt_text_chacha20"
+_cmd "encrypt_text_ceasar"
+_cmd "decrypt_text_ceasar"
+_cmd "encrypt_text_vigenere"
+_cmd "decrypt_text_vigenere"
+_cmd "encrypt_text_base64"
+_cmd "decrypt_text_base64"
+_cmd "rot13_cipher"              "rot13"
+
+# ── Encryption — files ────────────────────────────────────────────────────────
+_section "encryption — files"
+_cmd "encrypt_file_aes256"
+_cmd "decrypt_file_aes256"
+_cmd "encrypt_file_aes128"
+_cmd "decrypt_file_aes128"
+_cmd "encrypt_file_chacha20"
+_cmd "decrypt_file_chacha20"
+_cmd "encrypt_file_twofish"
+_cmd "decrypt_file_twofish"
+_cmd "encrypt_file_serpent"
+_cmd "decrypt_file_serpent"
+_cmd "generate_key"              "genkey"
+
+# ── Security ──────────────────────────────────────────────────────────────────
+_section "security"
+_cmd "system_audit"              "audit"
+_cmd "rootkit_hunt"              "rootkit"
+_cmd "generate_password"         "genpass"
+_cmd "secure_delete"             "sedl"
+_cmd "secure_empty_trash"        "SET"
+_cmd "secure_shred_dir"          "ssd"
+_cmd "secure_overwrite_free_space" "sofs"
+_cmd "clean_metadata"            "metadata"
+_cmd "remove_temp_files"         "rm_tmp"
+
+# ── Utilities ─────────────────────────────────────────────────────────────────
+_section "utilities"
+_cmd "show_weather"
+_cmd "count_lines_file"
+_cmd "view_cpu_processes"
+_cmd "show_disk_usage"
+_cmd "find_largest_files"
+_cmd "show_edited_files"
+_cmd "record_terminal"
+_cmd "find_broken_symlinks"
+_cmd "find_empty"
+_cmd "update_apps"               "update"
+
+# ── Meta ──────────────────────────────────────────────────────────────────────
+_section "meta"
+_cmd "help"
+_cmd "version"                   "v  V"
+_cmd "config"
+_cmd "check_dependencies"        "cd"
+_cmd "install_dependencies"      "id"
+_cmd "clone_source"              "c"
+_cmd "license"                   "l"
+_cmd "show_random_fact"
+_cmd "show_random_quote"
+
+# ── Licenses ──────────────────────────────────────────────────────────────────
+_section "licenses"
+_cmd "licenses_explained"
+_cmd "gpl_explained"
+_cmd "agpl_explained"
+_cmd "lgpl_explained"
+_cmd "mpl_explained"
+_cmd "mit_explained"
+_cmd "apache_explained"
+_cmd "bsl_explained"
+_cmd "unlicense_explained"
+_cmd "cc_explained"
+_cmd "system_recovery_help"
+
+# ── Category views ────────────────────────────────────────────────────────────
+_section "category views"
+_cmd "osint"
+_cmd "encryption"
+_cmd "networking"
+_cmd "system/security"
+
+echo ""
+_divider
+printf "  ${MUTED}tip: ${BRIGHT}peregine help <cmd>${MUTED} · ${BRIGHT}peregine version${MUTED} · ${BRIGHT}peregine config${RESET}\n"
+_divider
+echo ""
 }
 
     if [[ $# -eq 0 ]]; then
@@ -4555,7 +4702,7 @@ EOF
        "$1"
     else
         echo -e "${RED}[!] Unknown command: $1${RESET}"
-        echo -e "    Run ${CYAN}peregine${RESET} without arguments to list all commands."   
+        echo -e "Run ${CYAN}peregine${RESET} without arguments to list all commands."   
     return 1
     fi
 
