@@ -186,7 +186,6 @@ list_intel_report_options() {
 # Commands
 # Networking
 intel_report() {
-    echo -e "${DIVIDER}"
     current_date="date +”%A, %b %d, %Y %H:%M:%S”"
     
     echo -n "Enter target name: "
@@ -277,12 +276,8 @@ EOF
     done
 
     echo "[->] Command executed" 
-    echo -e "${DIVIDER}"
 }
 local_server() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v python3 >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install python3"
@@ -319,12 +314,8 @@ local_server() {
     fi
 
     echo "[->] Command executed" 
-    echo -e "${DIVIDER}"
 }
 whois_lookup() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v whois >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install whois"
@@ -379,13 +370,10 @@ whois_lookup() {
         echo -e "${output_color}WHOIS Information for $domain:${RESET}"
         echo -e "${output_color}$output${RESET}"
     fi
+
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 ping() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v ping >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install iputils-ping"
@@ -428,12 +416,8 @@ ping() {
     fi
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 traceroute() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v traceroute >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install traceroute"
@@ -483,12 +467,8 @@ traceroute() {
     fi
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 get_ip() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v curl >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install curl"
@@ -508,13 +488,9 @@ get_ip() {
     fi
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 # Osint
 dns_info() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v dig >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install dnsutils"
@@ -568,10 +544,8 @@ dns_info() {
     fi
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 ip_osint() {
-    echo -e "${DIVIDER}"
     echo "[->] Checking dependencies"
 
     if ! command -v curl >/dev/null 2>&1; then
@@ -625,13 +599,10 @@ ip_osint() {
         echo -e "${output_color}OSINT Information for $target:${RESET}"
         echo -e "${output_color}$output${RESET}"
     fi
+
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 maigret_search () {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v maigret >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: pipx install maigret"
@@ -728,13 +699,10 @@ maigret_search () {
         echo -e "${output_color}Maigret results for $username:${RESET}"
         echo -e "${output_color}$output${RESET}"
     fi
+
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 phone_lookup () {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v phoneinfoga >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: bash <( curl -sSL https://raw.githubusercontent.com/sundowndev/phoneinfoga/master/support/scripts/install )"
@@ -794,12 +762,8 @@ phone_lookup () {
     fi
     
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 web_phone_lookup () {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v phoneinfoga >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: bash <( curl -sSL https://raw.githubusercontent.com/sundowndev/phoneinfoga/master/support/scripts/install )"
@@ -851,12 +815,8 @@ web_phone_lookup () {
     fi
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 email_lookup () {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v theharvester >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with:"
@@ -914,12 +874,8 @@ email_lookup () {
     fi
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 site_history () {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v waybackurls >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: go install github.com/tomnomnom/waybackurls@latest"
@@ -968,12 +924,8 @@ site_history () {
     fi
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 site_screenshot () {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v gowitness >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: go install github.com/sensepost/gowitness@latest"
@@ -1039,12 +991,8 @@ site_screenshot () {
     fi
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 network_explorer () {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v nmap >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install nmap"
@@ -1123,7 +1071,6 @@ network_explorer () {
     fi
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 # System Maintenance
 update_apps() {
@@ -1157,11 +1104,8 @@ update_apps() {
     fi
     
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 show_edited_files() {
-    echo -e "${DIVIDER}"
-
     output=$(ls -lt --time-style=long-iso 2>&1)
     status=$?
 
@@ -1178,9 +1122,6 @@ show_edited_files() {
     echo -e "${DIVIDER}"
 }
 show_weather() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v curl >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install curl"
@@ -1200,11 +1141,8 @@ show_weather() {
     fi
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 count_lines_file() {
-    echo -e "${DIVIDER}"
-
     echo "Enter file to count lines in: "
     read -r file
 
@@ -1224,12 +1162,8 @@ count_lines_file() {
     fi 
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 view_cpu_processes() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v top >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install procps"
@@ -1241,12 +1175,8 @@ view_cpu_processes() {
     top
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 show_disk_usage() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v df >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install coreutils"
@@ -1258,12 +1188,8 @@ show_disk_usage() {
     df -h
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 find_largest_files() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v find >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install findutils"
@@ -1286,12 +1212,8 @@ find_largest_files() {
     find "$target" -type f -exec du -h {} + | sort -rh | head -n 10
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 record_terminal() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v script >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install bsdutils"
@@ -1312,12 +1234,8 @@ record_terminal() {
     echo -e "${YELLOW}[i]${RESET} Type 'exit' or press Ctrl+D to stop recording."
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 find_empty() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v find >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install findutils"
@@ -1340,12 +1258,8 @@ find_empty() {
     find "$target" -empty
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 find_broken_symlinks() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v find >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install findutils"
@@ -1368,13 +1282,9 @@ find_broken_symlinks() {
     find "$target" -xtype l
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 # Security
 secure_shred_dir() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v shred >/dev/null 2>&1; then # Check if shred is installed 
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install coreutils"
@@ -1485,12 +1395,8 @@ secure_shred_dir() {
     echo -e "${GREEN}[+]${RESET} Secure directory shred completed."
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}" 
 }
 secure_empty_trash() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v shred >/dev/null 2>&1; then
         echo -e "${RED}[!]${RESET} Required dependency not installed"
         echo "Install with: sudo apt install coreutils"
@@ -1544,12 +1450,8 @@ secure_empty_trash() {
     fi
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 secure_overwrite_free_space() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v sfill &> /dev/null; then # Check if sfill is installed
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install secure-delete"
@@ -1592,12 +1494,8 @@ secure_overwrite_free_space() {
     fi
     
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 system_audit() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v lynis &> /dev/null; then # Check if lynis is installed
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install lynis"
@@ -1646,12 +1544,8 @@ local report="/var/log/lynis-report.dat"
     fi
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 rootkit_hunt() {
-    echo -e "${DIVIDER}"
-    echo "[->] Checking dependencies"
-
     if ! command -v chkrootkit  &> /dev/null; then # Check if chkrootkit is installed
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install chkrootkit"
@@ -1695,11 +1589,8 @@ rootkit_hunt() {
     fi
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 remove_temp_files() {
-    echo -e "${DIVIDER}"
-
     if rm -rf /tmp/* 2>/dev/null; then
         echo -e "${GREEN}[+] Temporary files removed.${RESET}"
     else
@@ -1709,7 +1600,6 @@ remove_temp_files() {
     fi
 
     echo "[->] Command executed"
-    echo -e "${DIVIDER}"
 }
 generate_password() {
     echo -e "${DIVIDER}"
