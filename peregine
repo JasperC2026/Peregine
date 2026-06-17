@@ -36,6 +36,8 @@ TRASH_INFO="$HOME/.local/share/Trash/info"
 status_negative="${RED}[!]${RESET}"
 status_positive="${GREEN}[✔]${RESET}"
 forward="${GREEN}[➜]${RESET}" 
+arrow="➜"
+
 # Configs
 dependencie_notice=show # Show dependencie installed message, standard: show.
 output_color=CYAN # Color for command output, standard: CYAN.
@@ -1757,7 +1759,7 @@ clean_metadata() {
 
     local remaining
     remaining=$(exiftool "$outfile" 2>/dev/null | grep -v "^File\|^Directory\|^MIME\|^ExifTool" | wc -l)
-    echo -e "${GREEN}[+]${RESET} Metadata removed → $outfile"
+    echo -e "${GREEN}[+]${RESET} Metadata removed $arrow $outfile"
     echo -e "${output_color}[i] Remaining metadata fields: $remaining (filesystem/format fields only).${RESET}"
 
 
@@ -1838,10 +1840,10 @@ encrypt_file_aes256() {
         echo -e "\a"
         echo -e "${RED}[!]${RESET} Encryption failed."
         return 1
+    else
+        echo -e "${GREEN}[+]${RESET} File encrypted $arrow $outfile"
+        echo
     fi
-
-    echo -e "${GREEN}[+]${RESET} File encrypted → $outfile"
-    echo
 
     read -rp "Remove original file? (y/n): " remove_original
 
@@ -1889,7 +1891,7 @@ encrypt_file_aes128() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} File encrypted → $outfile"
+    echo -e "${GREEN}[+]${RESET} File encrypted $arrow $outfile"
 
     echo
     read -rp "Remove original file? (y/n): " remove_original
@@ -1939,7 +1941,7 @@ decrypt_file_aes256() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} File decrypted → $outfile"
+    echo -e "${GREEN}[+]${RESET} File decrypted $arrow $outfile"
 
     command_executed
     echo -e "${DIVIDER}"
@@ -1977,7 +1979,7 @@ decrypt_file_aes128() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} File decrypted → $outfile"
+    echo -e "${GREEN}[+]${RESET} File decrypted $arrow $outfile"
 
     command_executed
 }
@@ -2014,7 +2016,7 @@ encrypt_file_chacha20() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} File encrypted → $outfile"
+    echo -e "${GREEN}[+]${RESET} File encrypted $arrow $outfile"
 
     command_executed
 }
@@ -2051,7 +2053,7 @@ decrypt_file_chacha20() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} File decrypted → $outfile"
+    echo -e "${GREEN}[+]${RESET} File decrypted $arrow $outfile"
 
     command_executed
 }
@@ -2088,7 +2090,7 @@ encrypt_file_twofish() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} File encrypted → $outfile"
+    echo -e "${GREEN}[+]${RESET} File encrypted $arrow $outfile"
 
     command_executed
 }
@@ -2125,7 +2127,7 @@ decrypt_file_twofish() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} File decrypted → $outfile"
+    echo -e "${GREEN}[+]${RESET} File decrypted $arrow $outfile"
 
     command_executed
 }
@@ -2162,7 +2164,7 @@ encrypt_file_serpent() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} File encrypted → $outfile"
+    echo -e "${GREEN}[+]${RESET} File encrypted $arrow $outfile"
 
     command_executed
 }
@@ -2199,7 +2201,7 @@ decrypt_file_serpent() {
         return 1
     fi
 
-    echo -e "${GREEN}[+]${RESET} File decrypted → $outfile"
+    echo -e "${GREEN}[+]${RESET} File decrypted $arrow $outfile"
 
     command_executed
     echo -e "${DIVIDER}"
