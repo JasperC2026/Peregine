@@ -278,7 +278,7 @@ EOF
         fi
     done
 
-command_executed 
+    command_executed 
 }
 local_server() {
     if ! command -v python3 >/dev/null 2>&1; then
@@ -316,7 +316,7 @@ local_server() {
         echo -e "${GREEN}[+]${RESET} Local server started successfully on port $port"
     fi
 
-command_executed 
+    command_executed 
 }
 whois_lookup() {
     if ! command -v whois >/dev/null 2>&1; then
@@ -374,7 +374,7 @@ whois_lookup() {
         echo -e "${output_color}$output${RESET}"
     fi
 
-command_executed
+    command_executed
 }
 ping() {
     if ! command -v ping >/dev/null 2>&1; then
@@ -418,7 +418,7 @@ ping() {
         echo -e "${GREEN}[+]${RESET} Ping successful"
     fi
 
-command_executed
+    command_executed
 }
 traceroute() {
     if ! command -v traceroute >/dev/null 2>&1; then
@@ -469,7 +469,7 @@ traceroute() {
         echo -e "${output_color}$output${RESET}"
     fi
 
-command_executed
+    command_executed
 }
 get_ip() {
     if ! command -v curl >/dev/null 2>&1; then
@@ -490,7 +490,7 @@ get_ip() {
         echo -e "${GREEN}[+]${RESET} Your public IP address is: ${CYAN}$output${RESET}"
     fi
 
-command_executed
+    command_executed
 }
 # Osint
 dns_info() {
@@ -546,7 +546,7 @@ dns_info() {
         echo -e "${output_color}$output${RESET}"
     fi
 
-command_executed
+    command_executed
 }
 ip_osint() {
 
@@ -603,7 +603,7 @@ ip_osint() {
         echo -e "${output_color}$output${RESET}"
     fi
 
-command_executed
+    command_executed
 }
 maigret_search () {
     if ! command -v maigret >/dev/null 2>&1; then
@@ -703,7 +703,7 @@ maigret_search () {
         echo -e "${output_color}$output${RESET}"
     fi
 
-command_executed
+    command_executed
 }
 phone_lookup () {
     if ! command -v phoneinfoga >/dev/null 2>&1; then
@@ -764,7 +764,7 @@ phone_lookup () {
         echo -e "${output_color}$output${RESET}"
     fi
     
-command_executed
+    command_executed
 }
 web_phone_lookup () {
     if ! command -v phoneinfoga >/dev/null 2>&1; then
@@ -817,7 +817,7 @@ web_phone_lookup () {
         echo -e "Access it at: ${output_color}http://localhost:$port${RESET}"
     fi
 
-command_executed
+    command_executed
 }
 email_lookup () {
     if ! command -v theharvester >/dev/null 2>&1; then
@@ -876,7 +876,7 @@ email_lookup () {
         echo -e "${output_color}$output${RESET}"
     fi
 
-command_executed
+    command_executed
 }
 site_history () {
     if ! command -v waybackurls >/dev/null 2>&1; then
@@ -926,7 +926,7 @@ site_history () {
         echo -e "${output_color}$output${RESET}"
     fi
 
-command_executed
+    command_executed
 }
 site_screenshot () {
     if ! command -v gowitness >/dev/null 2>&1; then
@@ -993,7 +993,7 @@ site_screenshot () {
         echo -e "${output_color}Screenshot saved to: $save_dir${RESET}"
     fi
 
-command_executed
+    command_executed
 }
 network_explorer () {
     if ! command -v nmap >/dev/null 2>&1; then
@@ -1073,7 +1073,7 @@ network_explorer () {
         echo -e "${output_color}$output${RESET}"
     fi
 
-command_executed
+    command_executed
 }
 # System Maintenance
 update_apps() {
@@ -1106,7 +1106,7 @@ update_apps() {
         return 1
     fi
     
-command_executed
+    command_executed
 }
 show_edited_files() {
     output=$(ls -lt --time-style=long-iso 2>&1)
@@ -1121,7 +1121,7 @@ show_edited_files() {
         echo -e "${output_color}$output${RESET}"
     fi
 
-command_executed
+    command_executed
     echo -e "${DIVIDER}"
 }
 show_weather() {
@@ -1143,7 +1143,7 @@ show_weather() {
         echo -e "${GREEN}[+]${RESET} The wheather is: ${output_color}$output${RESET}"
     fi
 
-command_executed
+    command_executed
 }
 count_lines_file() {
     echo "Enter file to count lines in: "
@@ -1164,7 +1164,7 @@ count_lines_file() {
         echo -e "${GREEN}[+]${RESET} Total lines: ${output_color}$output${RESET}"
     fi 
 
-command_executed
+    command_executed
 }
 view_cpu_processes() {
     if ! command -v top >/dev/null 2>&1; then
@@ -1177,7 +1177,7 @@ view_cpu_processes() {
 
     top
 
-command_executed
+    command_executed
 }
 show_disk_usage() {
     if ! command -v df >/dev/null 2>&1; then
@@ -1190,7 +1190,7 @@ show_disk_usage() {
 
     df -h
 
-command_executed
+    command_executed
 }
 find_largest_files() {
     if ! command -v find >/dev/null 2>&1; then
@@ -1214,7 +1214,7 @@ find_largest_files() {
 
     find "$target" -type f -exec du -h {} + | sort -rh | head -n 10
 
-command_executed
+    command_executed
 }
 record_terminal() {
     if ! command -v script >/dev/null 2>&1; then
@@ -1236,7 +1236,7 @@ record_terminal() {
     echo -e "${GREEN}[+]${RESET} Terminal recording is being saved to: ${output_color}$filename${RESET}"
     echo -e "${YELLOW}[i]${RESET} Type 'exit' or press Ctrl+D to stop recording."
 
-command_executed
+    command_executed
 }
 find_empty() {
     if ! command -v find >/dev/null 2>&1; then
@@ -1260,7 +1260,7 @@ find_empty() {
 
     find "$target" -empty
 
-command_executed
+    command_executed
 }
 find_broken_symlinks() {
     if ! command -v find >/dev/null 2>&1; then
@@ -1284,7 +1284,7 @@ find_broken_symlinks() {
 
     find "$target" -xtype l
 
-command_executed
+    command_executed
 }
 # Security
 secure_shred_dir() {
@@ -1397,7 +1397,7 @@ secure_shred_dir() {
     echo
     echo -e "${GREEN}[+]${RESET} Secure directory shred completed."
 
-command_executed
+    command_executed
 }
 secure_empty_trash() {
     if ! command -v shred >/dev/null 2>&1; then
@@ -1452,7 +1452,7 @@ secure_empty_trash() {
         return 1
     fi
 
-command_executed
+    command_executed
 }
 secure_overwrite_free_space() {
     if ! command -v sfill &> /dev/null; then # Check if sfill is installed
@@ -1496,7 +1496,7 @@ secure_overwrite_free_space() {
         echo -e "${GREEN}[+]${RESET} Secure free space overwrite completed successfully on $root_partition."
     fi
     
-command_executed
+    command_executed
 }
 system_audit() {
     if ! command -v lynis &> /dev/null; then # Check if lynis is installed
@@ -1546,7 +1546,7 @@ local report="/var/log/lynis-report.dat"
         echo -e "${DIVIDER}"
     fi
 
-command_executed
+    command_executed
 }
 rootkit_hunt() {
     if ! command -v chkrootkit  &> /dev/null; then # Check if chkrootkit is installed
@@ -1591,7 +1591,7 @@ rootkit_hunt() {
         return 1
     fi
 
-command_executed
+    command_executed
 }
 remove_temp_files() {
     if rm -rf /tmp/* 2>/dev/null; then
@@ -1602,7 +1602,7 @@ remove_temp_files() {
         return 1
     fi
 
-command_executed
+    command_executed
 }
 generate_password() {
     if ! command -v openssl &> /dev/null; then # Check if openssl is installed
@@ -1643,7 +1643,7 @@ generate_password() {
     entropy_full=$(awk  "BEGIN { printf \"%d\", $length * 6.554 }")
     echo -e "${output_color}[i] Estimated entropy — alphanumeric: ~${entropy_alnum} bits  |  with symbols: ~${entropy_full} bits${RESET}"
 
-command_executed
+    command_executed
 }
 secure_delete() {
     if ! command -v shred &> /dev/null; then # Check if shred is installed
@@ -1700,7 +1700,7 @@ secure_delete() {
         return 1
     fi
 
-command_executed
+    command_executed
 }
 
 clean_metadata() {
@@ -1761,7 +1761,7 @@ clean_metadata() {
     echo -e "${output_color}[i] Remaining metadata fields: $remaining (filesystem/format fields only).${RESET}"
 
 
-command_executed
+    command_executed
 }
 # Encryption
 generate_key () {
@@ -1807,7 +1807,7 @@ generate_key () {
         echo -e "${output_color}$key${RESET}"
     fi
 
-command_executed
+    command_executed
 }
 encrypt_file_aes256() {
     if ! command -v openssl >/dev/null 2>&1; then
@@ -1855,7 +1855,7 @@ encrypt_file_aes256() {
         fi
     fi
 
-command_executed
+    command_executed
 }
 
 encrypt_file_aes128() {
@@ -1904,7 +1904,7 @@ encrypt_file_aes128() {
         fi
     fi
 
-command_executed
+    command_executed
 }
 
 decrypt_file_aes256() {
@@ -1941,7 +1941,7 @@ decrypt_file_aes256() {
 
     echo -e "${GREEN}[+]${RESET} File decrypted → $outfile"
 
-command_executed
+    command_executed
     echo -e "${DIVIDER}"
 }
 
@@ -1979,7 +1979,7 @@ decrypt_file_aes128() {
 
     echo -e "${GREEN}[+]${RESET} File decrypted → $outfile"
 
-command_executed
+    command_executed
 }
 
 encrypt_file_chacha20() {
@@ -2016,7 +2016,7 @@ encrypt_file_chacha20() {
 
     echo -e "${GREEN}[+]${RESET} File encrypted → $outfile"
 
-command_executed
+    command_executed
 }
 
 decrypt_file_chacha20() {
@@ -2053,7 +2053,7 @@ decrypt_file_chacha20() {
 
     echo -e "${GREEN}[+]${RESET} File decrypted → $outfile"
 
-command_executed
+    command_executed
 }
 
 encrypt_file_twofish() {
@@ -2090,7 +2090,7 @@ encrypt_file_twofish() {
 
     echo -e "${GREEN}[+]${RESET} File encrypted → $outfile"
 
-command_executed
+    command_executed
 }
 
 decrypt_file_twofish() {
@@ -2127,7 +2127,7 @@ decrypt_file_twofish() {
 
     echo -e "${GREEN}[+]${RESET} File decrypted → $outfile"
 
-command_executed
+    command_executed
 }
 
 encrypt_file_serpent() {
@@ -2164,7 +2164,7 @@ encrypt_file_serpent() {
 
     echo -e "${GREEN}[+]${RESET} File encrypted → $outfile"
 
-command_executed
+    command_executed
 }
 
 decrypt_file_serpent() {
@@ -2201,7 +2201,7 @@ decrypt_file_serpent() {
 
     echo -e "${GREEN}[+]${RESET} File decrypted → $outfile"
 
-command_executed
+    command_executed
     echo -e "${DIVIDER}"
 }
 
@@ -2234,7 +2234,7 @@ encrypt_text_aes256() {
     echo
     echo -e "${GREEN}[+]${RESET} Text encrypted."
 
-command_executed
+    command_executed
     echo -e "${DIVIDER}"
 }
 
@@ -2266,7 +2266,7 @@ encrypt_text_aes128() {
     echo
     echo -e "${GREEN}[+]${RESET} Text encrypted."
 
-command_executed
+    command_executed
 }
 
 decrypt_text_aes256() {
@@ -2297,7 +2297,7 @@ decrypt_text_aes256() {
     echo
     echo -e "${GREEN}[+]${RESET} Text decrypted."
 
-command_executed
+    command_executed
 }
 
 decrypt_text_aes128() {
@@ -2328,7 +2328,7 @@ decrypt_text_aes128() {
     echo
     echo -e "${GREEN}[+]${RESET} Text decrypted."
 
-command_executed
+    command_executed
 }
 
 encrypt_text_chacha20() {
@@ -2359,7 +2359,7 @@ encrypt_text_chacha20() {
     echo
     echo -e "${GREEN}[+]${RESET} Text encrypted."
 
-command_executed
+    command_executed
 }
 
 decrypt_text_chacha20() {
@@ -2392,7 +2392,7 @@ decrypt_text_chacha20() {
     echo
     echo -e "${GREEN}[+]${RESET} Text decrypted."
 
-command_executed
+    command_executed
 }
 
 encrypt_text_base64() {
@@ -2405,7 +2405,7 @@ encrypt_text_base64() {
     echo
     echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
 
-command_executed
+    command_executed
 }
 
 decrypt_text_base64() {
@@ -2424,7 +2424,7 @@ decrypt_text_base64() {
     echo
     echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
 
-command_executed
+    command_executed
 }
 
 encrypt_text_ceasar() {
@@ -2454,7 +2454,7 @@ encrypt_text_ceasar() {
 
     echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
 
-command_executed
+    command_executed
 }
 
 decrypt_text_ceasar() {
@@ -2485,7 +2485,7 @@ decrypt_text_ceasar() {
     }')
     echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
 
-command_executed
+    command_executed
 }
 
 encrypt_text_vigenere() {
@@ -2520,7 +2520,7 @@ encrypt_text_vigenere() {
 
     echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
 
-command_executed
+    command_executed
 }
 
 decrypt_text_vigenere() {
@@ -2555,7 +2555,7 @@ decrypt_text_vigenere() {
 
     echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
 
-command_executed
+    command_executed
 }
 
 rot13_cipher() {
@@ -2568,7 +2568,7 @@ rot13_cipher() {
     echo
     echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
     
-command_executed
+    command_executed
 }
 # Other
 system_recovery_help() {
@@ -3117,7 +3117,7 @@ clone_source() {
         echo -e "${GREEN}[+]${RESET} Source code cloned successfully."
     fi
 
-command_executed
+    command_executed
     echo -e "${DIVIDER}"
 }
 encryption() {
