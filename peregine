@@ -4521,22 +4521,16 @@ _PEREGINE_COMMANDS=(
 )
 
 _peregine_list_commands() { 
-DIM="\e[38;5;67m"       # muted slate blue
-MID="\e[38;5;32m"       # mid blue
-BRIGHT="\e[38;5;75m"    # bright blue
-ACCENT="\e[38;5;111m"   # light blue
-HI="\e[38;5;153m"       # near-white blue
-
-echo -e "
-${DIM} ███████████ ${MID} ██████████${BRIGHT} ███████████  ${ACCENT} ██████████  ${HI} █████████ ${ACCENT} █████${BRIGHT} ██████  ${MID} █████${DIM} ██████████${RESET}
-${DIM}░░███░░░░░███${MID}░░███░░░░░█${BRIGHT}░░███░░░░░███ ${ACCENT}░░███░░░░░█ ${HI} ███░░░░░███${ACCENT}░░███ ${BRIGHT}░░██████ ${MID}░░███${DIM}░░███░░░░░█${RESET}
-${DIM} ░███    ░███${MID} ░███  █ ░ ${BRIGHT} ░███    ░███ ${ACCENT} ░███  █ ░  ${HI}███     ░░░ ${ACCENT} ░███ ${BRIGHT} ░███░███ ${MID}░███${DIM} ░███  █ ░ ${RESET}
-${DIM} ░██████████ ${MID} ░██████   ${BRIGHT} ░██████████  ${ACCENT} ░██████    ${HI}░███         ${ACCENT} ███ ${BRIGHT} ░███░░███${MID}░███${DIM} ░██████   ${RESET}
-${DIM} ░███░░░░░░  ${MID} ░███░░█   ${BRIGHT} ░███░░░░░███ ${ACCENT} ░███░░█    ${HI}░███    █████${ACCENT} ███ ${BRIGHT} ░███ ░░██${MID}████${DIM} ░███░░█   ${RESET}
-${DIM} ░███        ${MID} ░███ ░   █${BRIGHT} ░███    ░███ ${ACCENT} ░███ ░   █ ${HI}░░███  ░░███${ACCENT} ░███ ${BRIGHT} ░███  ░░█${MID}████${DIM} ░███ ░   █${RESET}
-${DIM} █████       ${MID} ██████████${BRIGHT} █████   █████${ACCENT} ██████████ ${HI} ░░█████████${ACCENT} █████${BRIGHT} █████  ${MID}░░███${DIM}   ██████████${RESET}
-${DIM}░░░░░        ${MID}░░░░░░░░░░${BRIGHT}░░░░░   ░░░░░${ACCENT}░░░░░░░░░░ ${HI}  ░░░░░░░░░ ${ACCENT}░░░░░${BRIGHT}░░░░░  ${MID} ░░░░${DIM}░░░░░░░░░░${RESET}
-"
+cat << EOF
+ /$$$$$$$  /$$$$$$$$ /$$$$$$$  /$$$$$$$$  /$$$$$$  /$$$$$$ /$$   /$$ /$$$$$$$$
+| $$__  $$| $$_____/| $$__  $$| $$_____/ /$$__  $$|_  $$_/| $$$ | $$| $$_____/
+| $$  \ $$| $$      | $$  \ $$| $$      | $$  \__/  | $$  | $$$$| $$| $$      
+| $$$$$$$/| $$$$$   | $$$$$$$/| $$$$$   | $$ /$$$$  | $$  | $$ $$ $$| $$$$$   
+| $$____/ | $$__/   | $$__  $$| $$__/   | $$|_  $$  | $$  | $$  $$$$| $$__/   
+| $$      | $$      | $$  \ $$| $$      | $$  \ $$  | $$  | $$\  $$$| $$      
+| $$      | $$$$$$$$| $$  | $$| $$$$$$$$|  $$$$$$/ /$$$$$$| $$ \  $$| $$$$$$$$
+|__/      |________/|__/  |__/|________/ \______/ |______/|__/  \__/|________/
+EOF
 echo -e "${BLUE}${BOLD} Peregine: A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface.${RESET}"
 echo
 
