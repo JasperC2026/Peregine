@@ -4692,7 +4692,9 @@ echo ""
     elif [[ "$1" == "help" ]]; then
        help "$2"
     elif [[ " ${_PEREGINE_COMMANDS[*]} " == *" $1 "* ]]; then
-       "$1"
+        cmd="$1"
+        shift
+        "$cmd" "$@"
     else
         echo -e "${RED}[!] Unknown command: $1${RESET}"
         echo -e "Run ${CYAN}peregine${RESET} without arguments to list all commands."   
