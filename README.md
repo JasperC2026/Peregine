@@ -118,6 +118,7 @@ Required dependencie for using loading animations: https://github.com/Silejonu/b
 ```bash  
 git clone https://github.com/Silejonu/bash_loading_animations
 ```  
+See install.sh how to make it properly work.
 
 **Install everything at once (Debian/Ubuntu):**  
    
