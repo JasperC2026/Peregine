@@ -630,10 +630,14 @@ dns_info() {
             return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        animation_begin
         output=$(torsocks dig "$domain" ANY +noall +answer 2>&1)
+        animation_end
         status=$?
     else 
+        animation_begin
         output=$(dig "$domain" ANY +noall +answer 2>&1)
+        animation_end
         status=$?
     fi
 
@@ -688,10 +692,14 @@ ip_osint() {
             return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        animation_begin
         output=$(torsocks curl -s --max-time 10 "https://ipinfo.io/$target/json" 2>&1)
+        animation_end
         status=$?
     else 
+        animation_begin
         output=$(curl -s --max-time 10 "https://ipinfo.io/$target/json" 2>&1)
+        animation_end
         status=$?
     fi
 
@@ -754,10 +762,14 @@ maigret_search () {
                 return 1
             fi
             echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+            animation_begin
             torsocks maigret -a --pdf "$username" 2>&1
+            animation_end
             status=$?
         else 
+            animation_begin
             maigret -a --pdf "$username" 2>&1
+            animation_end
             status=$?
         fi
     elif [[ "$output_choice" =~ ^[Hh]$ ]]; then
@@ -772,10 +784,14 @@ maigret_search () {
                 return 1
             fi
             echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+            animation_begin
             torsocks maigret -a --html "$username" 2>&1
+            animation_end
             status=$?
         else 
+            animation_begin
             maigret -a --html "$username" 2>&1
+            animation_end
             status=$?
         fi
     elif [[ "$output_choice" =~ ^[Tt]$ ]]; then
@@ -790,10 +806,14 @@ maigret_search () {
                 return 1
             fi
             echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+            animation_begin
             torsocks maigret -a "$username" 2>&1
+            animation_end
             status=$?
         else 
+            animation_begin
             maigret -a "$username" 2>&1
+            animation_end
             status=$?
         fi
     fi
@@ -853,10 +873,14 @@ phone_lookup () {
             return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        animation_begin
         output=$(torsocks phoneinfoga scan -n "$phone" 2>&1)
+        animation_end
         status=$?
     else 
+        animation_begin
         output=$(phoneinfoga scan -n "$phone" 2>&1)
+        animation_end
         status=$?
     fi
 
@@ -906,9 +930,13 @@ web_phone_lookup () {
     echo -n "Confirm hosting PhoneInfoga web interface on port $port? (y/n): "
     read -r confirm
 
+    echo -e "Access it at: ${output_color}http://localhost:$port${RESET}"
+
     if [[ "$confirm" =~ ^[Yy]$ ]]; then
         echo -e "${GREEN}[+]${RESET} Starting PhoneInfoga web interface on port $port..."
+        animation_begin
         phoneinfoga serve -p "$port"
+        animation_end
         status=$?
     else
         echo -e "${YELLOW}[i]${RESET} Web interface setup cancelled."
@@ -918,9 +946,6 @@ web_phone_lookup () {
     if [[ $status -ne 0 ]]; then
         echo -e "${RED}[!]${RESET} Failed to start web interface: $output"
         return 1
-    else
-        echo -e "${GREEN}[+]${RESET} PhoneInfoga web interface started successfully on port $port"
-        echo -e "Access it at: ${output_color}http://localhost:$port${RESET}"
     fi
 
     command_executed
@@ -970,10 +995,14 @@ email_lookup () {
             return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        animation_begin
         output=$(torsocks theharvester -d "$domain" -b google,bing,dnsdumpster,crtsh 2>&1)
+        animation_end
         status=$?
     else
+        animation_begin
         output=$(theharvester -d "$domain" -b google,bing,dnsdumpster,crtsh 2>&1)
+        animation_end
         status=$?
     fi
 
@@ -1023,10 +1052,14 @@ site_history () {
             return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        animation_begin
         output=$(echo "$target" | torsocks waybackurls -dates 2>&1)
+        animation_end
         status=$?
     else
+        animation_begin
         output=$(echo "$target" | waybackurls -dates 2>&1)
+        animation_end
         status=$?
     fi
 
@@ -1094,10 +1127,14 @@ site_screenshot () {
             return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        animation_begin
         output=$(torsocks gowitness scan single --url "$target" --screenshot-path "$save_dir" 2>&1)
+        animation_end
         status=$?
     else
+        animation_begin
         output=$(gowitness scan single --url "$target" --screenshot-path "$save_dir" 2>&1)
+        animation_end
         status=$?
     fi
 
@@ -1180,7 +1217,9 @@ network_explorer () {
         [Pp]) nmap_flags="-p-" ;;
     esac
 
+    animation_begin
     output=$(sudo $tor_prefix nmap $nmap_flags "$target" 2>&1)
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
