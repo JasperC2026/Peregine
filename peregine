@@ -8,7 +8,7 @@
 # Version: 3.9
 
 # Loading animations source
-source /usr/local/bin/peregine_loading.sh # Copyright (c) 2022 Silejonu
+source /usr/local/bin/peregine_loading.sh # Copyright (c) Silejonu
 
 # Variables
 written_in="Bash/shell"
