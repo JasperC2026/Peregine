@@ -4412,8 +4412,8 @@ test_colors() {
     echo -e "${DIVIDER}"
 }
 test_loading_animations() {
-    BLA::start_loading_animation "${BLA_vertical_block[@]}"
-    sudo apt update
+    BLA::start_loading_animation "${BLA_classic[@]}"
+    sleep 10
     BLA::stop_loading_animation
 }
 config() {
