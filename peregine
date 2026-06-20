@@ -203,7 +203,13 @@ list_intel_report_options() {
 
     rm -f "$tmpfile"
 }
-# Commands
+animation_begin() {
+    BLA::start_loading_animation "${BLA_classic[@]}"
+}
+animation_end() {
+    BLA::stop_loading_animation
+}
+# Commands 
 # Networking
 intel_report() {
     current_date="date +”%A, %b %d, %Y %H:%M:%S”"
@@ -360,9 +366,11 @@ local_server() {
     if [[ "$confirm" =~ ^[Yy]$ ]]; then
         echo -n "Enter port number (default 8000): "
         read -r port
-        BLA::start_loading_animation "${BLA_classic[@]}"
+  
+        animation_begin
         python3 -m http.server "$port"
-        BLA::stop_loading_animation
+        animation_end
+
         status=$?
     else
         echo -e "${YELLOW}[i]${RESET} Local server setup cancelled."
@@ -417,10 +425,14 @@ whois_lookup() {
         fi
 
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        animation_begin
         output=$(torsocks whois $domain 2>&1)
+        animation_end
         status=$?
     else 
+        animation_begin
         output=$(whois $domain 2>&1)
+        animation_end
         status=$?
     fi
 
@@ -474,10 +486,14 @@ ping() {
             return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        animation_begin
         torsocks "$(command -v ping)" -c 6 "$target"    
+        animation_end
         status=$?
     else 
+        animation_begin
         command ping -c 6 "$target"    
+        animation_end
         status=$?
     fi
 
@@ -528,10 +544,14 @@ traceroute() {
             return 1
         fi
         echo -e "${GREEN}[+]${RESET} Routing through Tor..."
+        animation_begin
         output=$(torsocks "$(command -v traceroute)" "$target" 2>&1)  
+        animation_end
         status=$?
     else 
+        animation_begin
         output=$(command traceroute "$target" 2>&1)   
+        animation_end
         status=$?
     fi
 
@@ -555,7 +575,9 @@ get_ip() {
 
     status_dependencies
 
+    animation_begin
     output=$(curl -s --max-time 5 ifconfig.me 2>&1)
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
