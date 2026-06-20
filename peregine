@@ -110,6 +110,13 @@ risk_notice () {
         return 1
     fi
 }
+ip_leak_warning () {
+    echo "You are not using the tor option provided, please note running this command without tor can leak your IP to qeuried sources."
+    echo "Also you can use a VPN or a proxy to hide your IP."
+
+    echo
+    risk_notice  
+}
 terms_notice () {
     echo "Do you accept these terms and want to proceed? (y/n): "
     read -r confirm
@@ -328,6 +335,9 @@ whois_lookup() {
 
     status_dependencies
 
+    ip_leak_warning
+    echo
+
     echo -n "Enter domain: "
     read -r domain
 
@@ -386,6 +396,9 @@ ping() {
 
     status_dependencies
 
+    ip_leak_warning
+    echo
+
     echo -n "Enter IP address or domain to ping: "
     read -r target
 
@@ -429,6 +442,9 @@ traceroute() {
     fi
 
     status_dependencies
+
+    ip_leak_warning
+    echo
 
     echo -n "Enter IP address or domain to traceroute: "
     read -r target
@@ -507,6 +523,9 @@ dns_info() {
     osint_disclaimer
     echo
 
+    ip_leak_warning
+    echo
+
     echo -n "Enter domain to retrieve DNS information: "
     read -r domain
 
@@ -550,8 +569,6 @@ dns_info() {
     command_executed
 }
 ip_osint() {
-
-
     if ! command -v curl >/dev/null 2>&1; then
         echo "${RED}[!]${RESET} Required dependencie not installed"
         echo "Install with: sudo apt install curl"
@@ -562,6 +579,9 @@ ip_osint() {
 
     echo
     osint_disclaimer
+    echo
+
+    ip_leak_warning
     echo
 
     echo -n "Enter IP address to perform OSINT on: "
@@ -617,6 +637,9 @@ maigret_search () {
 
     echo
     osint_disclaimer
+    echo
+
+    ip_leak_warning
     echo
 
     echo -n "Enter username to search for: "
@@ -716,6 +739,9 @@ phone_lookup () {
 
     echo
     osint_disclaimer
+    echo
+
+    ip_leak_warning
     echo
 
     echo -n "Enter phone number (with country code, e.g. +1234567890): "
@@ -833,6 +859,9 @@ email_lookup () {
     osint_disclaimer
     echo
 
+    ip_leak_warning
+    echo
+
     echo -n "Enter email address to search for: "
     read -r email
 
@@ -889,6 +918,9 @@ site_history () {
     osint_disclaimer
     echo
 
+    ip_leak_warning
+    echo
+
     echo -n "Enter target website: "
     read -r target
 
@@ -938,6 +970,9 @@ site_screenshot () {
     
     echo
     osint_disclaimer
+    echo
+
+    ip_leak_warning
     echo
 
     echo -n "Enter target website (include http:// or https://): "
@@ -1007,6 +1042,9 @@ network_explorer () {
     echo
 
     warning_privilege_escalation
+    echo
+
+    ip_leak_warning
     echo
 
     if [[ $EUID -ne 0 ]]; then
