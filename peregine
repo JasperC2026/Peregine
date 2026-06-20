@@ -111,11 +111,16 @@ risk_notice () {
     fi
 }
 ip_leak_warning () {
-    echo "You are not using the tor option provided, please note running this command without tor can leak your IP to qeuried sources."
-    echo "Also you can use a VPN or a proxy to hide your IP."
-
+    echo -e "${RED}${DIVIDER}"
+    cat << EOF
+WARNING: This action can leak your IP.
+If you don't use the tor option provided please be aware of the risks that it can have.
+Otherwise use a VPN or proxy to hide your identity to qeuried sources
+EOF
+    echo -e "${DIVIDER}${RESET}"
+    
     echo
-    risk_notice  
+    risk_notice
 }
 terms_notice () {
     echo "Do you accept these terms and want to proceed? (y/n): "
