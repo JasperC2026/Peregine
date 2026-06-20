@@ -41,6 +41,7 @@ arrow="➜"
 # Configs
 dependencie_notice=show # Show dependencie installed message, standard: show.
 output_color=CYAN # Color for command output, standard: CYAN.
+hide_warnings=false # To hide warnings, standard: false
 
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
@@ -340,8 +341,10 @@ whois_lookup() {
 
     status_dependencies
 
-    ip_leak_warning
-    echo
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        ip_leak_warning
+        echo
+    fi
 
     echo -n "Enter domain: "
     read -r domain
@@ -401,8 +404,10 @@ ping() {
 
     status_dependencies
 
-    ip_leak_warning
-    echo
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        ip_leak_warning
+        echo
+    fi
 
     echo -n "Enter IP address or domain to ping: "
     read -r target
@@ -448,8 +453,10 @@ traceroute() {
 
     status_dependencies
 
-    ip_leak_warning
-    echo
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        ip_leak_warning
+        echo
+    fi
 
     echo -n "Enter IP address or domain to traceroute: "
     read -r target
@@ -524,12 +531,12 @@ dns_info() {
 
     status_dependencies
 
-    echo
-    osint_disclaimer
-    echo
-
-    ip_leak_warning
-    echo
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        osint_disclaimer
+        echo
+        ip_leak_warning
+        echo
+    fi
 
     echo -n "Enter domain to retrieve DNS information: "
     read -r domain
@@ -582,12 +589,12 @@ ip_osint() {
 
     status_dependencies
 
-    echo
-    osint_disclaimer
-    echo
-
-    ip_leak_warning
-    echo
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        osint_disclaimer
+        echo
+        ip_leak_warning
+        echo
+    fi
 
     echo -n "Enter IP address to perform OSINT on: "
     read -r target
@@ -640,12 +647,12 @@ maigret_search () {
 
     status_dependencies
 
-    echo
-    osint_disclaimer
-    echo
-
-    ip_leak_warning
-    echo
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        osint_disclaimer
+        echo
+        ip_leak_warning
+        echo
+    fi
 
     echo -n "Enter username to search for: "
     read -r username
@@ -742,12 +749,12 @@ phone_lookup () {
 
     status_dependencies
 
-    echo
-    osint_disclaimer
-    echo
-
-    ip_leak_warning
-    echo
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        osint_disclaimer
+        echo
+        ip_leak_warning
+        echo
+    fi
 
     echo -n "Enter phone number (with country code, e.g. +1234567890): "
     read -r phone
@@ -806,9 +813,10 @@ web_phone_lookup () {
 
     status_dependencies
 
-    echo
-    osint_disclaimer
-    echo
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        osint_disclaimer
+        echo
+    fi
 
     echo -n "Enter port to host web interface on (default 8080): "
     read -r port
@@ -861,11 +869,12 @@ email_lookup () {
 
     status_dependencies
 
-    osint_disclaimer
-    echo
-
-    ip_leak_warning
-    echo
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        osint_disclaimer
+        echo
+        ip_leak_warning
+        echo
+    fi
 
     echo -n "Enter email address to search for: "
     read -r email
@@ -920,11 +929,12 @@ site_history () {
 
     status_dependencies
 
-    osint_disclaimer
-    echo
-
-    ip_leak_warning
-    echo
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        osint_disclaimer
+        echo
+        ip_leak_warning
+        echo
+    fi
 
     echo -n "Enter target website: "
     read -r target
@@ -973,12 +983,12 @@ site_screenshot () {
 
     status_dependencies
     
-    echo
-    osint_disclaimer
-    echo
-
-    ip_leak_warning
-    echo
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        osint_disclaimer
+        echo
+        ip_leak_warning
+        echo
+    fi
 
     echo -n "Enter target website (include http:// or https://): "
     read -r target
@@ -1043,14 +1053,14 @@ network_explorer () {
 
     status_dependencies
 
-    osint_disclaimer
-    echo
-
-    warning_privilege_escalation
-    echo
-
-    ip_leak_warning
-    echo
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        warning_privilege_escalation
+        echo
+        osint_disclaimer
+        echo
+        ip_leak_warning
+        echo
+    fi
 
     if [[ $EUID -ne 0 ]]; then
         echo -e "${RED}[!]${RESET} Command requires root."
@@ -1121,9 +1131,10 @@ network_explorer () {
 update_apps() {
     echo -e "${DIVIDER}"
 
-    echo
-    warning_privilege_escalation 
-    echo
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        warning_privilege_escalation
+        echo
+    fi
 
     echo -n "Name package manager (apt, pacman, snap, pipx, pip): "
     read -r package_manager
@@ -1458,8 +1469,10 @@ secure_empty_trash() {
         return 0
     fi
 
-    warning_destructive_actions
-    echo
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        warning_destructive_actions
+        echo
+    fi
 
     echo -e "${output_color}[i] Found $file_count item(s) in Trash.${RESET}"
     echo
@@ -1511,13 +1524,13 @@ secure_overwrite_free_space() {
     echo -e "${RED}[!]${RESET} This will securely overwrite all free space on the root partition ($root_partition) to help prevent recovery of deleted files."
     echo -e "${RED}[!]${RESET} This process can take a long time depending on the size of the partition and the amount of free space. Make sure to close other applications and save your work before proceeding."
     
-    echo
-    warning_privilege_escalation 
-    echo
-
-    echo
-    warning_destructive_actions
-    echo 
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        echo
+        warning_privilege_escalation 
+        echo
+        warning_destructive_actions
+        echo
+    fi
 
     echo -n "Proceed with secure free space overwrite? (y/n): "
     read -r confirm
@@ -1549,9 +1562,11 @@ system_audit() {
 
     status_dependencies
 
-    echo
-    warning_privilege_escalation 
-    echo
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        echo
+        warning_privilege_escalation 
+        echo
+    fi
 
     echo -e "${GREEN}[->]${RESET} Starting Lynis system audit — this may take a few minutes..."
 
@@ -1696,9 +1711,11 @@ secure_delete() {
 
     status_dependencies
 
-    echo
-    warning_destructive_actions
-    echo
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        echo
+        warning_destructive_actions
+        echo
+    fi
 
     echo -n "Enter file or directory to securely delete: "
     read -r target
