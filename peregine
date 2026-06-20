@@ -177,13 +177,13 @@ list_intel_report_options() {
 
     # Run the tool, output goes to terminal AND tmpfile simultaneously
     case "$commands" in
-        t) traceroute 2>&1 | tee "$tmpfile" ;;
-        i) ip_osint   2>&1 | tee "$tmpfile" ;;
-        d) dns_info   2>&1 | tee "$tmpfile" ;;
-        m) maigret_search 2>&1 | tee "$tmpfile" ;;
-        p) phone_lookup   2>&1 | tee "$tmpfile" ;;
-        s) site_history   2>&1 | tee "$tmpfile" ;;
-        n) network_explorer 2>&1 | tee "$tmpfile" ;;
+        t) traceroute_base 2>&1 | tee "$tmpfile" ;;
+        i) ip_osint_base   2>&1 | tee "$tmpfile" ;;
+        d) dns_info_base   2>&1 | tee "$tmpfile" ;;
+        m) maigret_search_base 2>&1 | tee "$tmpfile" ;;
+        p) phone_lookup_base   2>&1 | tee "$tmpfile" ;;
+        s) site_history_base  2>&1 | tee "$tmpfile" ;;
+        n) network_explorer_base 2>&1 | tee "$tmpfile" ;;
     esac
 
     # Append clean (no ANSI codes) output to report
@@ -293,6 +293,48 @@ EOF
     done
 
     command_executed 
+}
+traceroute_base () {
+    echo -n "IP: "
+    read -r target
+
+    torsocks "$(command -v traceroute)" "$target" 2>&1
+}
+ip_osint_base () {
+    echo -n "IP: "
+    read -r target
+
+    torsocks curl -s --max-time 10 "https://ipinfo.io/$target/json" 2>&1
+}
+dns_info_base () {
+    echo -n "Domain: "
+    read -r domain
+
+    torsocks dig "$domain" ANY +noall +answer 2>&1
+}
+maigret_search_base () {
+    echo -n "Username: "
+    read -r username
+
+    torsocks maigret -a "$username" 2>&1
+} 
+phone_lookup_base () {
+    echo -n "Phone number: "
+    read -r phone
+
+    torsocks phoneinfoga scan -n "$phone" 2>&1
+}
+site_history_base () {
+    echo -n "Site: "
+    read -r target
+
+    echo "$target" | torsocks waybackurls -dates 2>&1
+}
+network_explorer () {
+    echo -n "IP: "
+    read -r target
+
+    sudo torsocks nmap -p- "$target" 2>&1
 }
 local_server() {
     if ! command -v python3 >/dev/null 2>&1; then
