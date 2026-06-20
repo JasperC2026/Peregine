@@ -4590,6 +4590,35 @@ email() {
 site() {
     site_history
 }
+weather() {
+    show_weather
+}
+count_lines() {
+    count_lines_file 
+}
+cpu() {
+    view_cpu_processes 
+}
+disk() {
+    show_disk_usage
+}
+large_files() {
+    find_largest_files
+}
+edited_files() {
+    show_edited_files 
+}
+rec_ternima() {
+    record_terminal
+}
+broken_symlinks() {
+    find_broken_symlinks 
+}
+empty() {
+    find_empty
+}
+
+
 # ─── Command dispatcher ───────────────────────────────────────────────────────
 
 _PEREGINE_COMMANDS=(
@@ -4651,15 +4680,15 @@ _PEREGINE_COMMANDS=(
     secure_shred_dir ssd
     # Uttilities
     local_server
-    show_weather
-    count_lines_file
-    view_cpu_processes
-    show_disk_usage
-    find_largest_files
-    show_edited_files
-    record_terminal
-    find_broken_symlinks
-    find_empty
+    show_weather weather
+    count_lines_file count_lines
+    view_cpu_processes cpu
+    show_disk_usage disk
+    find_largest_files large_files
+    show_edited_files edited_files
+    record_terminal rec_ternimal
+    find_broken_symlinks broken_symlinks
+    find_empty empty
     # Other
     test_loading_animations
     license l
