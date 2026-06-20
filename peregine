@@ -1987,7 +1987,9 @@ generate_key () {
     echo 
     echo -e "${GREEN}[+]${RESET} Generating $bits-bit key ($bytes bytes)..."
 
+    animation_begin
     key=$(openssl rand -hex "$bytes" 2>/dev/null) # Generate a random key of the specified size using openssl
+    animation_end
     status=$? # Capture the exit status of the openssl command to check for errors
 
     if [[ $status -ne 0 ]]; then # Check if the openssl command executed successfully
@@ -2021,7 +2023,9 @@ encrypt_file_aes256() {
 
     read -rp "Output file (e.g. file.enc): " outfile
 
+    animation_begin
     openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$outfile"
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2036,10 +2040,14 @@ encrypt_file_aes256() {
 
     if [[ "$remove_original" == "y" ]]; then
         if command -v shred >/dev/null 2>&1; then
+            animation_begin
             shred -u -- "$file"
+            animation_end
             echo -e "${GREEN}[+]${RESET} Original securely removed (shred)."
         else
+            animation_begin
             rm -- "$file"
+            animation_end
             echo -e "${YELLOW}[i]${RESET} shred not found, file removed normally."
         fi
     fi
@@ -2068,7 +2076,9 @@ encrypt_file_aes128() {
 
     read -rp "Output file (e.g. file.enc): " outfile
 
+    animation_begin
     openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$outfile"
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2083,10 +2093,14 @@ encrypt_file_aes128() {
 
     if [[ "$remove_original" == "y" ]]; then
         if command -v shred >/dev/null 2>&1; then
+            animation_begin
             shred -u -- "$file"
+            animation_end
             echo -e "${GREEN}[+]${RESET} Original securely removed (shred)."
         else
+            animation_begin
             rm -- "$file"
+            animation_end
             echo -e "${YELLOW}[i]${RESET} shred not found, file removed normally."
         fi
     fi
@@ -2116,7 +2130,9 @@ decrypt_file_aes256() {
 
     read -rp "Output file: " outfile
 
+    animation_begin
     openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -in "$file" -out "$outfile"
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2152,7 +2168,9 @@ decrypt_file_aes128() {
 
     read -rp "Output file: " outfile
 
+    animation_begin
     openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -in "$file" -out "$outfile"
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2188,7 +2206,9 @@ encrypt_file_chacha20() {
 
     read -rp "Output file (e.g. file.enc): " outfile
 
+    animation_begin
     openssl enc -chacha20 -pbkdf2 -iter 100000 -salt -in "$file" -out "$outfile"
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2223,7 +2243,9 @@ decrypt_file_chacha20() {
 
     read -rp "Output file: " outfile
     
+    animation_begin
     openssl enc -chacha20 -d -pbkdf2 -iter 100000 -in "$file" -out "$outfile"
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2258,7 +2280,9 @@ encrypt_file_twofish() {
 
     read -rp "Output file: " outfile
 
+    animation_begin
     gpg --symmetric --cipher-algo TWOFISH --s2k-cipher-algo TWOFISH --s2k-digest-algo SHA512 --compress-algo none -o "$outfile" "$file"
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2294,7 +2318,9 @@ decrypt_file_twofish() {
 
     read -rp "Output file: " outfile
 
+    animation_begin
     gpg -o "$outfile" -d "$file"
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2330,7 +2356,9 @@ encrypt_file_serpent() {
 
     read -rp "Output file: " outfile
 
+    animation_begin
     gpg --symmetric --cipher-algo SERPENT256 --s2k-digest-algo SHA512 --compress-algo none -o "$outfile" "$file"
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2366,7 +2394,9 @@ decrypt_file_serpent() {
 
     read -rp "Output file: " outfile
 
+    animation_begin
     gpg -o "$outfile" -d "$file"
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2396,7 +2426,9 @@ encrypt_text_aes256() {
     read -rp "Enter text: " text
 
     echo
+    animation_begin
     printf "%s" "$text" | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -a
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2426,7 +2458,9 @@ encrypt_text_aes128() {
     read -rp "Enter text: " text
 
     echo
+    animation_begin
     printf "%s" "$text" | openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -a
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2456,7 +2490,9 @@ decrypt_text_aes256() {
     read -rp "Enter encrypted text: " text
 
     echo
+    animation_begin
     printf "%s" "$text" | openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -a
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2486,7 +2522,9 @@ decrypt_text_aes128() {
     read -rp "Enter encrypted text: " text
 
     echo
+    animation_begin
     printf "%s" "$text" | openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -a
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2516,7 +2554,9 @@ encrypt_text_chacha20() {
     read -rp "Enter text: " text
 
     echo
+    animation_begin
     printf "%s" "$text" | openssl enc -chacha20 -pbkdf2 -iter 100000 -salt -a
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2548,7 +2588,9 @@ decrypt_text_chacha20() {
     read -rp "> " encrypted_text
 
     echo
+    animation_begin
     printf "%s" "$encrypted_text" | openssl enc -chacha20 -d -pbkdf2 -iter 100000 -a
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2567,7 +2609,9 @@ encrypt_text_base64() {
 
     echo
     read -rp "Enter text: " text
+    animation_begin
     result=$(printf "%s" "$text" | base64)
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -2584,7 +2628,9 @@ decrypt_text_base64() {
 
     echo
     read -rp "Enter Base64 text: " text
+    animation_begin
     result=$(printf "%s" "$text" | base64 -d 2>/dev/null)
+    animation_end
 
     if [[ $? -ne 0 ]]; then
         echo -e "${RED}[!]${RESET} Invalid Base64 input."
@@ -2605,6 +2651,7 @@ encrypt_text_ceasar() {
     read -rp "Enter shift (e.g. 3 or -3): " shift
 
     echo
+    animation_begin
     result=$(printf "%s" "$text" | awk -v shift="$shift" '
     BEGIN {
         alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
@@ -2621,7 +2668,7 @@ encrypt_text_ceasar() {
             printf "%s", (c in map)?map[c]:c
         }
     }')
-
+    animation_end
     echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
 
     command_executed
@@ -2637,6 +2684,7 @@ decrypt_text_ceasar() {
 
     shift=$(( -shift ))
     echo
+    animation_begin
     result=$(printf "%s" "$text" | awk -v shift="$shift" '
     BEGIN {
         alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
@@ -2653,6 +2701,7 @@ decrypt_text_ceasar() {
             printf "%s", (c in map)?map[c]:c
         }
     }')
+    animation_end
     echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
 
     command_executed
@@ -2667,6 +2716,7 @@ encrypt_text_vigenere() {
     read -rp "Enter key: " key
 
     echo
+    animation_begin
     result=$(awk -v text="$text" -v key="$key" '
     function ord(c) { return index("ABCDEFGHIJKLMNOPQRSTUVWXYZ", c) }
     function chr(n) { return substr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", n, 1) }
@@ -2687,7 +2737,7 @@ encrypt_text_vigenere() {
             }
         }
     }')
-
+    animation_end
     echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
 
     command_executed
@@ -2701,6 +2751,7 @@ decrypt_text_vigenere() {
     read -rp "Enter key: " key
 
     echo
+    animation_begin
     result=$(awk -v text="$text" -v key="$key" '
     function ord(c) { return index("ABCDEFGHIJKLMNOPQRSTUVWXYZ", c) }
     function chr(n) { return substr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", n, 1) }
@@ -2722,7 +2773,7 @@ decrypt_text_vigenere() {
             }
         }
     }')
-
+    animation_end
     echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
 
     command_executed
@@ -2733,7 +2784,9 @@ rot13_cipher() {
 
     echo
     read -rp "Enter text: " text
+    animation_begin
     result=$(printf "%s" "$text" | tr 'A-Za-z' 'N-ZA-Mn-za-m')
+    animation_end
 
     echo
     echo -e "${GREEN}[+]${RESET} Result: ${CYAN}$result${RESET}"
