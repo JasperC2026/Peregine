@@ -131,4 +131,3 @@ foo 2> /dev/null # hide error messages
 foo &> /dev/null # hide all output
 
 EXAMPLES
-
