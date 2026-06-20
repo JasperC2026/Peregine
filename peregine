@@ -142,7 +142,7 @@ status_dependencies() {
     fi
 }
 command_executed() {
-echo "$forward${BOLD} Command Executed ${RESET}"
+echo -e "$forward${BOLD} Command Executed ${RESET}"
 }
 list_intel_report_options() {
     local target="$1"
@@ -348,11 +348,11 @@ local_server() {
 
     status_dependencies
 
-    echo -e "${DIVIDER}"   
-    echo -e "${RED}[!]${RESET} Note: This will expose the contents of the current directory to anyone who can access the specified port on your machine. Make sure you understand the security implications before proceeding."
+    echo -e "${RED}${DIVIDER}"   
+    echo -e "WARNING: This will expose the contents of the current directory to anyone who can access the specified port on your machine. Make sure you understand the security implications before proceeding."
     echo "This will start a local HTTP server using Python's built-in http.server module. You can access it by navigating to http://localhost:PORT in your web browser, where PORT is the port number you specify."
     echo "Make sure to stop the server when you're done by pressing Ctrl+C in the terminal."
-    echo -e "${DIVIDER}"    
+    echo -e "${DIVIDER}${RESET}"    
 
     echo -n "Are you sure you want to start a local server? (y/n): "
     read -r confirm
@@ -360,8 +360,9 @@ local_server() {
     if [[ "$confirm" =~ ^[Yy]$ ]]; then
         echo -n "Enter port number (default 8000): "
         read -r port
-
+        BLA::start_loading_animation "${BLA_classic[@]}"
         python3 -m http.server "$port"
+        BLA::stop_loading_animation
         status=$?
     else
         echo -e "${YELLOW}[i]${RESET} Local server setup cancelled."
