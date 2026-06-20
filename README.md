@@ -111,6 +111,14 @@ All dependencies are optional — only install what you need for the tools you u
 | `openssl` | `sudo apt install openssl` | All AES/ChaCha20 encrypt/decrypt, `generate_password`, `generate_key` |  
 | `gpg` | `sudo apt install gnupg` | `encrypt_file_twofish`, `encrypt_file_serpent` and their decrypt counterparts |  
    
+**MISC**
+
+Required dependencie for using loading animations: https://github.com/Silejonu/bash_loading_animations
+
+```bash  
+git clone https://github.com/Silejonu/bash_loading_animations
+```  
+
 **Install everything at once (Debian/Ubuntu):**  
    
 ```bash  

@@ -7,6 +7,9 @@
 # You cannot distribute it as closed-source / proprietary, add restrictions that prevent others from exercising these rights, hold the author (JasperC) liable for anything — the software comes with no warranty.
 # Version: 3.9
 
+# Loading animations source
+source ~/bash_loading_animations/bash_loading_animations.sh # Copyright (c) 2022 Silejonu
+
 # Variables
 written_in="Bash/shell"
 total_commands="81"
@@ -4806,6 +4809,8 @@ echo ""
 # If you have any suggestions, improvements, or just want to say hi, feel free to reach out.
 # You can open an issue, discussion or pull request on the repository. I welcome all contributions and feedback.
 # Also you can contact me trough matrix: @whiteghost404:matrix.org
+
+# Thanks to Silejonu https://github.com/Silejonu/bash_loading_animations for the loading animations use, licensed MIT.
 
 # Special thanks to all contributors and all creators of the tools used in this program. 
 # Copyright (C) 2026 JasperC
