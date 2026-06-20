@@ -1251,6 +1251,7 @@ update_apps() {
         return 1
     fi
 
+    animation_begin
     if [[ "$package_manager" == "apt" ]]; then
         sudo apt update && sudo apt upgrade -y
     elif [[ "$package_manager" == "pacman" ]]; then
@@ -1265,11 +1266,14 @@ update_apps() {
         echo -e "${RED}[!]${RESET} Unsupported package manager: '$package_manager'. Please use apt, pacman, snap, pipx, or pip."  
         return 1
     fi
+    animation_end
     
     command_executed
 }
 show_edited_files() {
+    animation_begin
     output=$(ls -lt --time-style=long-iso 2>&1)
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -1293,7 +1297,9 @@ show_weather() {
 
     status_dependencies
 
-    output=$(curl -s --max-time 5 wttr.in 2>&1)
+    animation_begin
+    output=$(curl -s --max-time 5 wttr.in 2>&1)\
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
@@ -1314,7 +1320,9 @@ count_lines_file() {
         return 1
     fi    
 
+    animation_begin
     output=$( wc -l $file)
+    animation_end
     status=$?
 
     if [[ $status -ne 0 ]]; then
