@@ -15,8 +15,10 @@ echo "[+] Downloading tool..."
 git clone https://codeberg.org/JasperC/peregine.git 
 
 chmod +x ~/Peregine/peregine
+chmod +x ~/Peregine/peregine_loading.sh
 
 sudo ln -sf ~/Peregine/peregine /usr/local/bin/peregine
+sudo ln -sf ~/Peregine/peregine_loading.sh /usr/local/bin/peregine_loading.sh
 
 echo "[✓] Peregine installed!"
 echo "Run with: peregine"

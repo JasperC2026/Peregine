@@ -8,7 +8,7 @@
 # Version: 3.9
 
 # Loading animations source
-source ~/bash_loading_animations/bash_loading_animations.sh # Copyright (c) 2022 Silejonu
+source /usr/local/bin/peregine_loading.sh # Copyright (c) 2022 Silejonu
 
 # Variables
 written_in="Bash/shell"
@@ -4411,6 +4411,11 @@ test_colors() {
     echo -e "${RESET}This is DEFAULT"
     echo -e "${DIVIDER}"
 }
+test_loading_animations() {
+    BLA::start_loading_animation "${BLA_vertical_block[@]}"
+    sudo apt update
+    BLA::stop_loading_animation
+}
 config() {
     # Colors
     local CLABEL='\033[38;5;39m' # Bright blue for labels
@@ -4594,6 +4599,7 @@ _PEREGINE_COMMANDS=(
     find_broken_symlinks
     find_empty
     # Other
+    test_loading_animations
     license l
     clone_source c
     version v V    
