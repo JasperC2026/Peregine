@@ -1510,9 +1510,12 @@ secure_shred_dir() {
     echo -e "${CYAN}  Passes    : $passes${RESET}"
     echo
 
-    echo
-    warning_destructive_actions
-    echo 
+    
+    if [[ ! "$hide_warnings" =~ ^[false]$ ]]; then
+        echo
+        warning_destructive_actions
+        echo 
+    fi
 
     echo -e "${RED}[!]${RESET} This will permanently destroy $total_files file(s) in:"
     echo -e "    ${BOLD}$abs_target${RESET}"
@@ -1534,11 +1537,13 @@ secure_shred_dir() {
         printf "\r  ${GREEN}[%3d%%]${RESET} (%d/%d) Shredding: %-60s" \
             "$pct" "$current" "$total_files" "$(basename "$file")"
  
+        animation_begin
         if ! shred -u -z -n "$passes" "$file" 2>/dev/null; then
             echo
             echo -e "  ${RED}[!]${RESET} Failed to shred: $file"
             (( errors++ ))
         fi
+        animation_end
     done < <(find "$abs_target" -type f -print0)
 
     echo -e "$forward Removing directory structure..."
@@ -1594,6 +1599,7 @@ secure_empty_trash() {
     read -rp "Securely delete all trash? (y/n): " confirm
 
     if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        animation_begin
         echo -e "${GREEN}[+]${RESET} Emptying Trash securely..."
 
         # Shred files: 3 passes, zero out on final pass, then remove
@@ -1609,6 +1615,7 @@ secure_empty_trash() {
     else
         echo -e "${YELLOW}[i]${RESET} Trash emptying cancelled."
         return 1
+        animation_end
     fi
 
     local remaining
@@ -1652,7 +1659,9 @@ secure_overwrite_free_space() {
 
     if [[ "$confirm" =~ ^[Yy]$ ]]; then
         echo -e "${GREEN}[+]${RESET} Starting secure free space overwrite on $root_partition..."
+        animation_begin
         sudo sfill -v "$root_partition" # Use sfill to securely overwrite free space on the root partition with verbose output
+        animation_end
         status=$? # Capture the exit status of the sfill command to check for errors
     else
         echo -e "${YELLOW}[i]${RESET} Secure free space overwrite cancelled."
@@ -1734,7 +1743,9 @@ rootkit_hunt() {
     local tmpfile
     tmpfile=$(mktemp)
 
+    animation_begin
     chkrootkit 2>&1 | tee "$tmpfile" # run chkrootkit
+    animation_end
     status=${PIPESTATUS[0]}
 
     local infected warnings suspicious
@@ -1769,7 +1780,6 @@ remove_temp_files() {
     if rm -rf /tmp/* 2>/dev/null; then
         echo -e "${GREEN}[+] Temporary files removed.${RESET}"
     else
-
         echo -e "${RED}[!] Failed to remove some temporary files (permissions or in-use files).${RESET}"
         return 1
     fi
@@ -1846,8 +1856,10 @@ secure_delete() {
         [[ "$confirm" != "y" ]] && return 0
 
         echo -e "${GREEN}[➜] Shredding all files in '$target'...${RESET}"
+        animation_begin
         find "$target" -type f -exec shred -u -v -n 5 {} \;
         rm -rf "$target"
+        animation_end
 
         if [[ ! -e "$target" ]]; then
             echo -e "${GREEN}[+]${RESET} Directory securely deleted."
@@ -1861,7 +1873,9 @@ secure_delete() {
         [[ "$confirm" != "y" ]] && return 0
 
         echo -e "$forward Shredding '$target'..."
+        animation_begin
         shred -u -v -n 5 "$target"
+        animation_end
 
         if [[ ! -e "$target" ]]; then
             echo -e "${GREEN}[+]${RESET} File securely deleted."
@@ -1915,12 +1929,15 @@ clean_metadata() {
             echo -e "[!] This will overwrite the original file."
             read -rp "Confirm? (y/n): " confirm
             [[ "$confirm" != "y" ]] && return 0
-
+            animation_begin
             exiftool -all= -overwrite_original "$file" >/dev/null 2>&1
+            animation_end
             status=$?
             outfile="$file"
         else
+            animation_begin
             exiftool -all= -overwrite_original -o "$outfile" "$file" >/dev/null 2>&1
+            animation_end
             status=$?
         fi
 
