@@ -5,23 +5,23 @@
 # You are free to use, copy, modify, and distribute this software for any purpose.
 # With the requirements of: keeping the source code open and availible, license any modified or derived versions under GPL-3.0 as well and keeping all copyright and license notices intact.
 # You cannot distribute it as closed-source / proprietary, add restrictions that prevent others from exercising these rights, hold the author (JasperC) liable for anything — the software comes with no warranty.
-# Version: 3.9
+# Version: 4.0
 
 # Loading animations source
 source /usr/local/bin/peregine_loading.sh # Copyright (c) Silejonu
 
 # Variables
 written_in="Bash/shell"
-total_commands="81"
+total_commands="85"
 created_on="March 18, 2026"
-contributors="JasperC (Developer, Maintainer), and Open Source Community"
+contributors="JasperC (Lead Developer, Maintainer), and Open Source Community"
 license="GPL-3.0"
 lines_of_code=$(wc -l < "${BASH_SOURCE[0]}")
 type="Stable"
-version="V3.9"
-release_date="13-6-2026"
-test_date="13-6-2026"
-previous_versions="Stable: V3.8 Beta: V3.7"
+version="V4.0"
+release_date="21-6-2026"
+test_date="20-6-2026 and 21-6-2026"
+previous_versions="Version 3"
 install_path=$(command -v peregine 2>/dev/null || echo "not installed")
 installed=$( [[ "$install_path" != "not installed" ]] && echo "Yes" || echo "No (running from repo)" )
 shell_info="$( basename "$SHELL" ) $BASH_VERSION"
