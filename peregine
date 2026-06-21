@@ -60,6 +60,45 @@ BOLD="\e[1m"
 RESET="\e[0m"
 
 # Internal commands
+menu() {
+    local options=("$@")
+    local selected=0
+    local key
+
+    tput civis  # hide cursor
+    trap 'tput cnorm; exit' INT TERM EXIT
+
+    while true; do
+        # draw menu
+        for i in "${!options[@]}"; do
+            if [ "$i" -eq "$selected" ]; then
+                tput setaf 2  # green
+                echo "> ${options[$i]}"
+                tput sgr0
+            else
+                echo "  ${options[$i]}"
+            fi
+        done
+
+        # read a key (handles escape sequences)
+        IFS= read -rsn1 key
+        if [[ $key == $'\x1b' ]]; then
+            read -rsn2 key
+            case "$key" in
+                '[A') ((selected--)); [ "$selected" -lt 0 ] && selected=$((${#options[@]}-1)) ;;
+                '[B') ((selected++)); [ "$selected" -ge "${#options[@]}" ] && selected=0 ;;
+            esac
+        elif [[ $key == "" ]]; then
+            break  # Enter pressed
+        fi
+
+        # move cursor back up to redraw
+        tput cuu "${#options[@]}"
+    done
+
+    tput cnorm
+    echo "You chose: ${options[$selected]}"
+}
 osint_disclaimer () {
     echo -e "${RED}${DIVIDER}"
     cat << EOF
@@ -4583,6 +4622,295 @@ config() {
 
     echo -e "${DIVIDER}"
 }
+# Commands menu
+set -u
+
+declare -A CATEGORIES=(
+    [1]="Network"
+    [2]="OSINT"
+    [3]="Lookup"
+    [4]="Web"
+    [5]="Encryption"
+    [6]="System and Security"
+    [7]="Utilities"
+    [8]="Other"
+)
+CATEGORY_ORDER=(1 2 3 4 5 6 7 8)
+
+NETWORK_ITEMS=(
+    "Whois lookup (whois)|whois_lookup"
+    "Ping|ping"
+    "Traceroute|traceroute"
+    "DNS info (dns)|dns_info"
+    "Get IP (ip)|get_ip"
+)
+
+OSINT_ITEMS=(
+    "Network explorer (ne)|network_explorer"
+    "Intel report|intel_report"
+)
+
+LOOKUP_ITEMS=(
+    "IP OSINT|ip_osint"
+    "Maigret search (maigret)|maigret_search"
+    "Phone lookup (phone)|phone_lookup"
+    "Web phone lookup|web_phone_lookup"
+    "Email lookup (email)|email_lookup"
+)
+
+WEB_ITEMS=(
+    "Site history (site)|site_history"
+    "Site screenshot|site_screenshot"
+)
+
+ENCRYPTION_ITEMS=(
+    "Generate key (genkey)|generate_key"
+    "ROT13 cipher (rot13)|rot13_cipher"
+    "Encrypt text - AES256|encrypt_text_aes256"
+    "Decrypt text - AES256|decrypt_text_aes256"
+    "Encrypt text - AES128|encrypt_text_aes128"
+    "Decrypt text - AES128|decrypt_text_aes128"
+    "Encrypt text - ChaCha20|encrypt_text_chacha20"
+    "Decrypt text - ChaCha20|decrypt_text_chacha20"
+    "Encrypt text - Caesar|encrypt_text_ceasar"
+    "Decrypt text - Caesar|decrypt_text_ceasar"
+    "Encrypt text - Vigenere|encrypt_text_vigenere"
+    "Decrypt text - Vigenere|decrypt_text_vigenere"
+    "Encrypt text - Base64|encrypt_text_base64"
+    "Decrypt text - Base64|decrypt_text_base64"
+    "Encrypt file - ChaCha20|encrypt_file_chacha20"
+    "Decrypt file - ChaCha20|decrypt_file_chacha20"
+    "Encrypt file - Twofish|encrypt_file_twofish"
+    "Decrypt file - Twofish|decrypt_file_twofish"
+    "Encrypt file - Serpent|encrypt_file_serpent"
+    "Decrypt file - Serpent|decrypt_file_serpent"
+    "Encrypt file - AES256|encrypt_file_aes256"
+    "Decrypt file - AES256|decrypt_file_aes256"
+    "Encrypt file - AES128|encrypt_file_aes128"
+    "Decrypt file - AES128|decrypt_file_aes128"
+)
+
+SYSTEM_SECURITY_ITEMS=(
+    "--- Maintenance ---|__separator__"
+    "Update apps|update_apps"
+    "Remove temp files (rm_tmp)|remove_temp_files"
+    "Clean metadata (metadata)|clean_metadata"
+    "Secure empty trash (set)|secure_empty_trash"
+    "--- Security ---|__separator__"
+    "System audit (audit)|system_audit"
+    "Rootkit hunt (rootkit)|rootkit_hunt"
+    "Generate password (genpass)|generate_password"
+    "Secure delete (sedl)|secure_delete"
+    "Secure overwrite free space (sofs)|secure_overwrite_free_space"
+    "Secure shred dir (ssd)|secure_shred_dir"
+)
+
+UTILITIES_ITEMS=(
+    "Local server|local_server"
+    "Show weather (weather)|show_weather"
+    "Count lines in file (count_lines)|count_lines_file"
+    "View CPU processes (cpu)|view_cpu_processes"
+    "Show disk usage (disk)|show_disk_usage"
+    "Find largest files (large_files)|find_largest_files"
+    "Show edited files (edited_files)|show_edited_files"
+    "Record terminal (rec_terminal)|record_terminal"
+    "Find broken symlinks (broken_symlinks)|find_broken_symlinks"
+    "Find empty (empty)|find_empty"
+)
+
+OTHER_ITEMS=(
+    "Test loading animations|test_loading_animations"
+    "License (l)|license"
+    "Clone source (c)|clone_source"
+    "Version (v/V)|version"
+    "Help|help"
+    "Check dependencies (cd)|check_dependencies"
+    "Update|update"
+    "Config|config"
+    "Install dependencies (id)|install_dependencies"
+    "Show random fact|show_random_fact"
+    "Show random quote|show_random_quote"
+    "Licenses explained|licenses_explained"
+    "  GPL explained|gpl_explained"
+    "  AGPL explained|agpl_explained"
+    "  LGPL explained|lgpl_explained"
+    "  MPL explained|mpl_explained"
+    "  MIT explained|mit_explained"
+    "  Apache explained|apache_explained"
+    "  BSL explained|bsl_explained"
+    "  Unlicense explained|unlicense_explained"
+    "  CC explained|cc_explained"
+    "System recovery help|system_recovery_help"
+)
+
+_MENU_BREADCRUMB=()
+
+_cleanup_menu() {
+    tput cnorm 2>/dev/null
+    echo
+}
+trap _cleanup_menu EXIT INT TERM
+
+_render_menu() {
+    local title="$1"
+    local selected="$2"
+    shift 2
+    local items=("$@")
+
+    clear
+    if [ "${#_MENU_BREADCRUMB[@]}" -gt 0 ]; then
+        tput setaf 8
+        local IFS=' > '
+        echo "${_MENU_BREADCRUMB[*]}"
+        tput sgr0
+        echo
+    fi
+
+    tput bold
+    echo "$title"
+    tput sgr0
+    echo
+
+    local i=0
+    for entry in "${items[@]}"; do
+        local label="${entry%%|*}"
+        local target="${entry#*|}"
+
+        if [[ "$target" == "__separator__" ]]; then
+            tput setaf 8
+            echo "  $label"
+            tput sgr0
+        elif [ "$i" -eq "$selected" ]; then
+            tput setaf 2
+            echo "> $label"
+            tput sgr0
+        else
+            echo "  $label"
+        fi
+        ((i++))
+    done
+
+    echo
+    tput setaf 8
+    echo "↑/↓ move   Enter select   q back/quit"
+    tput sgr0
+}
+
+select_from_menu() {
+    local title="$1"
+    shift
+    local items=("$@")
+    local count="${#items[@]}"
+    local selected=0
+
+    # land selection on first non-separator item
+    while [[ "${items[$selected]#*|}" == "__separator__" ]]; do
+        ((selected++))
+    done
+
+    tput civis
+
+    while true; do
+        _render_menu "$title" "$selected" "${items[@]}"
+
+        IFS= read -rsn1 key
+        case "$key" in
+            $'\x1b')
+                read -rsn2 -t 0.01 key
+                case "$key" in
+                    '[A') # up
+                        local new=$selected
+                        repeat=0
+                        while [ "$repeat" -lt "$count" ]; do
+                            ((new--)); [ "$new" -lt 0 ] && new=$((count - 1))
+                            [[ "${items[$new]#*|}" != "__separator__" ]] && break
+                            ((repeat++))
+                        done
+                        selected=$new
+                        ;;
+                    '[B') # down
+                        local new=$selected
+                        repeat=0
+                        while [ "$repeat" -lt "$count" ]; do
+                            ((new++)); [ "$new" -ge "$count" ] && new=0
+                            [[ "${items[$new]#*|}" != "__separator__" ]] && break
+                            ((repeat++))
+                        done
+                        selected=$new
+                        ;;
+                esac
+                ;;
+            "q"|"Q")
+                REPLY_TARGET="__back__"
+                tput cnorm
+                return
+                ;;
+            "")
+                REPLY_TARGET="${items[$selected]#*|}"
+                REPLY_LABEL="${items[$selected]%%|*}"
+                tput cnorm
+                return
+                ;;
+        esac
+    done
+}
+
+dispatch() {
+    local fn="$1"
+    if declare -f "$fn" >/dev/null; then
+        clear
+        "$fn"
+        echo
+        read -rsn1 -p "Press any key to return to the menu..."
+    else
+        clear
+        tput setaf 1
+        echo "Function '$fn' is not defined yet."
+        tput sgr0
+        read -rsn1 -p "Press any key to return to the menu..."
+    fi
+}
+
+open_category() {
+    local title="$1"
+    local -n items_ref="$2"
+
+    _MENU_BREADCRUMB+=("$title")
+
+    while true; do
+        select_from_menu "$title" "${items_ref[@]}"
+        if [[ "$REPLY_TARGET" == "__back__" ]]; then
+            break
+        fi
+        dispatch "$REPLY_TARGET"
+    done
+
+    unset '_MENU_BREADCRUMB[-1]'
+}
+
+all_commands() {
+    local cat_items=()
+    for key in "${CATEGORY_ORDER[@]}"; do
+        cat_items+=("${CATEGORIES[$key]}|cat_$key")
+    done
+
+    while true; do
+        _MENU_BREADCRUMB=("Main Menu")
+        select_from_menu "Main Menu" "${cat_items[@]}"
+
+        case "$REPLY_TARGET" in
+            __back__) clear; echo "Goodbye."; break ;;
+            cat_1) open_category "Network"             NETWORK_ITEMS ;;
+            cat_2) open_category "OSINT"                OSINT_ITEMS ;;
+            cat_3) open_category "Lookup"               LOOKUP_ITEMS ;;
+            cat_4) open_category "Web"                  WEB_ITEMS ;;
+            cat_5) open_category "Encryption"            ENCRYPTION_ITEMS ;;
+            cat_6) open_category "System and Security"   SYSTEM_SECURITY_ITEMS ;;
+            cat_7) open_category "Utilities"             UTILITIES_ITEMS ;;
+            cat_8) open_category "Other"                 OTHER_ITEMS ;;
+        esac
+    done
+}
 # Alternatives
 quote () {
     show_random_quote
@@ -4768,6 +5096,7 @@ _PEREGINE_COMMANDS=(
     find_broken_symlinks broken_symlinks
     find_empty empty
     # Other
+    all_commands
     test_loading_animations
     license l
     clone_source c
@@ -4814,156 +5143,11 @@ echo
 
 echo "See license: peregine license or look at the LICENSE file." 
 echo "See version info: peregine version." 
-echo "Install all dependencies: peregine install_dependencies" 
+echo "Install all dependencies: peregine install_dependencies"
+echo "The loading animation dependencie is seperate of that, use install.sh for that."
 echo
 
-echo "All commands included in this toolkit: "
-
-# ── Colors ────────────────────────────────────────────────────────────────────
-DIM="\e[38;5;67m"
-MID="\e[38;5;32m"
-BRIGHT="\e[38;5;75m"
-ACCENT="\e[38;5;111m"
-HI="\e[38;5;153m"
-
-MUTED="\e[38;5;240m"
-LABEL="\e[38;5;33m"
-
-# ── Helpers ───────────────────────────────────────────────────────────────────
-_divider() {
-    printf "${DIM}%s${RESET}\n" "$(printf '─%.0s' {1..72})"
-}
-
-_section() {
-    echo ""
-    printf "${BOLD}${ACCENT}  %-20s${RESET}\n" "── $1"
-    _divider
-}
-
-_cmd() {
-    local name="$1"
-    local alias="$2"
-    if [[ -n "$alias" ]]; then
-        printf "  ${BRIGHT}%-32s${MUTED}%s${RESET}\n" "$name" "$alias"
-    else
-        printf "  ${BRIGHT}%s${RESET}\n" "$name"
-    fi
-}
-
-# ── Network ───────────────────────────────────────────────────────────────────
-_section "network"
-_cmd "whois_lookup"              "whois"
-_cmd "ping"
-_cmd "traceroute"
-_cmd "dns_info"                  "dns"
-_cmd "get_ip"                    "ip"
-_cmd "local_server"
-
-# ── OSINT ─────────────────────────────────────────────────────────────────────
-_section "osint"
-_cmd "network_explorer"          "ne"
-_cmd "intel_report"
-_cmd "ip_osint"
-_cmd "maigret_search"            "maigret"
-_cmd "phone_lookup"              "phone"
-_cmd "web_phone_lookup"
-_cmd "email_lookup"              "email"
-_cmd "site_history"              "site"
-_cmd "site_screenshot"
-
-# ── Encryption — text ─────────────────────────────────────────────────────────
-_section "encryption — text"
-_cmd "encrypt_text_aes256"
-_cmd "decrypt_text_aes256"
-_cmd "encrypt_text_aes128"
-_cmd "decrypt_text_aes128"
-_cmd "encrypt_text_chacha20"
-_cmd "decrypt_text_chacha20"
-_cmd "encrypt_text_ceasar"
-_cmd "decrypt_text_ceasar"
-_cmd "encrypt_text_vigenere"
-_cmd "decrypt_text_vigenere"
-_cmd "encrypt_text_base64"
-_cmd "decrypt_text_base64"
-_cmd "rot13_cipher"              "rot13"
-
-# ── Encryption — files ────────────────────────────────────────────────────────
-_section "encryption — files"
-_cmd "encrypt_file_aes256"
-_cmd "decrypt_file_aes256"
-_cmd "encrypt_file_aes128"
-_cmd "decrypt_file_aes128"
-_cmd "encrypt_file_chacha20"
-_cmd "decrypt_file_chacha20"
-_cmd "encrypt_file_twofish"
-_cmd "decrypt_file_twofish"
-_cmd "encrypt_file_serpent"
-_cmd "decrypt_file_serpent"
-_cmd "generate_key"              "genkey"
-
-# ── Security ──────────────────────────────────────────────────────────────────
-_section "security"
-_cmd "system_audit"              "audit"
-_cmd "rootkit_hunt"              "rootkit"
-_cmd "generate_password"         "genpass"
-_cmd "secure_delete"             "sedl"
-_cmd "secure_empty_trash"        "SET"
-_cmd "secure_shred_dir"          "ssd"
-_cmd "secure_overwrite_free_space" "sofs"
-_cmd "clean_metadata"            "metadata"
-_cmd "remove_temp_files"         "rm_tmp"
-
-# ── Utilities ─────────────────────────────────────────────────────────────────
-_section "utilities"
-_cmd "show_weather"
-_cmd "count_lines_file"
-_cmd "view_cpu_processes"
-_cmd "show_disk_usage"
-_cmd "find_largest_files"
-_cmd "show_edited_files"
-_cmd "record_terminal"
-_cmd "find_broken_symlinks"
-_cmd "find_empty"
-_cmd "update_apps"               "update"
-
-# ── Meta ──────────────────────────────────────────────────────────────────────
-_section "meta"
-_cmd "help"
-_cmd "version"                   "v  V"
-_cmd "config"
-_cmd "check_dependencies"        "cd"
-_cmd "install_dependencies"      "id"
-_cmd "clone_source"              "c"
-_cmd "license"                   "l"
-_cmd "show_random_fact"
-_cmd "show_random_quote"
-
-# ── Licenses ──────────────────────────────────────────────────────────────────
-_section "licenses"
-_cmd "licenses_explained"
-_cmd "gpl_explained"
-_cmd "agpl_explained"
-_cmd "lgpl_explained"
-_cmd "mpl_explained"
-_cmd "mit_explained"
-_cmd "apache_explained"
-_cmd "bsl_explained"
-_cmd "unlicense_explained"
-_cmd "cc_explained"
-_cmd "system_recovery_help"
-
-# ── Category views ────────────────────────────────────────────────────────────
-_section "category views"
-_cmd "osint"
-_cmd "encryption"
-_cmd "networking"
-_cmd "system/security"
-
-echo ""
-_divider
-printf "  ${MUTED}tip: ${BRIGHT}peregine help <cmd>${MUTED} · ${BRIGHT}peregine version${MUTED} · ${BRIGHT}peregine config${RESET}\n"
-_divider
-echo ""
+echo "Want a menu to select a command? Use peregine all_commands"
 }
 
     if [[ $# -eq 0 ]]; then
