@@ -43,7 +43,7 @@ arrow="➜"
 
 # Configs
 dependencie_notice=show # Show dependencie installed message, standard: show.
-output_color=CYAN # Color for command output, standard: CYAN.
+output_color=$CYAN # Color for command output, standard: CYAN.
 hide_warnings=false # To hide warnings, standard: false
 
 # Colors for ASCII art and use in output messages
