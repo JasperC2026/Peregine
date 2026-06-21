@@ -550,27 +550,10 @@ traceroute() {
         return 1
     fi
 
-    echo -e "${PURPLE}"
-    read -p "[TOR] Route through Tor? (y/n): " USE_TOR
-    echo -e "${RESET}"
-
-    if [[ "$USE_TOR" =~ ^[Yy]$ ]]; then
-        if ! command -v torsocks >/dev/null 2>&1; then
-            echo -e "${RED}[!]${RESET} Torsocks is not installed. Please install it to use Tor routing."
-            echo "Install with: sudo apt install torsocks"
-            return 1
-        fi
-        echo -e "${GREEN}[+]${RESET} Routing through Tor..."
-        animation_begin
-        output=$(torsocks "$(command -v traceroute)" "$target" 2>&1)  
-        animation_end
-        status=$?
-    else 
-        animation_begin
-        output=$(command traceroute "$target" 2>&1)   
-        animation_end
-        status=$?
-    fi
+    animation_begin
+    output=$(command traceroute "$target" 2>&1)   
+    animation_end
+    status=$?
 
     if [[ $status -ne 0 ]]; then
         echo -e "${RED}[!]${RESET} Traceroute failed: $output"
