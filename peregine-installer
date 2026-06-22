@@ -70,42 +70,21 @@ show_license() {
 }
 
 see_info() {
-    written_in="Bash/shell"
-    total_commands="85"
-    created_on="March 18, 2026"
-    contributors="JasperC (Lead Developer, Maintainer), and Open Source Community"
-    license="GPL-3.0"
-    lines_of_code=$(wc -l < "${BASH_SOURCE[0]}")
-    type="Stable"
-    version="V4.0"
-    release_date="21-6-2026"
-    test_date="20-6-2026 and 21-6-2026"
-    previous_versions="Version 3"
-    install_path=$(command -v peregine 2>/dev/null || echo "not installed")
-    installed=$( [[ "$install_path" != "not installed" ]] && echo "Yes" || echo "No (running from repo)" )
-    shell_info="$( basename "$SHELL" ) $BASH_VERSION"
-    platform=$(grep PRETTY_NAME /etc/os-release 2>/dev/null | cut -d= -f2 | tr -d '"')
-
-    echo
-    tput bold; echo "  Peregine Project Info"; tput sgr0
-    echo "  ─────────────────────────────────────"
-    echo "  Version         : $version ($type)"
-    echo "  Release date    : $release_date"
-    echo "  Test date       : $test_date"
-    echo "  Created on      : $created_on"
-    echo "  Previous vers.  : $previous_versions"
-    echo "  ─────────────────────────────────────"
-    echo "  Written in      : $written_in"
-    echo "  Total commands  : $total_commands"
-    echo "  Lines of code   : $lines_of_code"
-    echo "  License         : $license"
-    echo "  Contributors    : $contributors"
-    echo "  ─────────────────────────────────────"
-    echo "  Install path    : $install_path"
-    echo "  Installed       : $installed"
-    echo "  Shell           : $shell_info"
-    echo "  Platform        : $platform"
-    echo
+    echo -e "${BOLD}${CYAN}"
+cat << EOF
+                                                        
+####   #####  ####   #####   ###   ####   #  ##  ##### 
+## ##  ##     ## ##  ##     ## ##   ##    ## ##  ##    
+## ##  ##     ## ##  ##     ##      ##    #####  ##    
+####   ####   ####   ####   #####   ##    #####  ####  
+##     ##     ###    ##     ## ##   ##    #####  ##    
+##     ##     ####   ##     ## ##   ##    ## ##  ##    
+##     #####  ## ##  #####   ####  ####   ##  #  ##### 
+                                                        
+                                                        
+EOF
+echo -e "${BOLD} Peregine: A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface.${RESET}"
+echo "Created by: JasperC" 
 }
 
 # ─── Dependency install stubs ─────────────────────────────────────────────────
