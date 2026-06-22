@@ -4867,25 +4867,24 @@ _PEREGINE_COMMANDS=(
 )
 
 _peregine_list_commands() { 
+    echo -e "${BOLD}${CYAN}"
 cat << EOF
->======>   >=======> >======>     >=======>    >===>    >=> >==>    >=> >=======> 
->=>    >=> >=>       >=>    >=>   >=>        >>    >=>  >=> >> >=>  >=> >=>       
->=>    >=> >=>       >=>    >=>   >=>       >=>         >=> >=> >=> >=> >=>       
->======>   >=====>   >> >==>      >=====>   >=>         >=> >=>  >=>>=> >=====>   
->=>        >=>       >=>  >=>     >=>       >=>   >===> >=> >=>   > >=> >=>       
->=>        >=>       >=>    >=>   >=>        >=>    >>  >=> >=>    >>=> >=>       
->=>        >=======> >=>      >=> >=======>   >====>    >=> >=>     >=> >=======> 
-                                                                                  
-
+                                                        
+ ####   #####  ####   #####   ###   ####   #  ##  ##### 
+ ## ##  ##     ## ##  ##     ## ##   ##    ## ##  ##    
+ ## ##  ##     ## ##  ##     ##      ##    #####  ##    
+ ####   ####   ####   ####   #####   ##    #####  ####  
+ ##     ##     ###    ##     ## ##   ##    #####  ##    
+ ##     ##     ####   ##     ## ##   ##    ## ##  ##    
+ ##     #####  ## ##  #####   ####  ####   ##  #  ##### 
+                                                        
+                                                        
 EOF
-echo -e "${BLUE}${BOLD} Peregine: A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface.${RESET}"
-echo
+echo -e "${BOLD} Peregine: A powerful, lightweight Bash-based CLI toolbox for networking, system management, and privacy/security — all in one interactive interface.${RESET}"
+echo "Created by: JasperC" 
 
-echo "See license: peregine license or look at the LICENSE file." 
-echo "See version info: peregine version." 
-echo "Install all dependencies: peregine install_dependencies"
-echo "The loading animation dependencie is seperate of that, use install.sh for that."
 echo
+echo -e "Run ${CYAN}peregine${RESET} {command}"
 
 echo "Want a menu to select a command? Use peregine all_commands"
 }
