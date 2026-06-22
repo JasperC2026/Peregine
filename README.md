@@ -115,22 +115,11 @@ All dependencies are optional — only install what you need for the tools you u
 
 Required dependencie for using loading animations: https://github.com/Silejonu/bash_loading_animations
 
-```bash  
-git clone https://github.com/Silejonu/bash_loading_animations
-```  
-See install.sh how to make it properly work.
-
-**Install everything at once (Debian/Ubuntu):**  
-   
-```bash  
-peregine install_dependencies
-```  
-   
----  
+peregine_loading.sh should be in usr/local/bin
    
 ## Getting Started  
    
-Use the install.sh file or just clone the repo.  
+Use the peregine-installer. Copy the file, make it executable and run it.
    
 ---  
    
