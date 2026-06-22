@@ -46,7 +46,7 @@ _install_version() {
     local tag="$1"
     echo "Installing $tag..."
 
-    curl -L "https://codeberg.org/{user}/Peregine/archive/${tag}.tar.gz" -o /tmp/peregine.tar.gz
+    curl -L "https://codeberg.org/JasperC/Peregine/archive/${tag}.tar.gz" -o /tmp/peregine.tar.gz
 
     mkdir -p ~/Peregine
     tar -xzf /tmp/peregine.tar.gz -C ~/Peregine --strip-components=1
@@ -59,56 +59,108 @@ _install_version() {
     echo "Done! Peregine $tag installed."
 }
 
-install_stable_40()  { _install_version "v4.0"; }
-install_stable_391() { _install_version "v3.9.1"; }
-install_stable_38()  { _install_version "v3.8"; }
-install_beta_37()    { _install_version "v3.7-beta"; }
+install_stable_40()  { _install_version "stable_4.0"; }
+install_stable_391() { _install_version "stable_3.9.1"; }
+install_stable_38()  { _install_version "stable_3.8"; }
+install_beta_37()    { _install_version "beta_3.7"; }
 
 show_license() {
-    echo "License:"
-    # TODO: display license here (e.g. curl raw license file from Codeberg)
+   echo "License:"
+   curl https://codeberg.org/JasperC/Peregine/raw/branch/main/LICENSE
 }
 
 see_info() {
-    echo "Project Info:"
-    # TODO: display project info here
+    written_in="Bash/shell"
+    total_commands="85"
+    created_on="March 18, 2026"
+    contributors="JasperC (Lead Developer, Maintainer), and Open Source Community"
+    license="GPL-3.0"
+    lines_of_code=$(wc -l < "${BASH_SOURCE[0]}")
+    type="Stable"
+    version="V4.0"
+    release_date="21-6-2026"
+    test_date="20-6-2026 and 21-6-2026"
+    previous_versions="Version 3"
+    install_path=$(command -v peregine 2>/dev/null || echo "not installed")
+    installed=$( [[ "$install_path" != "not installed" ]] && echo "Yes" || echo "No (running from repo)" )
+    shell_info="$( basename "$SHELL" ) $BASH_VERSION"
+    platform=$(grep PRETTY_NAME /etc/os-release 2>/dev/null | cut -d= -f2 | tr -d '"')
+
+    echo
+    tput bold; echo "  Peregine Project Info"; tput sgr0
+    echo "  ─────────────────────────────────────"
+    echo "  Version         : $version ($type)"
+    echo "  Release date    : $release_date"
+    echo "  Test date       : $test_date"
+    echo "  Created on      : $created_on"
+    echo "  Previous vers.  : $previous_versions"
+    echo "  ─────────────────────────────────────"
+    echo "  Written in      : $written_in"
+    echo "  Total commands  : $total_commands"
+    echo "  Lines of code   : $lines_of_code"
+    echo "  License         : $license"
+    echo "  Contributors    : $contributors"
+    echo "  ─────────────────────────────────────"
+    echo "  Install path    : $install_path"
+    echo "  Installed       : $installed"
+    echo "  Shell           : $shell_info"
+    echo "  Platform        : $platform"
+    echo
 }
 
 # ─── Dependency install stubs ─────────────────────────────────────────────────
 
-install_dep_main() {
-    echo "Installing main dependencies..."
-    # TODO
+bashinstall_dep_main() {
+    echo "Installing all dependencies..."
+    sudo apt install -y curl whois dnsutils iputils-ping traceroute python3 \
+        lynis chkrootkit coreutils secure-delete procps \
+        libimage-exiftool-perl openssl gnupg theharvester torsocks
+    pipx install maigret
+    go install github.com/tomnomnom/waybackurls@latest
+    bash <( curl -sSL https://raw.githubusercontent.com/sundowndev/phoneinfoga/master/support/scripts/install )
+    echo "Done."
 }
 
 install_dep_network() {
-    echo "Installing network dependencies..."
-    # TODO
+    echo "Installing networking & OSINT dependencies..."
+    sudo apt install -y curl whois dnsutils iputils-ping traceroute python3 theharvester torsocks
+    pipx install maigret
+    go install github.com/tomnomnom/waybackurls@latest
+    bash <( curl -sSL https://raw.githubusercontent.com/sundowndev/phoneinfoga/master/support/scripts/install )
+    echo "Done."
 }
 
 install_dep_osint() {
     echo "Installing OSINT dependencies..."
-    # TODO
+    sudo apt install -y curl theharvester
+    pipx install maigret
+    go install github.com/tomnomnom/waybackurls@latest
+    bash <( curl -sSL https://raw.githubusercontent.com/sundowndev/phoneinfoga/master/support/scripts/install )
+    echo "Done."
 }
 
 install_dep_encryption() {
     echo "Installing encryption dependencies..."
-    # TODO
+    sudo apt install -y openssl gnupg
+    echo "Done."
 }
 
 install_dep_system() {
     echo "Installing system dependencies..."
-    # TODO
+    sudo apt install -y lynis chkrootkit coreutils secure-delete procps
+    echo "Done."
 }
 
 install_dep_security() {
     echo "Installing security dependencies..."
-    # TODO
+    sudo apt install -y lynis chkrootkit coreutils secure-delete procps libimage-exiftool-perl
+    echo "Done."
 }
 
 install_dep_utils() {
     echo "Installing utils dependencies..."
-    # TODO
+    sudo apt install -y libimage-exiftool-perl
+    echo "Done."
 }
 
 # ─── Menu engine ──────────────────────────────────────────────────────────────
