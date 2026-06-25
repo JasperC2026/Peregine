@@ -4350,6 +4350,7 @@ config() {
 
     printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "dependencie_notice" "${dependencie_notice}" 
     printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "output_color" "${output_color}"
+    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "hide_warnings" "${hide_warnings}" 
 
     echo
     echo "To change a config option, edit the corresponding variable in the Peregine script and save it. Then run 'peregine config' again to see the updated settings. "
