@@ -4651,6 +4651,7 @@ all_commands() {
         esac
     done
 }
+
 # Alternatives
 quote () {
     show_random_quote
@@ -4866,6 +4867,7 @@ _PEREGINE_COMMANDS=(
     networking  
 )
 
+# Main command
 _peregine_list_commands() { 
     echo -e "${BOLD}${CYAN}"
 cat << EOF
@@ -4889,6 +4891,8 @@ echo -e "Run ${CYAN}peregine${RESET} {command}"
 echo "Want a menu to select a command? Use peregine all_commands"
 }
 
+
+# Main handler
     if [[ $# -eq 0 ]]; then
        _peregine_list_commands
     elif [[ "$1" == "help" ]]; then
