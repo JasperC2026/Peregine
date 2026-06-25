@@ -1955,6 +1955,28 @@ clean_metadata() {
     command_executed
 }
 # Encryption
+generate_uuid () {
+    C="89ab"
+
+    for ((N=0;N<16;++N)); do
+        B="$((RANDOM%256))"
+
+        case "$N" in
+            6)  printf '4%x' "$((B%16))" ;;
+            8)  printf '%c%x' "${C:$RANDOM%${#C}:1}" "$((B%16))" ;;
+
+            3|5|7|9)
+                printf '%02x-' "$B"
+            ;;
+
+            *)
+                printf '%02x' "$B"
+            ;;
+        esac
+    done
+
+    printf '\n'
+}
 generate_key () {
     if ! command -v openssl >/dev/null 2>&1; then  # Check if openssl is installed 
         echo "${RED}[!]${RESET} Required dependencie not installed"
@@ -3757,6 +3779,11 @@ help() {
             ;;
 
         # ── Encryption ───────────────────────────────────────────────────────
+        generate_uuid|uuid)
+            echo -e "${CYAN}generate_uuidC${RESET}"
+            echo "Generate a unique UUID."
+            echo "Note: The generated value is not cryptographically secure."
+            ;;
         encrypt_file_aes256|decrypt_file_aes256|encrypt_text_aes256|decrypt_text_aes256)
             echo -e "${CYAN}AES-256-CBC${RESET}"
             echo "  Encrypt or decrypt a file/text using AES-256-CBC."
@@ -4654,6 +4681,9 @@ all_commands() {
 }
 
 # Alternatives
+uuid () {
+    generate_uuid
+}
 quote () {
     show_random_quote
 }
@@ -4789,6 +4819,7 @@ _PEREGINE_COMMANDS=(
     site_history site 
     site_screenshot
 # Encryption
+    generate_uuid
     generate_key genkey
     rot13_cipher rot13
     encrypt_text_aes256
