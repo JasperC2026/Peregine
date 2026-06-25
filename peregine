@@ -249,6 +249,16 @@ animation_end() {
     BLA::stop_loading_animation
 }
 # Commands 
+simple_overview() {
+    echo -e "${CYAN}SYSTEM:   ${RESET}"
+    echo -e "${CYAN}Hostname:   ${RESET}""$HOSTNAME""" 
+    echo -e "${CYAN}Architecture:   ${RESET}"""$HOSTTYPE"""" 
+    echo -e "${CYAN}Kernel:   ${RESET}""""$OSTYPE""""" 
+    echo
+    echo -e "${CYAN}BASH:   ${RESET}"
+    echo -e "${CYAN}Bash binary:   ${RESET}"$BASH"" 
+    echo -e "${CYAN}Bash version:   ${RESET}""$BASH_VERSION""" 
+}
 # Networking
 intel_report() {
     current_date="date +”%A, %b %d, %Y %H:%M:%S”"
@@ -3839,6 +3849,10 @@ help() {
             ;;
 
         # ── Misc ─────────────────────────────────────────────────────────────
+        simple_overview|overview)
+            echo -e "${CYAN}simple_overview ${RESET}"    
+            echo "  A simple overview to see basic system info"  
+            ;;
         system_recovery_help)
             echo -e "${CYAN}system_recovery_help ${RESET}"    
             echo "  Some useful commands to help recover a broken system"  
@@ -4795,7 +4809,9 @@ broken_symlinks() {
 empty() {
     find_empty
 }
-
+overview() {
+    simple_overview
+}
 
 # ─── Command dispatcher ───────────────────────────────────────────────────────
 
@@ -4869,6 +4885,7 @@ _PEREGINE_COMMANDS=(
     find_broken_symlinks broken_symlinks
     find_empty empty
     # Other
+    simple_overview
     all_commands
     test_loading_animations
     license l
