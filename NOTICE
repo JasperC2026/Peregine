@@ -1,0 +1,10 @@
+Contributors:
+JasperC - Maintainer and developer
+JVisio - Community Contributor
+
+OSS used:
+bash_loading_animations by Silejonu | MIT license https://github.com/Silejonu/bash_loading_animations/tree/main
+pure bash bible by Dylan Araps | MIT license https://github.com/dylanaraps/pure-bash-bible
+waybackurls | https://github.com/tomnomnom/waybackurls
+phoneinfoga | https://github.com/sundowndev/phoneinfoga
+other software: distrubeted trough APT, see dependencies.
