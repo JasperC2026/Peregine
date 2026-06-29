@@ -45,7 +45,10 @@ arrow="➜"
 dependencie_notice=show # Show dependencie installed message, standard: show.
 output_color=$CYAN # Color for command output, standard: CYAN.
 hide_warnings=false # To hide warnings, standard: false
-
+user=jasper # For the auto command the greeting
+auto_option1=secure_empty_trash
+auto_option2=update_apps
+auto_option2=show_weather
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
 GREEN="\e[32m"
@@ -2826,6 +2829,23 @@ rot13_cipher() {
     command_executed
 }
 # Other
+auto() {
+    echo -e "Hello $user!!"
+    echo "Here are some fun facts and quotes for you:"
+    
+    show_random_quote
+    echo
+    show_random_fact
+    echo -e "${DIVIDER}"
+    echo "Please standby while we are running the commands for you: "
+    $auto_option1
+    $auto_option2
+    $auto_option2
+    echo
+    echo -e "${GREEN}[+]${RESET} Done!"
+
+    command_executed
+}
 system_recovery_help() {
     echo "Help with system recovery" 
     
@@ -4885,6 +4905,7 @@ _PEREGINE_COMMANDS=(
     find_broken_symlinks broken_symlinks
     find_empty empty
     # Other
+    auto
     simple_overview
     all_commands
     test_loading_animations
